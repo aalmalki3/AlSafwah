@@ -261,19 +261,29 @@ async function updateStatusAction(newStatus) {
 
 // --- LOGIC ---
 function getStatusLogic(c) {
-    const today = new Date(); today.setHours(0,0,0,0);
+    const today = new Date(); 
+    today.setHours(0,0,0,0);
+    
+    // Parse the raw date from the sheet to ensure accuracy
     const end = new Date(c.rawEnd);
     const start = new Date(c.rawStart);
     
-    const diffEnd = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    // Calculate days passed since the contract ended
+    const diffEnd = Math.ceil((today - end) / (1000 * 60 * 60 * 24));
+    
+    // Calculate days since the contract started (for "New" logic)
     const diffStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
     
-    let displayStatus = c.status; // Default to DB status
+    let displayStatus = c.status; // Default to the status stored in the DB
     
-    // Dynamic overrides for KPIs
+    // LOGIC UPDATE: Only mark as Expired if 30 days have passed since the end date
     if (c.status === 'Active') {
-        if (diffEnd < 0) displayStatus = 'Expired';
-        else if (diffEnd <= 5) displayStatus = 'Expiring';
+        if (diffEnd > 30) {
+            displayStatus = 'Expired';
+        } else if (diffEnd >= 0 && diffEnd <= 30) {
+            // Optional: You can call this "Grace Period" or keep it as Active/Expiring
+            displayStatus = 'Expiring'; 
+        }
     }
     
     return {
@@ -283,7 +293,6 @@ function getStatusLogic(c) {
         isExpired: (displayStatus === 'Expired' || c.status === 'Returned' || c.status === 'Rejected')
     };
 }
-
 function applyFilters() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const filterType = document.getElementById('statusFilter').value;
