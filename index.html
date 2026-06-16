@@ -14,7 +14,8 @@
                     fontFamily: { sans: ['Tajawal', 'sans-serif'] },
                     colors: { 
                         primary: '#0F766E', 
-                        active: '#10B981', 
+                        active: '#3B82F6', /* Changed to Blue */
+                        newStatus: '#10B981', /* Explicit Green for New */
                         warning: '#F59E0B', 
                         expired: '#E11D48', 
                         terminated: '#64748B' 
@@ -24,7 +25,6 @@
         }
     </script>
     <style>
-        /* Compact Scrollbar */
         .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
         input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; padding: 0; }
@@ -52,23 +52,32 @@
     <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
         <!-- COMPACT KPI CARDS -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                <p class="text-slate-500 text-[10px] uppercase tracking-wider mb-1">نشط</p>
-                <p id="kpi-active" class="text-2xl font-bold text-slate-900">-</p>
+            <!-- Active Card (Blue) - Clickable -->
+            <div class="bg-white p-3 rounded-lg border border-active/30 shadow-sm cursor-pointer hover:bg-active/5 transition-colors" onclick="filterByStatus('active')">
+                <p class="text-active text-[10px] uppercase tracking-wider mb-1">نشط</p>
+                <p id="kpi-active" class="text-2xl font-bold text-active">-</p>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-active/30 shadow-sm cursor-pointer hover:bg-active/5" onclick="filterByStatus('new')">
-                <p class="text-active text-[10px] uppercase tracking-wider mb-1">جديدة (5 أيام)</p>
-                <p id="kpi-new" class="text-2xl font-bold text-active">-</p>
+            
+            <!-- New Card (Green) - Clickable -->
+            <div class="bg-white p-3 rounded-lg border border-newStatus/30 shadow-sm cursor-pointer hover:bg-newStatus/5 transition-colors" onclick="filterByStatus('new')">
+                <p class="text-newStatus text-[10px] uppercase tracking-wider mb-1">جديدة (5 أيام)</p>
+                <p id="kpi-new" class="text-2xl font-bold text-newStatus">-</p>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-warning/30 shadow-sm cursor-pointer hover:bg-warning/5" onclick="filterByStatus('ending')">
+            
+            <!-- Ending Soon (Amber) - Clickable -->
+            <div class="bg-white p-3 rounded-lg border border-warning/30 shadow-sm cursor-pointer hover:bg-warning/5 transition-colors" onclick="filterByStatus('ending')">
                 <p class="text-warning text-[10px] uppercase tracking-wider mb-1">تنتهي قريباً</p>
                 <p id="kpi-ending" class="text-2xl font-bold text-warning">-</p>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-expired/30 shadow-sm cursor-pointer hover:bg-expired/5" onclick="filterByStatus('expired')">
+            
+            <!-- Expired (Red) - Clickable -->
+            <div class="bg-white p-3 rounded-lg border border-expired/30 shadow-sm cursor-pointer hover:bg-expired/5 transition-colors" onclick="filterByStatus('expired')">
                 <p class="text-expired text-[10px] uppercase tracking-wider mb-1">منتهية (تاريخ)</p>
                 <p id="kpi-expired" class="text-2xl font-bold text-expired">-</p>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-terminated/30 shadow-sm cursor-pointer hover:bg-terminated/5" onclick="filterByStatus('terminated')">
+            
+            <!-- Terminated (Gray) - Clickable -->
+            <div class="bg-white p-3 rounded-lg border border-terminated/30 shadow-sm cursor-pointer hover:bg-terminated/5 transition-colors" onclick="filterByStatus('terminated')">
                 <p class="text-terminated text-[10px] uppercase tracking-wider mb-1">مرتجعة/رافضة</p>
                 <p id="kpi-terminated" class="text-2xl font-bold text-terminated">-</p>
             </div>
@@ -85,6 +94,7 @@
             <select id="statusFilter" onchange="applyFilters()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs focus:outline-none focus:border-primary cursor-pointer w-full sm:w-auto">
                 <option value="all">جميع الحالات</option>
                 <option value="active">نشط</option>
+                <option value="new">جديدة (5 أيام)</option> <!-- Added New Option -->
                 <option value="ending">تنتهي قريباً</option>
                 <option value="expired">منتهية (تاريخ)</option>
                 <option value="terminated">مرتجعة / رافضة</option>
@@ -117,7 +127,7 @@
         </div>
     </main>
 
-    <!-- MODALS (Kept same structure but updated logic in JS) -->
+    <!-- MODALS -->
     <div id="contractModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -214,47 +224,26 @@ function formatDateForDisplay(dateVal) {
     return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
 }
 
-// --- CORE LOGIC UPDATE ---
+// --- CORE LOGIC ---
 function getStatusLogic(c) {
-    // 1. Normalize "Today" to midnight local time
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // 2. Parse Start and End dates from sheet
-    // We create new Date objects and immediately zero out the time to ensure fair comparison
-    const start = new Date(c.rawStart);
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date(c.rawEnd);
-    end.setHours(0, 0, 0, 0);
-
-    // 3. Calculate differences in days
-    // One day in milliseconds = 1000 * 60 * 60 * 24
-    const oneDay = 1000 * 60 * 60 * 24;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = new Date(c.rawStart); start.setHours(0, 0, 0, 0);
+    const end = new Date(c.rawEnd); end.setHours(0, 0, 0, 0);
     
-    const diffTimeStart = today.getTime() - start.getTime();
-    const daysSinceStart = Math.ceil(diffTimeStart / oneDay);
-
-    const diffTimeEnd = end.getTime() - today.getTime();
-    const daysUntilEnd = Math.ceil(diffTimeEnd / oneDay);
-
+    const oneDay = 1000 * 60 * 60 * 24;
+    const daysSinceStart = Math.ceil((today.getTime() - start.getTime()) / oneDay);
+    const daysUntilEnd = Math.ceil((end.getTime() - today.getTime()) / oneDay);
+    
     let isExpired = false;
     let isTerminated = false;
 
-    // 4. Determine Status
     if (c.status === 'Returned' || c.status === 'Rejected') {
         isTerminated = true;
-    } 
-    else if (daysUntilEnd < 0) {
-        // End date has passed
+    } else if (daysUntilEnd < 0) {
         isExpired = true;
     }
 
-    // 5. Determine "New" (Started within last 5 days, including today)
-    // daysSinceStart >= 0 ensures we don't count future contracts as "New"
     const isNew = (!isExpired && !isTerminated && daysSinceStart >= 0 && daysSinceStart <= 5);
-
-    // 6. Determine "Ending Soon" (Ends within next 5 days)
     const isEndingSoon = (!isExpired && !isTerminated && daysUntilEnd >= 0 && daysUntilEnd <= 5);
 
     return {
@@ -279,10 +268,10 @@ function applyFilters() {
         
         let matchFilter = true;
         if (filterType === 'active') matchFilter = !logic.isExpired && !logic.isTerminated;
+        else if (filterType === 'new') matchFilter = logic.isNew; // Filter for New
         else if (filterType === 'ending') matchFilter = logic.isEndingSoon;
         else if (filterType === 'expired') matchFilter = logic.isExpired;
         else if (filterType === 'terminated') matchFilter = logic.isTerminated;
-        else if (filterType === 'new') matchFilter = logic.isNew;
         
         return matchSearch && matchFilter;
     });
@@ -300,8 +289,8 @@ function renderTable(contracts) {
     
     tbody.innerHTML = contracts.map(c => {
         const logic = getStatusLogic(c);
-        let stCls = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-        let stLabel = 'نشط';
+        let stCls = '';
+        let stLabel = '';
         
         if (logic.isTerminated) {
             stCls = 'bg-slate-100 text-slate-600 border-slate-200';
@@ -309,9 +298,17 @@ function renderTable(contracts) {
         } else if (logic.isExpired) {
             stCls = 'bg-rose-50 text-rose-700 border-rose-200';
             stLabel = 'منتهي';
+        } else if (logic.isNew) {
+            // NEW Contracts: Green
+            stCls = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            stLabel = 'جديد';
         } else if (logic.isEndingSoon) {
             stCls = 'bg-amber-50 text-amber-700 border-amber-200';
             stLabel = 'ينتهي قريباً';
+        } else {
+            // ACTIVE Contracts: Blue
+            stCls = 'bg-blue-50 text-blue-700 border-blue-200';
+            stLabel = 'نشط';
         }
         
         return `
@@ -344,7 +341,7 @@ function updateKPIs() {
         if (logic.isTerminated) terminated++;
         else if (logic.isExpired) expired++;
         else {
-            active++;
+            active++; // Includes both New and Regular Active
             if (logic.isNew) newC++;
             if (logic.isEndingSoon) ending++;
         }
