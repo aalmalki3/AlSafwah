@@ -269,33 +269,42 @@ function getStatusLogic(c) {
     const today = new Date(); 
     today.setHours(0,0,0,0);
     
+    // Parse dates
+    const end = new Date(c.rawEnd);
     const start = new Date(c.rawStart);
+    
+    // Calculate days remaining until End Date
+    const diffEnd = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    
+    // Calculate days since Start (for "New" calculation)
     const daysSinceStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
     
     let displayStatus = c.status;
     let isExpired = false;
     let isTerminated = false;
 
-    // 1. Manual Termination Check
+    // 1. Check Manual Termination First
     if (c.status === 'Returned' || c.status === 'Rejected') {
         isTerminated = true;
         displayStatus = c.status;
     } 
-    // 2. Auto-Expiration Check (30 Days from START)
-    else if (daysSinceStart > 30) {
+    // 2. Check Auto-Expiration based on END DATE
+    else if (diffEnd < 0) { 
+        // If today is AFTER the end date
         isExpired = true;
         displayStatus = 'Expired';
-    } 
-    // 3. Active
+    }
+    // 3. Otherwise it is Active
     else {
         displayStatus = 'Active';
     }
 
     return {
         display: displayStatus,
-        isExpired: isExpired,
-        isTerminated: isTerminated,
-        isNew: (c.status !== 'Returned' && c.status !== 'Rejected' && daysSinceStart <= 5 && daysSinceStart >= 0)
+        isExpired: isExpired,       // Auto-expired by date
+        isTerminated: isTerminated, // Manually terminated
+        isNew: (c.status !== 'Returned' && c.status !== 'Rejected' && daysSinceStart <= 5 && daysSinceStart >= 0),
+        daysRemaining: diffEnd
     };
 }
 
@@ -338,11 +347,13 @@ function renderTable(contracts) {
         let stLabel = 'نشط';
         
         if (logic.isTerminated) {
-            stCls = 'bg-slate-100 text-slate-600 border-slate-200';
+            // Gray for Returned/Rejected
+            stCls = 'bg-slate-100 text-slate-600 border-slate-200'; 
             stLabel = c.status === 'Returned' ? 'مرتجع' : 'رافض';
         } else if (logic.isExpired) {
-            stCls = 'bg-rose-50 text-rose-700 border-rose-200';
-            stLabel = 'منتهي (30 يوم)';
+            // Red for Auto-Expired (Date Passed)
+            stCls = 'bg-rose-50 text-rose-700 border-rose-200'; 
+            stLabel = 'منتهي';
         }
         
         return `
@@ -369,22 +380,27 @@ function renderTable(contracts) {
 }
 
 function updateKPIs() {
-    let active = 0, newC = 0, terminated = 0, expired = 0;
+    let active = 0, endingSoon = 0, newC = 0, expiredTotal = 0;
     
     allContracts.forEach(c => {
         const logic = getStatusLogic(c);
-        if (logic.isTerminated) terminated++;
-        else if (logic.isExpired) expired++;
-        else {
+        
+        if (logic.isExpired || logic.isTerminated) {
+            expiredTotal++;
+        } else {
             active++;
             if (logic.isNew) newC++;
+            // "Ending Soon": Active contracts ending within the next 5 days
+            if (logic.daysRemaining <= 5 && logic.daysRemaining >= 0) {
+                endingSoon++;
+            }
         }
     });
     
     document.getElementById('kpi-active').textContent = active;
     document.getElementById('kpi-new').textContent = newC;
-    document.getElementById('kpi-terminated').textContent = terminated;
-    document.getElementById('kpi-expired').textContent = expired;
+    document.getElementById('kpi-terminated').textContent = expiredTotal; // Combined terminated+expired
+    document.getElementById('kpi-expiring').textContent = endingSoon; // Renamed from expiring to ending soon
 }
 
 // --- MODALS ---
