@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة عقود العمالة</title>
+    
+    <!-- Fonts: Tajawal for professional Arabic UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for GitHub Pages) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Tajawal', 'sans-serif'] },
+                    colors: {
+                        primary: '#0F766E',
+                        active: '#10B981',
+                        warning: '#F59E0B',
+                        expired: '#E11D48'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for table */
+        .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        /* Modal transition */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
+        .modal-exit { opacity: 0; transform: scale(0.95); transition: all 0.15s ease-in; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                    <i class="ph ph-files text-2xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900">إدارة عقود العمالة</h1>
+            </div>
+            <button onclick="openModal()" class="bg-primary hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm hover:shadow-md text-sm font-medium">
+                <i class="ph ph-plus-circle text-lg"></i>
+                عقد جديد
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        
+        <!-- KPI CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-slate-500 text-sm mb-1">إجمالي العقود النشطة</p>
+                <p id="kpi-total" class="text-3xl font-bold text-slate-900">-</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-warning/30 shadow-sm cursor-pointer hover:border-warning transition-colors" onclick="filterByStatus('warning')">
+                <p class="text-warning text-sm mb-1">تنتهي خلال 30 يوم</p>
+                <p id="kpi-expiring" class="text-3xl font-bold text-warning">-</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-active/30 shadow-sm">
+                <p class="text-active text-sm mb-1">جديدة هذا الشهر</p>
+                <p id="kpi-new" class="text-3xl font-bold text-active">-</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-expired/30 shadow-sm cursor-pointer hover:border-expired transition-colors" onclick="filterByStatus('expired')">
+                <p class="text-expired text-sm mb-1">منتهية</p>
+                <p id="kpi-expired" class="text-3xl font-bold text-expired">-</p>
+            </div>
+        </div>
+
+        <!-- SEARCH & FILTER BAR -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <i class="ph ph-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="بحث بالاسم، رقم الإقامة، أو صاحب العمل..." 
+                    class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                    oninput="handleSearch(this.value)">
+            </div>
+            <select id="statusFilter" onchange="handleFilterChange()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary cursor-pointer">
+                <option value="all">جميع الحالات</option>
+                <option value="active">نشط</option>
+                <option value="expiring">قريب الانتهاء</option>
+                <option value="expired">منتهي</option>
+            </select>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto custom-scroll">
+                <table class="w-full text-sm text-right">
+                    <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4">م</th>
+                            <th class="px-6 py-4">اسم العاملة</th>
+                            <th class="px-6 py-4">رقم الإقامة</th>
+                            <th class="px-6 py-4">صاحب العمل</th>
+                            <th class="px-6 py-4">بداية العقد</th>
+                            <th class="px-6 py-4">نهاية العقد</th>
+                            <th class="px-6 py-4">الحالة</th>
+                            <th class="px-6 py-4 text-center">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100">
+                        <!-- Rows injected by JS -->
+                        <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                            <i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto"></i>
+                            جاري تحميل البيانات...
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- CREATE/EDIT MODAL -->
+    <div id="contractModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl pointer-events-auto modal-enter-active overflow-hidden">
+                
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <h2 id="modalTitle" class="text-lg font-bold text-slate-900">عقد جديد</h2>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="ph ph-x text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Form -->
+                <form id="contractForm" onsubmit="handleSubmit(event)" class="p-6 space-y-4">
+                    <input type="hidden" id="editId">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">اسم العاملة</label>
+                            <input required type="text" id="workerName" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">رقم الإقامة</label>
+                            <input required type="text" id="iqamaNumber" pattern="[0-9]{10}" title="يجب أن يكون 10 أرقام" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm ltr text-right">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">صاحب العمل</label>
+                            <input required type="text" id="employer" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ البداية</label>
+                            <input required type="date" id="startDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ النهاية</label>
+                            <input required type="date" id="endDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Live Duration Badge -->
+                    <div id="durationBadge" class="hidden bg-primary/5 text-primary px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
+                        <i class="ph ph-calendar-check"></i>
+                        <span id="durationText"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-teal-700 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/20 mt-2 flex items-center justify-center gap-2">
+                        <span>حفظ العقد</span>
+                        <i class="ph ph-check-circle text-lg"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 left-6 z-[60] translate-y-20 opacity-0 transition-all duration-300">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium">
+            <i id="toastIcon" class="ph ph-check-circle text-active text-lg"></i>
+            <span id="toastMsg">تم الحفظ بنجاح</span>
+        </div>
+    </div>
+
+<script>
+/**
+ * ⚙️ CONFIGURATION
+ * Replace with your deployed Google Apps Script Web App URL
+ */
+const API_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+
+// State
+let allContracts = [];
+let filteredContracts = [];
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Set default start date to today
+    document.getElementById('startDate').valueAsDate = new Date();
+    fetchData();
+});
+
+// --- API COMMUNICATION ---
+async function fetchData() {
+    try {
+        // NOTE: For production, replace this with actual fetch to API_URL
+        // const res = await fetch(API_URL + '?action=get');
+        // const data = await res.json();
+        
+        // 🟡 MOCK DATA FOR DEMONSTRATION (Remove when connecting real DB)
+        const data = { success: true, contracts: [
+            { id: 1, workerName: "ZALKA", iqama: "2630000933", employer: "بدر", start: "2026-05-19", end: "2026-06-19" },
+            { id: 2, workerName: "MARIA", iqama: "2630001244", employer: "شركة الأفق", start: "2026-01-01", end: "2026-06-20" },
+            { id: 3, workerName: "SARA", iqama: "2630005566", employer: "محمد العلي", start: "2026-06-01", end: "2026-12-01" },
+            { id: 4, workerName: "NOUR", iqama: "2630008899", employer: "بدر", start: "2025-01-01", end: "2025-12-31" },
+        ]};
+        
+        if (data.success) {
+            allContracts = data.contracts.map(c => ({
+                ...c,
+                status: getContractStatus(c.end)
+            }));
+            applyFilters();
+        }
+    } catch (err) {
+        showToast("خطأ في الاتصال بالخادم", "error");
+        console.error(err);
+    }
+}
+
+async function saveContract(payload) {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> جاري الحفظ...';
+    
+    try {
+        // Real implementation:
+        // await fetch(API_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({action: payload.id ? 'update':'create', payload}) });
+        
+        // Mock delay
+        await new Promise(r => setTimeout(r, 800));
+        
+        showToast(payload.id ? "تم تعديل العقد بنجاح" : "تم إنشاء العقد بنجاح");
+        closeModal();
+        fetchData(); // Refresh table
+        
+    } catch (err) {
+        showToast("فشل الحفظ، حاول مرة أخرى", "error");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>حفظ العقد</span><i class="ph ph-check-circle text-lg"></i>';
+    }
+}
+
+// --- BUSINESS LOGIC ---
+function getContractStatus(endDateStr) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const end = new Date(endDateStr);
+    const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return 'expired';
+    if (diffDays <= 30) return 'expiring';
+    return 'active';
+}
+
+function calculateDuration() {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    const badge = document.getElementById('durationBadge');
+    
+    if (start && end) {
+        const s = new Date(start);
+        const e = new Date(end);
+        const months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+        const days = e.getDate() - s.getDate();
+        
+        let text = '';
+        if (months > 0) text += `${months} شهر `;
+        if (days !== 0 || months === 0) text += `${Math.abs(days)} يوم`;
+        
+        if (e < s) text = '⚠️ تاريخ النهاية قبل البداية';
+        
+        document.getElementById('durationText').textContent = `مدة العقد: ${text.trim()}`;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+// --- UI RENDERING ---
+function applyFilters() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    
+    filteredContracts = allContracts.filter(c => {
+        const matchSearch = c.workerName.toLowerCase().includes(search) || 
+                           c.iqama.includes(search) || 
+                           c.employer.toLowerCase().includes(search);
+        const matchStatus = status === 'all' || c.status === status;
+        return matchSearch && matchStatus;
+    });
+    
+    renderTable();
+    updateKPIs();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    
+    if (filteredContracts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">
+            <i class="ph ph-folder-open text-3xl mb-2 block mx-auto"></i>
+            لا توجد عقود مطابقة
+        </td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filteredContracts.map(c => {
+        const statusConfig = {
+            active: { label: 'نشط', class: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+            expiring: { label: 'قريب الانتهاء', class: 'bg-amber-50 text-amber-700 border-amber-200' },
+            expired: { label: 'منتهي', class: 'bg-rose-50 text-rose-700 border-rose-200' }
+        };
+        const st = statusConfig[c.status];
+        
+        return `
+        <tr class="hover:bg-slate-50/80 transition-colors group">
+            <td class="px-6 py-4 font-mono text-slate-400 text-xs">${c.id}</td>
+            <td class="px-6 py-4 font-bold text-slate-900">${c.workerName}</td>
+            <td class="px-6 py-4 font-mono text-slate-600 tracking-wide">${c.iqama}</td>
+            <td class="px-6 py-4 text-slate-600">${c.employer}</td>
+            <td class="px-6 py-4 text-slate-500 text-xs">${c.start}</td>
+            <td class="px-6 py-4 text-slate-500 text-xs">${c.end}</td>
+            <td class="px-6 py-4">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold border ${st.class}">${st.label}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <button onclick='editContract(${JSON.stringify(c)})' class="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                    <i class="ph ph-pencil-simple text-lg"></i>
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function updateKPIs() {
+    const now = new Date();
+    document.getElementById('kpi-total').textContent = allContracts.filter(c => c.status === 'active' || c.status === 'expiring').length;
+    document.getElementById('kpi-expiring').textContent = allContracts.filter(c => c.status === 'expiring').length;
+    document.getElementById('kpi-expired').textContent = allContracts.filter(c => c.status === 'expired').length;
+    
+    // New this month logic
+    const newThisMonth = allContracts.filter(c => {
+        const d = new Date(c.start);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+    document.getElementById('kpi-new').textContent = newThisMonth;
+}
+
+// --- MODAL & INTERACTIONS ---
+function openModal(data = null) {
+    const modal = document.getElementById('contractModal');
+    const form = document.getElementById('contractForm');
+    
+    form.reset();
+    document.getElementById('durationBadge').classList.add('hidden');
+    document.getElementById('startDate').valueAsDate = new Date();
+    
+    if (data) {
+        document.getElementById('modalTitle').textContent = 'تعديل العقد';
+        document.getElementById('editId').value = data.id;
+        document.getElementById('workerName').value = data.workerName;
+        document.getElementById('iqamaNumber').value = data.iqama;
+        document.getElementById('employer').value = data.employer;
+        document.getElementById('startDate').value = data.start;
+        document.getElementById('endDate').value = data.end;
+        calculateDuration();
+    } else {
+        document.getElementById('modalTitle').textContent = 'عقد جديد';
+        document.getElementById('editId').value = '';
+    }
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => document.getElementById('workerName').focus(), 100);
+}
+
+function closeModal() {
+    document.getElementById('contractModal').classList.add('hidden');
+}
+
+function editContract(data) {
+    openModal(data);
+}
+
+function handleSubmit(e) {
+    e.preventDefault();
+    const payload = {
+        id: document.getElementById('editId').value || null,
+        workerName: document.getElementById('workerName').value,
+        iqama: document.getElementById('iqamaNumber').value,
+        employer: document.getElementById('employer').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value
+    };
+    saveContract(payload);
+}
+
+function handleSearch(val) { applyFilters(); }
+function handleFilterChange() { applyFilters(); }
+function filterByStatus(status) {
+    document.getElementById('statusFilter').value = status;
+    applyFilters();
+}
+
+function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    document.getElementById('toastMsg').textContent = msg;
+    
+    icon.className = type === 'error' 
+        ? 'ph ph-warning-circle text-expired text-lg' 
+        : 'ph ph-check-circle text-active text-lg';
+    
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
