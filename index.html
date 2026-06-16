@@ -24,86 +24,92 @@
         }
     </script>
     <style>
-        .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
+        /* Compact Scrollbar */
+        .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; padding: 0; }
         .modal-enter-active { animation: fadeIn 0.2s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased text-sm">
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                    <i class="ph ph-files text-2xl"></i>
+    <!-- COMPACT HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 h-14">
+        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                    <i class="ph ph-files text-xl"></i>
                 </div>
-                <h1 class="text-xl font-bold text-slate-900">إدارة عقود العمالة</h1>
+                <h1 class="text-lg font-bold text-slate-900">إدارة العقود</h1>
             </div>
-            <button onclick="openModal()" class="bg-primary hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm text-sm font-medium">
-                <i class="ph ph-plus-circle text-lg"></i> عقد جديد
+            <button onclick="openModal()" class="bg-primary hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all shadow-sm text-xs font-bold">
+                <i class="ph ph-plus-circle text-base"></i> عقد جديد
             </button>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <!-- KPI CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-slate-500 text-sm mb-1">العقود النشطة</p>
-                <p id="kpi-active" class="text-3xl font-bold text-slate-900">-</p>
+    <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
+        <!-- COMPACT KPI CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                <p class="text-slate-500 text-[10px] uppercase tracking-wider mb-1">نشط</p>
+                <p id="kpi-active" class="text-2xl font-bold text-slate-900">-</p>
             </div>
-            <div class="bg-white p-5 rounded-xl border border-active/30 shadow-sm cursor-pointer hover:border-active transition-colors" onclick="filterByStatus('new')">
-                <p class="text-active text-sm mb-1">جديدة (آخر 5 أيام)</p>
-                <p id="kpi-new" class="text-3xl font-bold text-active">-</p>
+            <div class="bg-white p-3 rounded-lg border border-active/30 shadow-sm cursor-pointer hover:bg-active/5" onclick="filterByStatus('new')">
+                <p class="text-active text-[10px] uppercase tracking-wider mb-1">جديدة (5 أيام)</p>
+                <p id="kpi-new" class="text-2xl font-bold text-active">-</p>
             </div>
-            <div class="bg-white p-5 rounded-xl border border-terminated/30 shadow-sm cursor-pointer hover:border-terminated transition-colors" onclick="filterByStatus('terminated')">
-                <p class="text-terminated text-sm mb-1">مرتجعة / رافضة</p>
-                <p id="kpi-terminated" class="text-3xl font-bold text-terminated">-</p>
+            <div class="bg-white p-3 rounded-lg border border-warning/30 shadow-sm cursor-pointer hover:bg-warning/5" onclick="filterByStatus('ending')">
+                <p class="text-warning text-[10px] uppercase tracking-wider mb-1">تنتهي قريباً</p>
+                <p id="kpi-ending" class="text-2xl font-bold text-warning">-</p>
             </div>
-            <div class="bg-white p-5 rounded-xl border border-expired/30 shadow-sm cursor-pointer hover:border-expired transition-colors" onclick="filterByStatus('expired')">
-                <p class="text-expired text-sm mb-1">منتهية (أكثر من 30 يوم)</p>
-                <p id="kpi-expired" class="text-3xl font-bold text-expired">-</p>
+            <div class="bg-white p-3 rounded-lg border border-expired/30 shadow-sm cursor-pointer hover:bg-expired/5" onclick="filterByStatus('expired')">
+                <p class="text-expired text-[10px] uppercase tracking-wider mb-1">منتهية (تاريخ)</p>
+                <p id="kpi-expired" class="text-2xl font-bold text-expired">-</p>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-terminated/30 shadow-sm cursor-pointer hover:bg-terminated/5" onclick="filterByStatus('terminated')">
+                <p class="text-terminated text-[10px] uppercase tracking-wider mb-1">مرتجعة/رافضة</p>
+                <p id="kpi-terminated" class="text-2xl font-bold text-terminated">-</p>
             </div>
         </div>
 
         <!-- SEARCH & FILTER -->
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3">
+        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-2">
             <div class="relative flex-1">
                 <i class="ph ph-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" placeholder="بحث بالاسم، رقم الإقامة، أو صاحب العمل..." 
-                    class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                <input type="text" id="searchInput" placeholder="بحث سريع..." 
+                    class="w-full pr-9 pl-3 py-2 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-primary text-xs"
                     oninput="applyFilters()">
             </div>
-            <select id="statusFilter" onchange="applyFilters()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary cursor-pointer">
+            <select id="statusFilter" onchange="applyFilters()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs focus:outline-none focus:border-primary cursor-pointer w-full sm:w-auto">
                 <option value="all">جميع الحالات</option>
                 <option value="active">نشط</option>
-                <option value="new">جديدة (5 أيام)</option>
+                <option value="ending">تنتهي قريباً</option>
+                <option value="expired">منتهية (تاريخ)</option>
                 <option value="terminated">مرتجعة / رافضة</option>
-                <option value="expired">منتهية (30+ يوم)</option>
             </select>
         </div>
 
-        <!-- DATA TABLE -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <!-- DENSE DATA TABLE -->
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto custom-scroll">
-                <table class="w-full text-sm text-right">
-                    <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
+                <table class="w-full text-right whitespace-nowrap">
+                    <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px] uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-4">م</th>
-                            <th class="px-6 py-4">اسم العاملة</th>
-                            <th class="px-6 py-4">رقم الإقامة</th>
-                            <th class="px-6 py-4">صاحب العمل</th>
-                            <th class="px-6 py-4">بداية العقد</th>
-                            <th class="px-6 py-4">نهاية العقد</th>
-                            <th class="px-6 py-4">الحالة</th>
-                            <th class="px-6 py-4 text-center w-48">الإجراءات</th>
+                            <th class="px-3 py-2 w-10">م</th>
+                            <th class="px-3 py-2">العاملة</th>
+                            <th class="px-3 py-2">الإقامة</th>
+                            <th class="px-3 py-2">صاحب العمل</th>
+                            <th class="px-3 py-2">البداية</th>
+                            <th class="px-3 py-2">النهاية</th>
+                            <th class="px-3 py-2 w-24">الحالة</th>
+                            <th class="px-3 py-2 text-center w-20">إجراء</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100">
-                        <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">
-                            <i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto"></i> جاري التحميل...
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-xs">
+                        <tr><td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                            <i class="ph ph-spinner animate-spin text-xl mb-1 block mx-auto"></i> جاري التحميل...
                         </td></tr>
                     </tbody>
                 </table>
@@ -111,78 +117,74 @@
         </div>
     </main>
 
-    <!-- CREATE/EDIT MODAL -->
+    <!-- MODALS (Kept same structure but updated logic in JS) -->
     <div id="contractModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl pointer-events-auto modal-enter-active overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <h2 id="modalTitle" class="text-lg font-bold text-slate-900">عقد جديد</h2>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+            <div class="bg-white w-full max-w-md rounded-xl shadow-2xl pointer-events-auto modal-enter-active overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                    <h2 id="modalTitle" class="text-base font-bold text-slate-900">عقد جديد</h2>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-lg"></i></button>
                 </div>
-                <form id="contractForm" onsubmit="handleSubmit(event)" class="p-6 space-y-4">
+                <form id="contractForm" onsubmit="handleSubmit(event)" class="p-4 space-y-3">
                     <input type="hidden" id="editId">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">اسم العاملة</label>
-                            <input required type="text" id="workerName" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">اسم العاملة</label>
+                            <input required type="text" id="workerName" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded text-xs focus:border-primary outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">رقم الإقامة</label>
-                            <input required type="text" id="iqamaNumber" pattern="\d{10}" title="10 أرقام فقط" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm ltr text-right">
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">رقم الإقامة</label>
+                            <input required type="text" id="iqamaNumber" pattern="\d{10}" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded text-xs focus:border-primary outline-none ltr text-right">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">صاحب العمل</label>
-                            <input required type="text" id="employer" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">صاحب العمل</label>
+                            <input required type="text" id="employer" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded text-xs focus:border-primary outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ البداية</label>
-                            <input required type="date" id="startDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">بداية العقد</label>
+                            <input required type="date" id="startDate" onchange="calculateDuration()" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded text-xs focus:border-primary outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ النهاية</label>
-                            <input required type="date" id="endDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">نهاية العقد</label>
+                            <input required type="date" id="endDate" onchange="calculateDuration()" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded text-xs focus:border-primary outline-none">
                         </div>
                     </div>
-                    <div id="durationBadge" class="hidden bg-primary/5 text-primary px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
+                    <div id="durationBadge" class="hidden bg-primary/5 text-primary px-2 py-1 rounded text-[10px] font-medium flex items-center gap-1">
                         <i class="ph ph-calendar-check"></i> <span id="durationText"></span>
                     </div>
-                    <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-teal-700 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/20 mt-2 flex items-center justify-center gap-2">
-                        <span>حفظ العقد</span> <i class="ph ph-check-circle text-lg"></i>
+                    <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-teal-700 text-white py-2 rounded-lg font-bold text-xs transition-all mt-2">
+                        حفظ البيانات
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- STATUS UPDATE MODAL -->
     <div id="statusModal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeStatusModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl pointer-events-auto p-6 text-center">
-                <h3 class="text-lg font-bold mb-4">تحديث حالة العقد</h3>
-                <p class="text-slate-500 text-sm mb-6">اختر سبب إنهاء العقد:</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="updateStatusAction('Returned')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium">مرتجع من العميل</button>
-                    <button onclick="updateStatusAction('Rejected')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium">رافض للعمل</button>
-                    <button onclick="updateStatusAction('Expired')" class="bg-expired/10 hover:bg-expired/20 text-expired py-2 rounded-lg text-sm font-medium col-span-2">منتهي يدوياً</button>
+            <div class="bg-white w-full max-w-xs rounded-xl shadow-2xl pointer-events-auto p-4 text-center">
+                <h3 class="text-sm font-bold mb-3">تحديث الحالة اليدوي</h3>
+                <div class="grid grid-cols-1 gap-2">
+                    <button onclick="updateStatusAction('Returned')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded text-xs font-medium">مرتجع من العميل</button>
+                    <button onclick="updateStatusAction('Rejected')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded text-xs font-medium">رافض للعمل</button>
+                    <button onclick="updateStatusAction('Active')" class="bg-active/10 hover:bg-active/20 text-active py-2 rounded text-xs font-medium">تفعيل العقد مجدداً</button>
                 </div>
-                <button onclick="closeStatusModal()" class="mt-4 text-slate-400 text-sm hover:text-slate-600">إلغاء</button>
+                <button onclick="closeStatusModal()" class="mt-3 text-slate-400 text-[10px] hover:text-slate-600">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div id="toast" class="fixed bottom-6 left-6 z-[70] translate-y-20 opacity-0 transition-all duration-300">
-        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium">
-            <i id="toastIcon" class="ph ph-check-circle text-active text-lg"></i>
-            <span id="toastMsg">تم الحفظ بنجاح</span>
+    <div id="toast" class="fixed bottom-4 left-4 z-[70] translate-y-20 opacity-0 transition-all duration-300">
+        <div class="bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl flex items-center gap-2 text-xs font-medium">
+            <i id="toastIcon" class="ph ph-check-circle text-active"></i>
+            <span id="toastMsg">تم الحفظ</span>
         </div>
     </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyw7gf9PDoOpAU5ux6V1JLmhgIYpNGA7DkcIVo4OHIXny4p0hJqlGUIOUE7PJhBwIar/exec";
-
 let allContracts = [];
 let currentStatusUpdateId = null;
 
@@ -195,115 +197,53 @@ async function fetchData() {
     try {
         const res = await fetch(`${API_URL}?action=get`, { redirect: 'follow' });
         const data = await res.json();
-        
         if (data.success) {
-            allContracts = data.contracts.map(c => {
-                return {
-                    id: c[0], 
-                    workerName: c[1], 
-                    iqama: String(c[2]), 
-                    employer: c[3],
-                    start: formatDateForDisplay(c[4]), 
-                    end: formatDateForDisplay(c[5]), 
-                    status: c[6], // Active, Returned, Rejected, Expired
-                    rawStart: c[4], 
-                    rawEnd: c[5]
-                };
-            });
+            allContracts = data.contracts.map(c => ({
+                id: c[0], workerName: c[1], iqama: String(c[2]), employer: c[3],
+                start: formatDateForDisplay(c[4]), end: formatDateForDisplay(c[5]),
+                status: c[6], rawStart: c[4], rawEnd: c[5]
+            }));
             applyFilters();
         }
-    } catch (err) {
-        console.error(err);
-        showToast("خطأ في الاتصال", "error");
-    }
+    } catch (err) { showToast("خطأ في الاتصال", "error"); }
 }
 
 function formatDateForDisplay(dateVal) {
     if (!dateVal) return "";
     const d = new Date(dateVal);
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${month}/${day}/${year}`;
+    return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
 }
 
-async function saveContract(payload) {
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> جاري الحفظ...';
-    
-    try {
-        const action = payload.id ? 'update' : 'create';
-        await fetch(API_URL, {
-            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: action, payload: payload })
-        });
-        showToast(payload.id ? "تم التعديل" : "تم الإنشاء");
-        closeModal();
-        fetchData();
-    } catch (err) {
-        showToast("فشل الحفظ", "error");
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span>حفظ العقد</span><i class="ph ph-check-circle text-lg"></i>';
-    }
-}
-
-async function updateStatusAction(newStatus) {
-    if (!currentStatusUpdateId) return;
-    try {
-        await fetch(API_URL, {
-            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'updateStatus', payload: { id: currentStatusUpdateId, newStatus: newStatus } })
-        });
-        showToast(`تم تحديث الحالة إلى ${newStatus}`);
-        closeStatusModal();
-        fetchData();
-    } catch (err) {
-        showToast("فشل التحديث", "error");
-    }
-}
-
-// --- CORE LOGIC ---
+// --- CORE LOGIC UPDATE ---
 function getStatusLogic(c) {
-    const today = new Date(); 
-    today.setHours(0,0,0,0);
-    
-    // Parse dates
+    const today = new Date(); today.setHours(0,0,0,0);
     const end = new Date(c.rawEnd);
     const start = new Date(c.rawStart);
     
-    // Calculate days remaining until End Date
+    // Days remaining until End Date
     const diffEnd = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
-    
-    // Calculate days since Start (for "New" calculation)
     const daysSinceStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
     
-    let displayStatus = c.status;
     let isExpired = false;
     let isTerminated = false;
+    let displayStatus = c.status;
 
-    // 1. Check Manual Termination First
+    // 1. Manual Termination Check
     if (c.status === 'Returned' || c.status === 'Rejected') {
         isTerminated = true;
-        displayStatus = c.status;
     } 
-    // 2. Check Auto-Expiration based on END DATE
-    else if (diffEnd < 0) { 
-        // If today is AFTER the end date
+    // 2. Auto-Expiration Check (ONLY based on End Date)
+    else if (diffEnd < 0) {
         isExpired = true;
         displayStatus = 'Expired';
-    }
-    // 3. Otherwise it is Active
-    else {
-        displayStatus = 'Active';
     }
 
     return {
         display: displayStatus,
-        isExpired: isExpired,       // Auto-expired by date
-        isTerminated: isTerminated, // Manually terminated
-        isNew: (c.status !== 'Returned' && c.status !== 'Rejected' && daysSinceStart <= 5 && daysSinceStart >= 0),
+        isExpired: isExpired,
+        isTerminated: isTerminated,
+        isNew: (!isExpired && !isTerminated && daysSinceStart <= 5 && daysSinceStart >= 0),
+        isEndingSoon: (!isExpired && !isTerminated && diffEnd >= 0 && diffEnd <= 5),
         daysRemaining: diffEnd
     };
 }
@@ -314,18 +254,16 @@ function applyFilters() {
     
     const filtered = allContracts.filter(c => {
         const logic = getStatusLogic(c);
-        
-        // Robust Search
         const matchSearch = String(c.workerName).toLowerCase().includes(search) || 
                            String(c.iqama).includes(search) || 
-                           String(c.employer).toLowerCase().includes(search) ||
-                           String(c.start).includes(search);
+                           String(c.employer).toLowerCase().includes(search);
         
         let matchFilter = true;
         if (filterType === 'active') matchFilter = !logic.isExpired && !logic.isTerminated;
-        else if (filterType === 'new') matchFilter = logic.isNew;
-        else if (filterType === 'terminated') matchFilter = logic.isTerminated;
+        else if (filterType === 'ending') matchFilter = logic.isEndingSoon;
         else if (filterType === 'expired') matchFilter = logic.isExpired;
+        else if (filterType === 'terminated') matchFilter = logic.isTerminated;
+        else if (filterType === 'new') matchFilter = logic.isNew;
         
         return matchSearch && matchFilter;
     });
@@ -337,7 +275,7 @@ function applyFilters() {
 function renderTable(contracts) {
     const tbody = document.getElementById('tableBody');
     if (contracts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">لا توجد نتائج</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-slate-400 text-xs">لا توجد نتائج</td></tr>`;
         return;
     }
     
@@ -347,31 +285,32 @@ function renderTable(contracts) {
         let stLabel = 'نشط';
         
         if (logic.isTerminated) {
-            // Gray for Returned/Rejected
-            stCls = 'bg-slate-100 text-slate-600 border-slate-200'; 
+            stCls = 'bg-slate-100 text-slate-600 border-slate-200';
             stLabel = c.status === 'Returned' ? 'مرتجع' : 'رافض';
         } else if (logic.isExpired) {
-            // Red for Auto-Expired (Date Passed)
-            stCls = 'bg-rose-50 text-rose-700 border-rose-200'; 
+            stCls = 'bg-rose-50 text-rose-700 border-rose-200';
             stLabel = 'منتهي';
+        } else if (logic.isEndingSoon) {
+            stCls = 'bg-amber-50 text-amber-700 border-amber-200';
+            stLabel = 'ينتهي قريباً';
         }
         
         return `
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="px-6 py-4 font-mono text-slate-400 text-xs">${c.id}</td>
-            <td class="px-6 py-4 font-bold text-slate-900">${c.workerName}</td>
-            <td class="px-6 py-4 font-mono text-slate-600 tracking-wide">${c.iqama}</td>
-            <td class="px-6 py-4 text-slate-600">${c.employer}</td>
-            <td class="px-6 py-4 text-slate-500 text-xs font-mono">${c.start}</td>
-            <td class="px-6 py-4 text-slate-500 text-xs font-mono">${c.end}</td>
-            <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold border ${stCls}">${stLabel}</span></td>
-            <td class="px-6 py-4 text-center">
-                <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onclick='editContract(${JSON.stringify(c).replace(/'/g, "&#39;")})' class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg" title="بيانات العقد">
-                        <i class="ph ph-pencil-simple text-lg"></i>
+        <tr class="hover:bg-slate-50 transition-colors group">
+            <td class="px-3 py-2 font-mono text-slate-400">${c.id}</td>
+            <td class="px-3 py-2 font-bold text-slate-900">${c.workerName}</td>
+            <td class="px-3 py-2 font-mono text-slate-600">${c.iqama}</td>
+            <td class="px-3 py-2 text-slate-600">${c.employer}</td>
+            <td class="px-3 py-2 text-slate-500 font-mono">${c.start}</td>
+            <td class="px-3 py-2 text-slate-500 font-mono">${c.end}</td>
+            <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${stCls}">${stLabel}</span></td>
+            <td class="px-3 py-2 text-center">
+                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick='editContract(${JSON.stringify(c).replace(/'/g, "&#39;")})' class="p-1 text-blue-600 hover:bg-blue-50 rounded" title="تعديل">
+                        <i class="ph ph-pencil-simple"></i>
                     </button>
-                    <button onclick='openStatusModal(${c.id})' class="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg" title="حالة الانتهاء">
-                        <i class="ph ph-clock-countdown text-lg"></i>
+                    <button onclick='openStatusModal(${c.id})' class="p-1 text-slate-500 hover:bg-slate-100 rounded" title="حالة">
+                        <i class="ph ph-clock-countdown"></i>
                     </button>
                 </div>
             </td>
@@ -380,38 +319,50 @@ function renderTable(contracts) {
 }
 
 function updateKPIs() {
-    let active = 0, endingSoon = 0, newC = 0, expiredTotal = 0;
-    
+    let active = 0, ending = 0, newC = 0, expired = 0, terminated = 0;
     allContracts.forEach(c => {
         const logic = getStatusLogic(c);
-        
-        if (logic.isExpired || logic.isTerminated) {
-            expiredTotal++;
-        } else {
+        if (logic.isTerminated) terminated++;
+        else if (logic.isExpired) expired++;
+        else {
             active++;
             if (logic.isNew) newC++;
-            // "Ending Soon": Active contracts ending within the next 5 days
-            if (logic.daysRemaining <= 5 && logic.daysRemaining >= 0) {
-                endingSoon++;
-            }
+            if (logic.isEndingSoon) ending++;
         }
     });
-    
     document.getElementById('kpi-active').textContent = active;
     document.getElementById('kpi-new').textContent = newC;
-    document.getElementById('kpi-terminated').textContent = expiredTotal; // Combined terminated+expired
-    document.getElementById('kpi-expiring').textContent = endingSoon; // Renamed from expiring to ending soon
+    document.getElementById('kpi-ending').textContent = ending;
+    document.getElementById('kpi-expired').textContent = expired;
+    document.getElementById('kpi-terminated').textContent = terminated;
 }
 
-// --- MODALS ---
+// --- ACTIONS ---
+async function saveContract(payload) {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.innerText = 'جاري الحفظ...';
+    try {
+        await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: payload.id ? 'update' : 'create', payload }) });
+        showToast("تم الحفظ بنجاح"); closeModal(); fetchData();
+    } catch (err) { showToast("فشل الحفظ", "error"); }
+    finally { btn.disabled = false; btn.innerText = 'حفظ البيانات'; }
+}
+
+async function updateStatusAction(newStatus) {
+    if (!currentStatusUpdateId) return;
+    try {
+        await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'updateStatus', payload: { id: currentStatusUpdateId, newStatus } }) });
+        showToast(`تم التحديث إلى ${newStatus}`); closeStatusModal(); fetchData();
+    } catch (err) { showToast("فشل التحديث", "error"); }
+}
+
+// --- UTILS ---
 function openModal(data = null) {
-    const form = document.getElementById('contractForm');
-    form.reset();
+    const form = document.getElementById('contractForm'); form.reset();
     document.getElementById('durationBadge').classList.add('hidden');
     document.getElementById('startDate').valueAsDate = new Date();
-    
     if (data) {
-        document.getElementById('modalTitle').textContent = 'تعديل العقد';
+        document.getElementById('modalTitle').innerText = 'تعديل العقد';
         document.getElementById('editId').value = data.id;
         document.getElementById('workerName').value = data.workerName;
         document.getElementById('iqamaNumber').value = data.iqama;
@@ -420,7 +371,7 @@ function openModal(data = null) {
         if(data.end) document.getElementById('endDate').value = convertToISO(data.end);
         calculateDuration();
     } else {
-        document.getElementById('modalTitle').textContent = 'عقد جديد';
+        document.getElementById('modalTitle').innerText = 'عقد جديد';
         document.getElementById('editId').value = '';
     }
     document.getElementById('contractModal').classList.remove('hidden');
@@ -434,51 +385,24 @@ function convertToISO(dateStr) {
 
 function closeModal() { document.getElementById('contractModal').classList.add('hidden'); }
 function editContract(data) { openModal(data); }
-
-function openStatusModal(id) {
-    currentStatusUpdateId = id;
-    document.getElementById('statusModal').classList.remove('hidden');
-}
-function closeStatusModal() { 
-    document.getElementById('statusModal').classList.add('hidden'); 
-    currentStatusUpdateId = null;
-}
-
-function handleSubmit(e) {
-    e.preventDefault();
-    saveContract({
-        id: document.getElementById('editId').value || null,
-        workerName: document.getElementById('workerName').value,
-        iqama: document.getElementById('iqamaNumber').value,
-        employer: document.getElementById('employer').value,
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value
-    });
-}
-
+function openStatusModal(id) { currentStatusUpdateId = id; document.getElementById('statusModal').classList.remove('hidden'); }
+function closeStatusModal() { document.getElementById('statusModal').classList.add('hidden'); currentStatusUpdateId = null; }
+function handleSubmit(e) { e.preventDefault(); saveContract({ id: document.getElementById('editId').value || null, workerName: document.getElementById('workerName').value, iqama: document.getElementById('iqamaNumber').value, employer: document.getElementById('employer').value, startDate: document.getElementById('startDate').value, endDate: document.getElementById('endDate').value }); }
 function calculateDuration() {
-    const start = document.getElementById('startDate').value;
-    const end = document.getElementById('endDate').value;
-    const badge = document.getElementById('durationBadge');
-    if (start && end) {
-        const s = new Date(start); const e = new Date(end);
-        const months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
-        document.getElementById('durationText').textContent = `مدة العقد: ${months} شهر`;
-        badge.classList.remove('hidden');
-    } else { badge.classList.add('hidden'); }
+    const s = document.getElementById('startDate').value; const e = document.getElementById('endDate').value;
+    if (s && e) {
+        const months = (new Date(e).getFullYear() - new Date(s).getFullYear()) * 12 + (new Date(e).getMonth() - new Date(s).getMonth());
+        document.getElementById('durationText').innerText = `المدة: ${months} شهر`;
+        document.getElementById('durationBadge').classList.remove('hidden');
+    } else { document.getElementById('durationBadge').classList.add('hidden'); }
 }
-
-function filterByStatus(status) { 
-    document.getElementById('statusFilter').value = status; 
-    applyFilters(); 
-}
-
+function filterByStatus(status) { document.getElementById('statusFilter').value = status; applyFilters(); }
 function showToast(msg, type = 'success') {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    document.getElementById('toastIcon').className = type === 'error' ? 'ph ph-warning-circle text-expired text-lg' : 'ph ph-check-circle text-active text-lg';
-    toast.classList.remove('translate-y-20', 'opacity-0');
-    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').innerText = msg;
+    document.getElementById('toastIcon').className = type === 'error' ? 'ph ph-warning-circle text-expired' : 'ph ph-check-circle text-active';
+    t.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 2500);
 }
 </script>
 </body>
