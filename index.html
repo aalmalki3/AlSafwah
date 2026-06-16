@@ -216,35 +216,54 @@ function formatDateForDisplay(dateVal) {
 
 // --- CORE LOGIC UPDATE ---
 function getStatusLogic(c) {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const end = new Date(c.rawEnd);
+    // 1. Normalize "Today" to midnight local time
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 2. Parse Start and End dates from sheet
+    // We create new Date objects and immediately zero out the time to ensure fair comparison
     const start = new Date(c.rawStart);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(c.rawEnd);
+    end.setHours(0, 0, 0, 0);
+
+    // 3. Calculate differences in days
+    // One day in milliseconds = 1000 * 60 * 60 * 24
+    const oneDay = 1000 * 60 * 60 * 24;
     
-    // Days remaining until End Date
-    const diffEnd = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
-    const daysSinceStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
-    
+    const diffTimeStart = today.getTime() - start.getTime();
+    const daysSinceStart = Math.ceil(diffTimeStart / oneDay);
+
+    const diffTimeEnd = end.getTime() - today.getTime();
+    const daysUntilEnd = Math.ceil(diffTimeEnd / oneDay);
+
     let isExpired = false;
     let isTerminated = false;
-    let displayStatus = c.status;
 
-    // 1. Manual Termination Check
+    // 4. Determine Status
     if (c.status === 'Returned' || c.status === 'Rejected') {
         isTerminated = true;
     } 
-    // 2. Auto-Expiration Check (ONLY based on End Date)
-    else if (diffEnd < 0) {
+    else if (daysUntilEnd < 0) {
+        // End date has passed
         isExpired = true;
-        displayStatus = 'Expired';
     }
 
+    // 5. Determine "New" (Started within last 5 days, including today)
+    // daysSinceStart >= 0 ensures we don't count future contracts as "New"
+    const isNew = (!isExpired && !isTerminated && daysSinceStart >= 0 && daysSinceStart <= 5);
+
+    // 6. Determine "Ending Soon" (Ends within next 5 days)
+    const isEndingSoon = (!isExpired && !isTerminated && daysUntilEnd >= 0 && daysUntilEnd <= 5);
+
     return {
-        display: displayStatus,
+        display: c.status,
         isExpired: isExpired,
         isTerminated: isTerminated,
-        isNew: (!isExpired && !isTerminated && daysSinceStart <= 5 && daysSinceStart >= 0),
-        isEndingSoon: (!isExpired && !isTerminated && diffEnd >= 0 && diffEnd <= 5),
-        daysRemaining: diffEnd
+        isNew: isNew,
+        isEndingSoon: isEndingSoon,
+        daysRemaining: daysUntilEnd
     };
 }
 
