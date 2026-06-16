@@ -12,7 +12,13 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Tajawal', 'sans-serif'] },
-                    colors: { primary: '#0F766E', active: '#10B981', warning: '#F59E0B', expired: '#E11D48', returned: '#64748B' }
+                    colors: { 
+                        primary: '#0F766E', 
+                        active: '#10B981', 
+                        warning: '#F59E0B', 
+                        expired: '#E11D48', 
+                        terminated: '#64748B' 
+                    }
                 }
             }
         }
@@ -20,8 +26,9 @@
     <style>
         .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        /* Force calendar icon visibility */
         input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
+        .modal-enter-active { animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
@@ -47,16 +54,16 @@
                 <p class="text-slate-500 text-sm mb-1">العقود النشطة</p>
                 <p id="kpi-active" class="text-3xl font-bold text-slate-900">-</p>
             </div>
-            <div class="bg-white p-5 rounded-xl border border-warning/30 shadow-sm cursor-pointer hover:border-warning transition-colors" onclick="filterByStatus('expiring')">
-                <p class="text-warning text-sm mb-1">تنتهي خلال 5 أيام</p>
-                <p id="kpi-expiring" class="text-3xl font-bold text-warning">-</p>
-            </div>
             <div class="bg-white p-5 rounded-xl border border-active/30 shadow-sm cursor-pointer hover:border-active transition-colors" onclick="filterByStatus('new')">
                 <p class="text-active text-sm mb-1">جديدة (آخر 5 أيام)</p>
                 <p id="kpi-new" class="text-3xl font-bold text-active">-</p>
             </div>
+            <div class="bg-white p-5 rounded-xl border border-terminated/30 shadow-sm cursor-pointer hover:border-terminated transition-colors" onclick="filterByStatus('terminated')">
+                <p class="text-terminated text-sm mb-1">مرتجعة / رافضة</p>
+                <p id="kpi-terminated" class="text-3xl font-bold text-terminated">-</p>
+            </div>
             <div class="bg-white p-5 rounded-xl border border-expired/30 shadow-sm cursor-pointer hover:border-expired transition-colors" onclick="filterByStatus('expired')">
-                <p class="text-expired text-sm mb-1">منتهية / مرتجعة</p>
+                <p class="text-expired text-sm mb-1">منتهية (أكثر من 30 يوم)</p>
                 <p id="kpi-expired" class="text-3xl font-bold text-expired">-</p>
             </div>
         </div>
@@ -72,9 +79,9 @@
             <select id="statusFilter" onchange="applyFilters()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary cursor-pointer">
                 <option value="all">جميع الحالات</option>
                 <option value="active">نشط</option>
-                <option value="expiring">قريب الانتهاء (5 أيام)</option>
                 <option value="new">جديدة (5 أيام)</option>
-                <option value="expired">منتهية / مرتجعة</option>
+                <option value="terminated">مرتجعة / رافضة</option>
+                <option value="expired">منتهية (30+ يوم)</option>
             </select>
         </div>
 
@@ -104,7 +111,7 @@
         </div>
     </main>
 
-    <!-- MODAL -->
+    <!-- CREATE/EDIT MODAL -->
     <div id="contractModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -130,12 +137,10 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ البداية</label>
-                            <!-- Calendar Only -->
                             <input required type="date" id="startDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-500 mb-1.5">تاريخ النهاية</label>
-                            <!-- Calendar Only -->
                             <input required type="date" id="endDate" onchange="calculateDuration()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
                         </div>
                     </div>
@@ -156,11 +161,11 @@
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
             <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl pointer-events-auto p-6 text-center">
                 <h3 class="text-lg font-bold mb-4">تحديث حالة العقد</h3>
-                <p class="text-slate-500 text-sm mb-6">هل تريد تغيير حالة هذا العقد؟</p>
+                <p class="text-slate-500 text-sm mb-6">اختر سبب إنهاء العقد:</p>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="updateStatusAction('Returned')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium">مرتجع من العميل</button>
                     <button onclick="updateStatusAction('Rejected')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium">رافض للعمل</button>
-                    <button onclick="updateStatusAction('Expired')" class="bg-expired/10 hover:bg-expired/20 text-expired py-2 rounded-lg text-sm font-medium col-span-2">منتهي الصلاحية</button>
+                    <button onclick="updateStatusAction('Expired')" class="bg-expired/10 hover:bg-expired/20 text-expired py-2 rounded-lg text-sm font-medium col-span-2">منتهي يدوياً</button>
                 </div>
                 <button onclick="closeStatusModal()" class="mt-4 text-slate-400 text-sm hover:text-slate-600">إلغاء</button>
             </div>
@@ -193,13 +198,16 @@ async function fetchData() {
         
         if (data.success) {
             allContracts = data.contracts.map(c => {
-                // c[4] and c[5] are dates from sheet. We parse them to avoid timezone issues.
-                const startStr = formatDateForDisplay(c[4]);
-                const endStr = formatDateForDisplay(c[5]);
-                
                 return {
-                    id: c[0], workerName: c[1], iqama: String(c[2]), employer: c[3],
-                    start: startStr, end: endStr, status: c[6], rawStart: c[4], rawEnd: c[5]
+                    id: c[0], 
+                    workerName: c[1], 
+                    iqama: String(c[2]), 
+                    employer: c[3],
+                    start: formatDateForDisplay(c[4]), 
+                    end: formatDateForDisplay(c[5]), 
+                    status: c[6], // Active, Returned, Rejected, Expired
+                    rawStart: c[4], 
+                    rawEnd: c[5]
                 };
             });
             applyFilters();
@@ -210,11 +218,9 @@ async function fetchData() {
     }
 }
 
-// Helper to format YYYY-MM-DD or Date Object to MM/DD/YYYY without Timezone shift
 function formatDateForDisplay(dateVal) {
     if (!dateVal) return "";
     const d = new Date(dateVal);
-    // Adjust for timezone offset to get local date parts
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     const year = d.getFullYear();
@@ -245,7 +251,6 @@ async function saveContract(payload) {
 
 async function updateStatusAction(newStatus) {
     if (!currentStatusUpdateId) return;
-    
     try {
         await fetch(API_URL, {
             method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
@@ -259,40 +264,41 @@ async function updateStatusAction(newStatus) {
     }
 }
 
-// --- LOGIC ---
+// --- CORE LOGIC ---
 function getStatusLogic(c) {
     const today = new Date(); 
     today.setHours(0,0,0,0);
     
-    // Parse the raw date from the sheet to ensure accuracy
-    const end = new Date(c.rawEnd);
     const start = new Date(c.rawStart);
+    const daysSinceStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
     
-    // Calculate days passed since the contract ended
-    const diffEnd = Math.ceil((today - end) / (1000 * 60 * 60 * 24));
-    
-    // Calculate days since the contract started (for "New" logic)
-    const diffStart = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
-    
-    let displayStatus = c.status; // Default to the status stored in the DB
-    
-    // LOGIC UPDATE: Only mark as Expired if 30 days have passed since the end date
-    if (c.status === 'Active') {
-        if (diffEnd > 30) {
-            displayStatus = 'Expired';
-        } else if (diffEnd >= 0 && diffEnd <= 30) {
-            // Optional: You can call this "Grace Period" or keep it as Active/Expiring
-            displayStatus = 'Expiring'; 
-        }
+    let displayStatus = c.status;
+    let isExpired = false;
+    let isTerminated = false;
+
+    // 1. Manual Termination Check
+    if (c.status === 'Returned' || c.status === 'Rejected') {
+        isTerminated = true;
+        displayStatus = c.status;
+    } 
+    // 2. Auto-Expiration Check (30 Days from START)
+    else if (daysSinceStart > 30) {
+        isExpired = true;
+        displayStatus = 'Expired';
+    } 
+    // 3. Active
+    else {
+        displayStatus = 'Active';
     }
-    
+
     return {
         display: displayStatus,
-        isExpiring: (displayStatus === 'Expiring'),
-        isNew: (c.status === 'Active' && diffStart <= 5 && diffStart >= 0),
-        isExpired: (displayStatus === 'Expired' || c.status === 'Returned' || c.status === 'Rejected')
+        isExpired: isExpired,
+        isTerminated: isTerminated,
+        isNew: (c.status !== 'Returned' && c.status !== 'Rejected' && daysSinceStart <= 5 && daysSinceStart >= 0)
     };
 }
+
 function applyFilters() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const filterType = document.getElementById('statusFilter').value;
@@ -300,16 +306,16 @@ function applyFilters() {
     const filtered = allContracts.filter(c => {
         const logic = getStatusLogic(c);
         
-        // Search Logic (Convert everything to string to ensure numbers/dates are searchable)
+        // Robust Search
         const matchSearch = String(c.workerName).toLowerCase().includes(search) || 
                            String(c.iqama).includes(search) || 
                            String(c.employer).toLowerCase().includes(search) ||
                            String(c.start).includes(search);
         
         let matchFilter = true;
-        if (filterType === 'active') matchFilter = !logic.isExpired;
-        else if (filterType === 'expiring') matchFilter = logic.isExpiring;
+        if (filterType === 'active') matchFilter = !logic.isExpired && !logic.isTerminated;
         else if (filterType === 'new') matchFilter = logic.isNew;
+        else if (filterType === 'terminated') matchFilter = logic.isTerminated;
         else if (filterType === 'expired') matchFilter = logic.isExpired;
         
         return matchSearch && matchFilter;
@@ -331,8 +337,13 @@ function renderTable(contracts) {
         let stCls = 'bg-emerald-50 text-emerald-700 border-emerald-200';
         let stLabel = 'نشط';
         
-        if (logic.isExpired) { stCls = 'bg-rose-50 text-rose-700 border-rose-200'; stLabel = c.status; }
-        else if (logic.isExpiring) { stCls = 'bg-amber-50 text-amber-700 border-amber-200'; stLabel = 'ينتهي قريباً'; }
+        if (logic.isTerminated) {
+            stCls = 'bg-slate-100 text-slate-600 border-slate-200';
+            stLabel = c.status === 'Returned' ? 'مرتجع' : 'رافض';
+        } else if (logic.isExpired) {
+            stCls = 'bg-rose-50 text-rose-700 border-rose-200';
+            stLabel = 'منتهي (30 يوم)';
+        }
         
         return `
         <tr class="hover:bg-slate-50/80 transition-colors group">
@@ -358,21 +369,21 @@ function renderTable(contracts) {
 }
 
 function updateKPIs() {
-    let active = 0, expiring = 0, newC = 0, expired = 0;
+    let active = 0, newC = 0, terminated = 0, expired = 0;
     
     allContracts.forEach(c => {
         const logic = getStatusLogic(c);
-        if (logic.isExpired) expired++;
+        if (logic.isTerminated) terminated++;
+        else if (logic.isExpired) expired++;
         else {
             active++;
-            if (logic.isExpiring) expiring++;
             if (logic.isNew) newC++;
         }
     });
     
     document.getElementById('kpi-active').textContent = active;
-    document.getElementById('kpi-expiring').textContent = expiring;
     document.getElementById('kpi-new').textContent = newC;
+    document.getElementById('kpi-terminated').textContent = terminated;
     document.getElementById('kpi-expired').textContent = expired;
 }
 
@@ -389,7 +400,6 @@ function openModal(data = null) {
         document.getElementById('workerName').value = data.workerName;
         document.getElementById('iqamaNumber').value = data.iqama;
         document.getElementById('employer').value = data.employer;
-        // Convert MM/DD/YYYY back to YYYY-MM-DD for input[type=date]
         if(data.start) document.getElementById('startDate').value = convertToISO(data.start);
         if(data.end) document.getElementById('endDate').value = convertToISO(data.end);
         calculateDuration();
