@@ -399,26 +399,114 @@ function convertToISO(dateStr) {
     return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
 }
 
-function closeModal() { document.getElementById('contractModal').classList.add('hidden'); }
-function editContract(data) { openModal(data); }
-function openStatusModal(id) { currentStatusUpdateId = id; document.getElementById('statusModal').classList.remove('hidden'); }
-function closeStatusModal() { document.getElementById('statusModal').classList.add('hidden'); currentStatusUpdateId = null; }
-function handleSubmit(e) { e.preventDefault(); saveContract({ id: document.getElementById('editId').value || null, workerName: document.getElementById('workerName').value, iqama: document.getElementById('iqamaNumber').value, employer: document.getElementById('employer').value, startDate: document.getElementById('startDate').value, endDate: document.getElementById('endDate').value }); }
-function calculateDuration() {
-    const s = document.getElementById('startDate').value; const e = document.getElementById('endDate').value;
-    if (s && e) {
-        const months = (new Date(e).getFullYear() - new Date(s).getFullYear()) * 12 + (new Date(e).getMonth() - new Date(s).getMonth());
-        document.getElementById('durationText').innerText = `المدة: ${months} شهر`;
-        document.getElementById('durationBadge').classList.remove('hidden');
-    } else { document.getElementById('durationBadge').classList.add('hidden'); }
+function closeModal() { 
+    document.getElementById('contractModal').classList.add('hidden'); 
 }
-function filterByStatus(status) { document.getElementById('statusFilter').value = status; applyFilters(); }
+
+function editContract(data) { 
+    openModal(data); 
+}
+
+function openStatusModal(id) { 
+    currentStatusUpdateId = id; 
+    document.getElementById('statusModal').classList.remove('hidden'); 
+}
+
+function closeStatusModal() { 
+    document.getElementById('statusModal').classList.add('hidden'); 
+    currentStatusUpdateId = null; 
+}
+
+function handleSubmit(e) { 
+    e.preventDefault(); 
+    
+    // 1. Get Values
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // 2. Validate Dates are Selected
+    if (!startDate || !endDate) {
+        showToast("يرجى اختيار تواريخ البداية والنهاية من التقويم", "error");
+        return;
+    }
+
+    // 3. Validate Logic (End must be after Start)
+    if (new Date(endDate) < new Date(startDate)) {
+        showToast("تاريخ النهاية يجب أن يكون بعد تاريخ البداية", "error");
+        return;
+    }
+
+    // 4. Proceed with Save
+    saveContract({ 
+        id: document.getElementById('editId').value || null, 
+        workerName: document.getElementById('workerName').value, 
+        iqama: document.getElementById('iqamaNumber').value, 
+        employer: document.getElementById('employer').value, 
+        startDate: startDate, 
+        endDate: endDate 
+    }); 
+}
+
+function calculateDuration() {
+    const sVal = document.getElementById('startDate').value; 
+    const eVal = document.getElementById('endDate').value;
+    const badge = document.getElementById('durationBadge');
+    
+    if (sVal && eVal) {
+        const s = new Date(sVal);
+        const e = new Date(eVal);
+        
+        // Calculate total months difference
+        let months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+        
+        // Adjust for day of month (if end day is before start day, subtract one month)
+        if (e.getDate() < s.getDate()) {
+            months--;
+        }
+
+        if (months < 0) {
+            document.getElementById('durationText').innerText = `⚠️ تاريخ النهاية قبل البداية`;
+            badge.classList.remove('hidden');
+            badge.classList.replace('bg-primary/5', 'bg-rose-50');
+            badge.classList.replace('text-primary', 'text-rose-600');
+        } else {
+            document.getElementById('durationText').innerText = `المدة: ${months} شهر`;
+            badge.classList.remove('hidden');
+            // Reset colors to primary if they were changed by error state
+            badge.classList.add('bg-primary/5', 'text-primary');
+            badge.classList.remove('bg-rose-50', 'text-rose-600');
+        }
+    } else { 
+        badge.classList.add('hidden'); 
+    }
+}
+
+function filterByStatus(status) { 
+    document.getElementById('statusFilter').value = status; 
+    applyFilters(); 
+}
+
 function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
-    document.getElementById('toastMsg').innerText = msg;
-    document.getElementById('toastIcon').className = type === 'error' ? 'ph ph-warning-circle text-expired' : 'ph ph-check-circle text-active';
+    const icon = document.getElementById('toastIcon');
+    const msgEl = document.getElementById('toastMsg');
+    
+    msgEl.innerText = msg;
+    
+    if (type === 'error') {
+        icon.className = 'ph ph-warning-circle text-expired text-lg';
+    } else {
+        icon.className = 'ph ph-check-circle text-active text-lg';
+    }
+    
     t.classList.remove('translate-y-20', 'opacity-0');
-    setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 2500);
+    
+    // Clear any existing timeout to prevent flickering if called rapidly
+    if (t.timeoutId) clearTimeout(t.timeoutId);
+    
+    t.timeoutId = setTimeout(() => {
+        t.classList.add('translate-y-20', 'opacity-0');
+    }, 3000);
 }
 </script>
 </body>
