@@ -3,188 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام بناء الموارد البشرية الاستراتيجي | HR Transformation</title>
+    <title>سجل الإنجازات الإدارية | HR Management</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #34495e; --accent: #27ae60; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #333; }
+        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f6f7; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1100px; margin: 0 auto; }
         
-        .container { max-width: 1200px; margin: 0 auto; }
+        header { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { margin: 0; color: var(--primary); font-size: 1.4rem; }
         
-        /* Header */
-        header { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-        .header-info h1 { margin: 0; color: var(--primary); font-size: 1.5rem; }
-        .header-info p { margin: 5px 0 0; color: #7f8c8d; }
+        /* Stats */
+        .stats-bar { display: flex; gap: 15px; margin-bottom: 20px; }
+        .stat-box { flex: 1; background: white; padding: 15px; border-radius: 8px; text-align: center; border-top: 4px solid var(--accent); }
+        .stat-num { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
         
-        /* Stats Cards */
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .stat-val { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
-        .stat-label { font-size: 0.9rem; color: #95a5a6; }
-
-        /* Filters */
-        .filters { margin-bottom: 20px; display: flex; gap: 10px; }
-        .filter-btn { padding: 8px 15px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
+        /* Form */
+        .add-task-form { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 100%; box-sizing: border-box; }
+        button.add-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
         /* Table */
-        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; }
-        th { background-color: var(--secondary); color: white; padding: 15px; text-align: right; font-weight: 500; }
-        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: right; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+        .st-done { background: #d5f5e3; color: #196f3d; }
+        .st-pending { background: #fcf3cf; color: #9a7d0a; }
         
-        /* Badges */
-        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
-        .badge-gov { background: #e8f6f3; color: #1abc9c; } /* علاقات حكومية */
-        .badge-hr { background: #ebf5fb; color: #3498db; } /* موارد بشرية */
-        .badge-ops { background: #fef9e7; color: #f1c40f; } /* عمليات */
-        
-        .priority-high { color: #e74c3c; font-weight: bold; }
-        
-        input[type="checkbox"] { transform: scale(1.3); cursor: pointer; accent-color: var(--accent); }
-        
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:1000; display:flex; justify-content:center; align-items:center; font-size:1.2rem; color:var(--primary); }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:1000; display:flex; justify-content:center; align-items:center; }
     </style>
 </head>
 <body>
 
-<div id="loading">جاري مزامنة البيانات الاستراتيجية...</div>
+<div id="loading">جاري تحميل سجل الإنجازات...</div>
 
 <div class="container">
     <header>
-        <div class="header-info">
-            <h1>🏗️ نظام بناء الموارد البشرية المتكامل</h1>
-            <p>خطة التحول من 30 موظفاً إلى بنية تحتية لاستيعاب 4000 عامل</p>
-        </div>
-        <div style="text-align: left;">
-            <div style="font-size: 2rem; font-weight: bold; color: var(--accent);" id="total-progress">0%</div>
-            <div style="font-size: 0.8rem; color: #7f8c8d;">نسبة اكتمال البنية التحتية</div>
-        </div>
+        <h1>🏆 سجل الإنجازات الإداري للموارد البشرية</h1>
+        <div style="font-size: 0.9rem; color: #7f8c8d;">إدارة ومتابعة: المدير المباشر</div>
     </header>
 
-    <div class="stats-row">
-        <div class="stat-card"><div class="stat-val" id="count-gov">0</div><div class="stat-label">مهام الامتثال</div></div>
-        <div class="stat-card"><div class="stat-val" id="count-hr">0</div><div class="stat-label">الهيكلة والتوظيف</div></div>
-        <div class="stat-card"><div class="stat-val" id="count-ops">0</div><div class="stat-label">الأنظمة والعمليات</div></div>
-        <div class="stat-card"><div class="stat-val" id="count-pending">0</div><div class="stat-label">مهام قيد الانتظار</div></div>
+    <div class="stats-bar">
+        <div class="stat-box"><div class="stat-num" id="total-tasks">0</div><div>إجمالي المنجزات</div></div>
+        <div class="stat-box"><div class="stat-num" id="completed-tasks">0</div><div>تم إنجازه</div></div>
+        <div class="stat-box"><div class="stat-num" id="pending-tasks">0</div><div>قيد التنفيذ</div></div>
     </div>
 
-    <div class="filters">
-        <button class="filter-btn active" onclick="filterTable('all')">الكل</button>
-        <button class="filter-btn" onclick="filterTable('gov')">⚖️ حوكمة وامتثال</button>
-        <button class="filter-btn" onclick="filterTable('hr')">👥 رأس مال بشري</button>
-        <button class="filter-btn" onclick="filterTable('ops')">⚙️ عمليات وأنظمة</button>
+    <!-- نموذج إضافة منجز جديد -->
+    <div class="add-task-form">
+        <div>
+            <label style="font-size:0.8rem; display:block; margin-bottom:5px">وصف المنجز / المهمة</label>
+            <input type="text" id="newTaskName" placeholder="مثال: إنهاء إجراءات استقدام دفعة جديدة">
+        </div>
+        <div>
+            <label style="font-size:0.8rem; display:block; margin-bottom:5px">التصنيف</label>
+            <select id="newTaskCat">
+                <option value="استراتيجي">استراتيجي</option>
+                <option value="حوكمة">حوكمة وامتثال</option>
+                <option value="عمليات">عمليات يومية</option>
+                <option value="طارئ">منجز طارئ</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:0.8rem; display:block; margin-bottom:5px">الحالة الأولية</label>
+            <select id="newTaskStatus">
+                <option value="FALSE">قيد التنفيذ</option>
+                <option value="TRUE">منجز</option>
+            </select>
+        </div>
+        <button class="add-btn" onclick="addNewTask()">➕ إضافة</button>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">إنجاز</th>
-                    <th>المهمة الاستراتيجية</th>
-                    <th>المسؤول المباشر</th>
-                    <th>الأولوية</th>
-                    <th>المدة التقديرية</th>
-                </tr>
-            </thead>
-            <tbody id="tasks-body">
-                <!-- Tasks will be loaded here -->
-            </tbody>
-        </table>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:50px">ح</th>
+                <th>تاريخ الإضافة</th>
+                <th>وصف المنجز</th>
+                <th>التصنيف</th>
+                <th>الحالة</th>
+                <th>ملاحظات</th>
+            </tr>
+        </thead>
+        <tbody id="tasksTable"></tbody>
+    </table>
 </div>
 
 <script>
-    // ⚠️ ضع رابط تطبيق الويب الخاص بك هنا
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyf90xcFcSkyvG46_lwOKU5kb6MYaECT0cdclNsBeThOSP8BXGTYomw_XUOZBi6mspO/exec'; 
-    let allTasks = [];
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzxcziJ3VvLrk0SgrmD5qDy8BCuzZHaVJohfhxcI8U8y_G3dqLY3wxC48EqJJTQkF3i/exec'; 
+    let tasksData = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchData();
-    });
+    document.addEventListener('DOMContentLoaded', fetchTasks);
 
-    async function fetchData() {
+    async function fetchTasks() {
         try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            allTasks = data;
-            renderTable(allTasks);
+            const res = await fetch(API_URL);
+            tasksData = await res.json();
+            renderTable();
             updateStats();
             document.getElementById('loading').style.display = 'none';
-        } catch (error) {
-            console.error(error);
-            document.getElementById('loading').innerText = 'خطأ في الاتصال!';
-        }
+        } catch(e) { console.error(e); }
     }
 
-    function renderTable(tasks) {
-        const tbody = document.getElementById('tasks-body');
+    function renderTable() {
+        const tbody = document.getElementById('tasksTable');
         tbody.innerHTML = '';
-        
-        tasks.forEach(task => {
-            let badgeClass = '';
-            if(task.owner === 'علاقات حكومية') badgeClass = 'badge-gov';
-            else if(task.owner === 'موارد بشرية') badgeClass = 'badge-hr';
-            else badgeClass = 'badge-ops';
-
+        // ترتيب المهام: الأحدث أولاً
+        tasksData.sort((a,b) => b.id - a.id).forEach(task => {
+            const isDone = task.status === 'TRUE' || task.status === true;
             const row = `
                 <tr>
-                    <td><input type="checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTask(${task.id}, this)"></td>
-                    <td>
-                        <div style="font-weight: 500;">${task.task_name}</div>
-                        <small style="color: #95a5a6;">${task.deliverable || ''}</small>
-                    </td>
-                    <td><span class="badge ${badgeClass}">${task.owner}</span></td>
-                    <td class="${task.priority === 'عالية' ? 'priority-high' : ''}">${task.priority}</td>
-                    <td>${task.duration}</td>
+                    <td><input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleStatus(${task.id}, this)"></td>
+                    <td style="color:#7f8c8d; font-size:0.9rem">${task.date}</td>
+                    <td style="font-weight:500">${task.name}</td>
+                    <td><span style="background:#ebf5fb; color:#2980b9; padding:2px 8px; border-radius:10px; font-size:0.8rem">${task.category}</span></td>
+                    <td><span class="status-badge ${isDone ? 'st-done' : 'st-pending'}">${isDone ? 'منجز' : 'قيد التنفيذ'}</span></td>
+                    <td contenteditable="true" onblur="updateNote(${task.id}, this.innerText)" style="color:#95a5a6; font-size:0.9rem">${task.notes || '-'}</td>
                 </tr>
             `;
             tbody.innerHTML += row;
         });
     }
 
-    function filterTable(category) {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+    async function addNewTask() {
+        const name = document.getElementById('newTaskName').value;
+        const cat = document.getElementById('newTaskCat').value;
+        const status = document.getElementById('newTaskStatus').value;
+        
+        if(!name) return alert('الرجاء كتابة وصف للمنجز');
 
-        if(category === 'all') {
-            renderTable(allTasks);
-        } else {
-            const filtered = allTasks.filter(t => t.category === category);
-            renderTable(filtered);
-        }
+        const newTask = {
+            action: 'add',
+            name: name,
+            category: cat,
+            status: status,
+            date: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(newTask) });
+            document.getElementById('newTaskName').value = '';
+            fetchTasks(); // إعادة تحميل البيانات
+        } catch(e) { alert('حدث خطأ أثناء الإضافة'); }
     }
 
-    async function toggleTask(id, checkbox) {
-        checkbox.disabled = true;
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ id: id, is_completed: checkbox.checked })
-            });
-            // Update local state
-            const task = allTasks.find(t => t.id == id);
-            if(task) task.is_completed = checkbox.checked;
-            updateStats();
-        } catch (e) {
-            alert('فشل الحفظ');
-            checkbox.checked = !checkbox.checked;
-        } finally {
-            checkbox.disabled = false;
-        }
+    async function toggleStatus(id, checkbox) {
+        const newStatus = checkbox.checked ? 'TRUE' : 'FALSE';
+        await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'update', id: id, status: newStatus }) });
+        fetchTasks();
+    }
+
+    async function updateNote(id, text) {
+        await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'note', id: id, note: text }) });
     }
 
     function updateStats() {
-        const total = allTasks.length;
-        const completed = allTasks.filter(t => t.is_completed).length;
-        const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-        
-        document.getElementById('total-progress').innerText = percentage + '%';
-        
-        // Update specific counters
-        document.getElementById('count-gov').innerText = allTasks.filter(t => t.category === 'gov' && t.is_completed).length + '/' + allTasks.filter(t => t.category === 'gov').length;
-        document.getElementById('count-hr').innerText = allTasks.filter(t => t.category === 'hr' && t.is_completed).length + '/' + allTasks.filter(t => t.category === 'hr').length;
-        document.getElementById('count-ops').innerText = allTasks.filter(t => t.category === 'ops' && t.is_completed).length + '/' + allTasks.filter(t => t.category === 'ops').length;
-        document.getElementById('count-pending').innerText = total - completed;
+        document.getElementById('total-tasks').innerText = tasksData.length;
+        document.getElementById('completed-tasks').innerText = tasksData.filter(t => t.status === 'TRUE' || t.status === true).length;
+        document.getElementById('pending-tasks').innerText = tasksData.filter(t => t.status !== 'TRUE' && t.status !== true).length;
     }
 </script>
 
