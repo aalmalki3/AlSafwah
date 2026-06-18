@@ -1,727 +1,84 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accommodation Management System</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+// 1. Replace your existing renderTable function with this:
+function renderTable(workers) {
+    const tbody = document.getElementById('tableBody');
+    if (!workers || workers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 40px;">No workers found</td></tr>';
+        return;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    tbody.innerHTML = workers.map(worker => `
+        <tr>
+            <td>${worker.ID || worker.id}</td>
+            <td>${worker.Country || worker.country}</td>
+            <td>${worker.Name || worker.name}</td>
+            <td>${formatDate(worker['Arrival Date'] || worker.ArrivalDate)}</td>
+            <td>${formatDate(worker['End Date'] || worker.EndDate)}</td>
+            <td>${worker['Remaining Days'] || worker.RemainingDays || 0}</td>
+            <td>${worker.Section || worker.section}</td>
+            <td><span class="status-badge status-${getStatusClass(worker.Status || worker.status)}">${worker.Status || worker.status}</span></td>
+            <td>${worker['Reason for Stay'] || worker.Reason || '-'}</td>
+            <td>${worker['Agency Name'] || worker.Agency || '-'}</td>
+            <td>
+                <button class="btn btn-success" onclick="checkIn('${worker.ID || worker.id}')" title="Check In"><i class="fas fa-sign-in-alt"></i></button>
+                <button class="btn btn-warning" onclick="checkOut('${worker.ID || worker.id}')" title="Check Out"><i class="fas fa-sign-out-alt"></i></button>
+                <button class="btn btn-primary" onclick="editWorker('${worker.ID || worker.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger" onclick="deleteWorker('${worker.ID || worker.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+// 2. Replace your existing fillForm function with this:
+function fillForm(worker) {
+    document.getElementById('workerId').value = worker.ID || worker.id;
+    document.getElementById('country').value = worker.Country || worker.country;
+    document.getElementById('name').value = worker.Name || worker.name;
+    document.getElementById('arrivalDate').value = formatDateForInput(worker['Arrival Date'] || worker.ArrivalDate);
+    document.getElementById('endDate').value = formatDateForInput(worker['End Date'] || worker.EndDate);
+    document.getElementById('section').value = worker.Section || worker.section;
+    document.getElementById('status').value = worker.Status || worker.status;
+    document.getElementById('reason').value = worker['Reason for Stay'] || worker.Reason;
+    document.getElementById('agency').value = worker['Agency Name'] || worker.Agency;
+    document.getElementById('comments').value = worker.Comments || worker.comments;
+}
 
-        .header {
-            background: white;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
+// 3. Replace your existing saveWorker function with this:
+async function saveWorker(event) {
+    event.preventDefault();
+    
+    const data = {
+        id: document.getElementById('workerId').value,
+        country: document.getElementById('country').value,
+        name: document.getElementById('name').value,
+        arrivalDate: document.getElementById('arrivalDate').value,
+        endDate: document.getElementById('endDate').value,
+        section: document.getElementById('section').value,
+        status: document.getElementById('status').value,
+        reason: document.getElementById('reason').value,
+        agency: document.getElementById('agency').value,
+        comments: document.getElementById('comments').value
+    };
 
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .controls {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin: 5px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .search-filter {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .search-filter input, .search-filter select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        tr:hover {
-            background: #f5f5f5;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-new { background: #28a745; color: white; }
-        .status-returned { background: #17a2b8; color: white; }
-        .status-rejected { background: #dc3545; color: white; }
-        .status-contracted { background: #6f42c1; color: white; }
-        .status-pending { background: #ffc107; color: #333; }
-        .status-exit { background: #6c757d; color: white; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 18px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+    try {
+        const action = data.id ? 'update' : 'add';
+        const response = await fetch(`${https://script.google.com/macros/s/AKfycbz8ZVbUpNjj_ArGCVcCzitFoyaTyeKOf2Yw58V0Mdo1yYUaUsi1Mqk5pw7WbnCeKyM/exec}?action=${action}`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8', // FIXED: Prevents CORS preflight issues
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-home"></i> Accommodation Management System</h1>
-            <p>Track and manage worker accommodation status</p>
-        </div>
-
-        <div id="alertContainer"></div>
-
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <h3 id="totalWorkers">0</h3>
-                <p>Total Workers</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="checkInToday">0</h3>
-                <p>Checked In Today</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="checkOutToday">0</h3>
-                <p>Checked Out Today</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="pendingWorkers">0</h3>
-                <p>Pending Status</p>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div class="search-filter">
-                <input type="text" id="searchInput" placeholder="Search by name, country, agency...">
-                <select id="filterCountry">
-                    <option value="">All Countries</option>
-                    <option value="Philippines">Philippines</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="Indonesia">Indonesia</option>
-                    <option value="Ethiopia">Ethiopia</option>
-                </select>
-                <select id="filterStatus">
-                    <option value="">All Status</option>
-                    <option value="New">New</option>
-                    <option value="Returned">Returned</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Contracted">Contracted</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Final Exit">Final Exit</option>
-                </select>
-                <button class="btn btn-primary" onclick="openModal()">
-                    <i class="fas fa-plus"></i> Add Worker
-                </button>
-                <button class="btn btn-success" onclick="loadData()">
-                    <i class="fas fa-sync"></i> Refresh
-                </button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <table id="workersTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Country</th>
-                        <th>Name</th>
-                        <th>Arrival Date</th>
-                        <th>End Date</th>
-                        <th>Remaining Days</th>
-                        <th>Section</th>
-                        <th>Status</th>
-                        <th>Reason</th>
-                        <th>Agency</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr>
-                        <td colspan="11" class="loading">Loading data...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal" id="workerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add New Worker</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="workerForm" onsubmit="saveWorker(event)">
-                <input type="hidden" id="workerId">
-                
-                <div class="form-group">
-                    <label>Country *</label>
-                    <select id="country" required>
-                        <option value="">Select Country</option>
-                        <option value="Philippines">Philippines</option>
-                        <option value="Kenya">Kenya</option>
-                        <option value="Indonesia">Indonesia</option>
-                        <option value="Ethiopia">Ethiopia</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Name *</label>
-                    <input type="text" id="name" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Arrival Date *</label>
-                    <input type="date" id="arrivalDate" required>
-                </div>
-
-                <div class="form-group">
-                    <label>End Date *</label>
-                    <input type="date" id="endDate" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Section *</label>
-                    <select id="section" required>
-                        <option value="">Select Section</option>
-                        <option value="Recruitment">Recruitment (استقدام)</option>
-                        <option value="Rental">Rental (ايجار)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Status *</label>
-                    <select id="status" required>
-                        <option value="">Select Status</option>
-                        <option value="New">New</option>
-                        <option value="Returned">Returned</option>
-                        <option value="Rejected">Rejected to Work</option>
-                        <option value="Contracted">Contracted</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Final Exit">Final Exit</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Reason for Stay</label>
-                    <input type="text" id="reason">
-                </div>
-
-                <div class="form-group">
-                    <label>Agency Name</label>
-                    <input type="text" id="agency">
-                </div>
-
-                <div class="form-group">
-                    <label>Comments</label>
-                    <textarea id="comments"></textarea>
-                </div>
-
-                <div style="text-align: right;">
-                    <button type="button" class="btn" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxUPx5Ap7UFo2uUHK17pWtqkWx6rrZwOFFxbh_ghunrx-BlHeo8heIBWukFbT7PFaE/exec'; // Replace with your deployed URL
-        let allWorkers = [];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            closeModal();
             loadData();
-            setupEventListeners();
-        });
-
-        function setupEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', filterTable);
-            document.getElementById('filterCountry').addEventListener('change', filterTable);
-            document.getElementById('filterStatus').addEventListener('change', filterTable);
+            showAlert(result.message, 'success');
+        } else {
+            showAlert('Error: ' + result.message, 'error');
         }
-
-        async function loadData() {
-            showLoading();
-            try {
-                const response = await fetch(`${API_URL}?action=getAll`);
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    allWorkers = result.data || [];
-                    renderTable(allWorkers);
-                    loadStatistics();
-                    showAlert('Data loaded successfully', 'success');
-                } else {
-                    showAlert('Error loading data: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showAlert('Error connecting to server: ' + error.message, 'error');
-            }
-        }
-
-        async function loadStatistics() {
-            try {
-                const response = await fetch(`${API_URL}?action=getStats`);
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    const stats = result.data;
-                    document.getElementById('totalWorkers').textContent = stats.total || 0;
-                    document.getElementById('checkInToday').textContent = stats.checkInToday || 0;
-                    document.getElementById('checkOutToday').textContent = stats.checkOutToday || 0;
-                    document.getElementById('pendingWorkers').textContent = stats.byStatus?.Pending || 0;
-                }
-            } catch (error) {
-                console.error('Error loading statistics:', error);
-            }
-        }
-
-        function renderTable(workers) {
-            const tbody = document.getElementById('tableBody');
-            
-            if (!workers || workers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 40px;">No workers found</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = workers.map(worker => `
-                <tr>
-                    <td>${worker.ID || worker.id}</td>
-                    <td>${worker.Country || worker.country}</td>
-                    <td>${worker.Name || worker.name}</td>
-                    <td>${formatDate(worker.ArrivalDate || worker.arrivalDate)}</td>
-                    <td>${formatDate(worker.EndDate || worker.endDate)}</td>
-                    <td>${worker.RemainingDays || worker.remainingDays || 0}</td>
-                    <td>${worker.Section || worker.section}</td>
-                    <td><span class="status-badge status-${getStatusClass(worker.Status || worker.status)}">${worker.Status || worker.status}</span></td>
-                    <td>${worker.Reason || worker.reason || '-'}</td>
-                    <td>${worker.Agency || worker.agency || '-'}</td>
-                    <td>
-                        <button class="btn btn-success" onclick="checkIn('${worker.ID || worker.id}')" title="Check In">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </button>
-                        <button class="btn btn-warning" onclick="checkOut('${worker.ID || worker.id}')" title="Check Out">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                        <button class="btn btn-primary" onclick="editWorker('${worker.ID || worker.id}')" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger" onclick="deleteWorker('${worker.ID || worker.id}')" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function filterTable() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const country = document.getElementById('filterCountry').value;
-            const status = document.getElementById('filterStatus').value;
-
-            const filtered = allWorkers.filter(worker => {
-                const matchSearch = !search || 
-                    (worker.Name && worker.Name.toLowerCase().includes(search)) ||
-                    (worker.Country && worker.Country.toLowerCase().includes(search)) ||
-                    (worker.Agency && worker.Agency.toLowerCase().includes(search));
-                
-                const matchCountry = !country || worker.Country === country;
-                const matchStatus = !status || worker.Status === status;
-
-                return matchSearch && matchCountry && matchStatus;
-            });
-
-            renderTable(filtered);
-        }
-
-        function openModal(workerId = null) {
-            document.getElementById('workerModal').classList.add('active');
-            document.getElementById('workerForm').reset();
-            document.getElementById('workerId').value = '';
-            
-            if (workerId) {
-                document.getElementById('modalTitle').textContent = 'Edit Worker';
-                const worker = allWorkers.find(w => (w.ID || w.id) === workerId);
-                if (worker) {
-                    fillForm(worker);
-                }
-            } else {
-                document.getElementById('modalTitle').textContent = 'Add New Worker';
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('workerModal').classList.remove('active');
-        }
-
-        function fillForm(worker) {
-            document.getElementById('workerId').value = worker.ID || worker.id;
-            document.getElementById('country').value = worker.Country || worker.country;
-            document.getElementById('name').value = worker.Name || worker.name;
-            document.getElementById('arrivalDate').value = formatDateForInput(worker.ArrivalDate || worker.arrivalDate);
-            document.getElementById('endDate').value = formatDateForInput(worker.EndDate || worker.endDate);
-            document.getElementById('section').value = worker.Section || worker.section;
-            document.getElementById('status').value = worker.Status || worker.status;
-            document.getElementById('reason').value = worker.Reason || worker.reason;
-            document.getElementById('agency').value = worker.Agency || worker.agency;
-            document.getElementById('comments').value = worker.Comments || worker.comments;
-        }
-
-        async function saveWorker(event) {
-            event.preventDefault();
-            
-            const data = {
-                id: document.getElementById('workerId').value,
-                country: document.getElementById('country').value,
-                name: document.getElementById('name').value,
-                arrivalDate: document.getElementById('arrivalDate').value,
-                endDate: document.getElementById('endDate').value,
-                section: document.getElementById('section').value,
-                status: document.getElementById('status').value,
-                reason: document.getElementById('reason').value,
-                agency: document.getElementById('agency').value,
-                comments: document.getElementById('comments').value
-            };
-
-            try {
-                const action = data.id ? 'update' : 'add';
-                const response = await fetch(`${API_URL}?action=${action}`, {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    closeModal();
-                    loadData();
-                    showAlert(result.message, 'success');
-                } else {
-                    showAlert('Error: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showAlert('Error saving worker: ' + error.message, 'error');
-            }
-        }
-
-        async function checkIn(id) {
-            if (!confirm('Check in this worker?')) return;
-            
-            try {
-                const response = await fetch(`${API_URL}?action=checkIn&id=${id}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    loadData();
-                    showAlert('Worker checked in successfully', 'success');
-                } else {
-                    showAlert('Error: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showAlert('Error checking in: ' + error.message, 'error');
-            }
-        }
-
-        async function checkOut(id) {
-            if (!confirm('Check out this worker?')) return;
-            
-            try {
-                const response = await fetch(`${API_URL}?action=checkOut&id=${id}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    loadData();
-                    showAlert('Worker checked out successfully', 'success');
-                } else {
-                    showAlert('Error: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showAlert('Error checking out: ' + error.message, 'error');
-            }
-        }
-
-        async function deleteWorker(id) {
-            if (!confirm('Are you sure you want to delete this worker?')) return;
-            
-            try {
-                const response = await fetch(`${API_URL}?action=delete&id=${id}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    loadData();
-                    showAlert('Worker deleted successfully', 'success');
-                } else {
-                    showAlert('Error: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showAlert('Error deleting: ' + error.message, 'error');
-            }
-        }
-
-        function editWorker(id) {
-            openModal(id);
-        }
-
-        function getStatusClass(status) {
-            const statusMap = {
-                'New': 'new',
-                'Returned': 'returned',
-                'Rejected': 'rejected',
-                'Contracted': 'contracted',
-                'Pending': 'pending',
-                'Final Exit': 'exit'
-            };
-            return statusMap[status] || 'pending';
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US');
-        }
-
-        function formatDateForInput(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toISOString().split('T')[0];
-        }
-
-        function showLoading() {
-            document.getElementById('tableBody').innerHTML = 
-                '<tr><td colspan="11" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
-        }
-
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            
-            container.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        // Close modal on outside click
-        document.getElementById('workerModal').addEventListener('click', (e) => {
-            if (e.target.id === 'workerModal') {
-                closeModal();
-            }
-        });
-    </script>
-</body>
-</html>
+    } catch (error) {
+        showAlert('Error saving worker: ' + error.message, 'error');
+    }
+}
