@@ -1,392 +1,279 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الصفوة للألمنيوم</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --primary: #0f766e; --primary-light: #ccfbf1; --primary-dark: #0d5c56;
-            --danger: #dc2626; --warning: #f59e0b; --success: #16a34a;
-            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --border: #e2e8f0;
-            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-            --radius: 10px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>نظام الصفوة للألمنيوم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#0f766e;--pri-l:#ccfbf1;--pri-d:#0d5c56;--danger:#dc2626;--warn:#f59e0b;--ok:#16a34a;--bg:#f1f5f9;--card:#fff;--txt:#1e293b;--brd:#e2e8f0;--sh:0 1px 3px rgba(0,0,0,.08);--rad:10px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Tajawal',sans-serif}
+body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:40px}
+.header{background:linear-gradient(135deg,var(--pri),var(--pri-d));color:#fff;padding:20px 0;margin-bottom:20px;box-shadow:var(--sh)}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header h1{font-size:20px;font-weight:700}
+.container{max-width:1280px;margin:0 auto;padding:0 20px}
 
-        /* Header */
-        .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 24px 0; margin-bottom: 24px; box-shadow: var(--shadow); }
-        .header-inner { max-width: 1280px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .header-badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--card);padding:4px;border-radius:var(--rad);box-shadow:var(--sh);border:1px solid var(--brd)}
+.tab{flex:1;padding:12px;text-align:center;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:600;border-radius:8px;transition:.2s;color:#64748b}
+.tab.active{background:var(--pri);color:#fff;box-shadow:0 2px 4px rgba(15,118,110,.3)}
+.tab:hover:not(.active){background:#f1f5f9}
+.panel{display:none}.panel.active{display:block}
 
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+/* Toast */
+.toast-c{position:fixed;top:20px;left:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:var(--rad);color:#fff;font-size:14px;font-weight:500;animation:slideIn .3s ease,fadeOut .3s ease 2.7s forwards;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.toast-ok{background:var(--ok)}.toast-err{background:var(--danger)}
+@keyframes slideIn{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-10px)}}
 
-        /* Toast Notification */
-        .toast-container { position: fixed; top: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-        .toast { padding: 12px 20px; border-radius: var(--radius); color: white; font-size: 14px; font-weight: 500; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+/* Cards & Forms */
+.card{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);padding:20px;margin-bottom:16px;border:1px solid var(--brd)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--pri)}
+.gf{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fg label{display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#475569}
+.fg input,.fg textarea,.fg select{width:100%;padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;transition:.2s;background:#fafbfc;outline:none}
+.fg input:focus,.fg textarea:focus{border-color:var(--pri);background:#fff;box-shadow:0 0 0 3px var(--pri-l)}
+.btn-row{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:9px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:5px}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--pri);color:#fff}.btn-p:hover{background:var(--pri-d)}
+.btn-s{background:#e2e8f0;color:#475569}.btn-s:hover{background:#cbd5e1}
+.btn-de{background:#fef2f2;color:var(--danger);border:1px solid #fecaca;padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-de:hover{background:var(--danger);color:#fff}
+.btn-ed{background:#fffbeb;color:var(--warn);border:1px solid #fde68a;padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-ed:hover{background:var(--warn);color:#fff}
 
-        /* Form Card */
-        .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        
-        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: #475569; }
-        .form-group input, .form-group textarea { 
-            width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; 
-            font-size: 14px; transition: all 0.2s; background: #fafbfc; outline: none;
-        }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px var(--primary-light); }
-        .form-group textarea { resize: vertical; min-height: 42px; }
-
-        .btn-row { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-secondary { background: #e2e8f0; color: #475569; }
-        .btn-secondary:hover { background: #cbd5e1; }
-        .btn-danger-sm { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
-        .btn-danger-sm:hover { background: var(--danger); color: white; }
-        .btn-edit-sm { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
-        .btn-edit-sm:hover { background: var(--warning); color: white; }
-
-        /* Search Bar */
-        .search-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-        .search-bar input { flex: 1; min-width: 200px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-        .search-bar input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        .record-count { font-size: 13px; color: #64748b; display: flex; align-items: center; white-space: nowrap; }
-
-        /* Table */
-        .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-        th { background: #f8fafc; padding: 12px 14px; text-align: right; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 1; }
-        td { padding: 12px 14px; text-align: right; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #f8fafc; }
-        
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-        .badge-done { background: #dcfce7; color: #15803d; }
-        .badge-notes { background: #fef9c3; color: #a16207; }
-        .badge-pending { background: #f1f5f9; color: #64748b; }
-        .item-name { font-weight: 600; color: var(--primary-dark); }
-
-        /* Loading & Empty State */
-        .loading-overlay { display: none; text-align: center; padding: 40px; color: #64748b; }
-        .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .empty-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
-
-        @media (max-width: 768px) {
-            .grid-form { grid-template-columns: 1fr 1fr; }
-            .header h1 { font-size: 18px; }
-            td, th { padding: 10px 8px; font-size: 12px; }
-        }
-        @media (max-width: 480px) {
-            .grid-form { grid-template-columns: 1fr; }
-        }
-    </style>
+/* Search & Table */
+.search-bar{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px;padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;outline:none}
+.search-bar input:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l)}
+.rc{font-size:12px;color:#64748b;white-space:nowrap}
+.tw{overflow-x:auto;border-radius:var(--rad);border:1px solid var(--brd)}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{background:#f8fafc;padding:10px 12px;text-align:right;font-size:11px;font-weight:700;color:#64748b;border-bottom:2px solid var(--brd);position:sticky;top:0;z-index:1}
+td{padding:10px 12px;text-align:right;font-size:12px;border-bottom:1px solid var(--brd);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:#f8fafc}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.b-ok{background:#dcfce7;color:#15803d}.b-warn{background:#fef9c3;color:#a16207}.b-gray{background:#f1f5f9;color:#64748b}
+.b-low{background:#fef2f2;color:var(--danger);font-weight:700}
+.iname{font-weight:600;color:var(--pri-d)}
+.loader{display:none;text-align:center;padding:30px;color:#64748b}
+.spinner{width:28px;height:28px;border:3px solid var(--brd);border-top-color:var(--pri);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:30px;color:#94a3b8;font-size:13px}
+@media(max-width:768px){.gf{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.gf{grid-template-columns:1fr}.tabs{flex-direction:column}}
+</style>
 </head>
 <body>
-
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Header -->
-<div class="header">
-    <div class="header-inner">
-        <h1>🏭 نظام الصفوة للألمنيوم</h1>
-        <span class="header-badge">إدارة العملاء · المخزون · التصنيع</span>
-    </div>
-</div>
-
+<div class="toast-c" id="tc"></div>
+<div class="header"><div class="header-inner"><h1>🏭 نظام الصفوة للألمنيوم</h1><span style="background:rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:11px">مخزون · مشاريع · تصنيع</span></div></div>
 <div class="container">
-    <!-- Form Card -->
-    <div class="card">
-        <div class="card-title" id="formTitle">➕ إضافة سجل جديد</div>
-        <input type="hidden" id="recordId">
-        <div class="grid-form">
-            <div class="form-group">
-                <label>العميل</label>
-                <input list="dl-clients" id="client" placeholder="اختر أو اكتب...">
-                <datalist id="dl-clients"></datalist>
-            </div>
-            <div class="form-group">
-                <label>المشروع</label>
-                <input list="dl-projects" id="project" placeholder="اختر أو اكتب...">
-                <datalist id="dl-projects"></datalist>
-            </div>
-            <div class="form-group">
-                <label>مخزون الالمنيوم</label>
-                <input list="dl-items" id="item" placeholder="اختر أو اكتب...">
-                <datalist id="dl-items"></datalist>
-            </div>
-            <div class="form-group">
-                <label>الكمية الاجمالية</label>
-                <input type="text" id="totalQty" placeholder="مثال: 100">
-            </div>
-            <div class="form-group">
-                <label>الصافي بالمخزن</label>
-                <input type="text" id="netStock" placeholder="مثال: 85">
-            </div>
-            <div class="form-group">
-                <label>مرحلة التصنيع</label>
-                <input list="dl-mfg" id="mfgStage" placeholder="اختر أو اكتب...">
-                <datalist id="dl-mfg"></datalist>
-            </div>
-            <div class="form-group">
-                <label>مرحلة التوريد</label>
-                <input list="dl-supply" id="supplyStage" placeholder="اختر أو اكتب...">
-                <datalist id="dl-supply"></datalist>
-            </div>
-            <div class="form-group">
-                <label>مرحلة التسليم</label>
-                <input list="dl-delivery" id="deliveryStage" placeholder="اختر أو اكتب...">
-                <datalist id="dl-delivery"></datalist>
-            </div>
-            <div class="form-group" style="grid-column: span 2;">
-                <label>ملاحظات</label>
-                <textarea id="notes" placeholder="أي ملاحظات إضافية..."></textarea>
-            </div>
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="saveRecord()" id="btnSave">💾 حفظ السجل</button>
-            <button class="btn btn-secondary" onclick="resetForm()">↩️ إلغاء / جديد</button>
-        </div>
-    </div>
 
-    <!-- Data Table Card -->
-    <div class="card">
-        <div class="card-title">📋 السجلات</div>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="🔍 بحث في العميل، المشروع، الصنف..." oninput="filterTable()">
-            <span class="record-count" id="recordCount">0 سجل</span>
-        </div>
-        
-        <div class="loading-overlay" id="loader">
-            <div class="spinner"></div>
-            جاري تحميل البيانات...
-        </div>
-        
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>العميل</th>
-                        <th>المشروع</th>
-                        <th>الصنف</th>
-                        <th>الكمية</th>
-                        <th>الصافي</th>
-                        <th>التصنيع</th>
-                        <th>التوريد</th>
-                        <th>التسليم</th>
-                        <th>ملاحظات</th>
-                        <th style="width:100px">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr><td colspan="10" class="empty-state">لا توجد بيانات بعد</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('stock')">📦 إدارة المخزون</button>
+  <button class="tab" onclick="switchTab('projects')">👷 المشاريع والعملاء</button>
 </div>
 
+<!-- ==================== STOCK PANEL ==================== -->
+<div id="panel-stock" class="panel active">
+  <div class="card">
+    <div class="card-title" id="st-form-title">➕ إضافة صنف للمخزون</div>
+    <input type="hidden" id="st-id">
+    <div class="gf">
+      <div class="fg"><label>الصنف</label><input list="dl-items" id="st-item" placeholder="اختر أو اكتب..."><datalist id="dl-items"></datalist></div>
+      <div class="fg"><label>التصنيف</label><input id="st-cat" placeholder="مثال: حلوق، مسامير، ربر..."></div>
+      <div class="fg"><label>الوحدة</label><input id="st-unit" placeholder="مثال: قطعة، متر، علبة"></div>
+      <div class="fg"><label>الكمية الاجمالية</label><input type="number" id="st-total"></div>
+      <div class="fg"><label>الصافي بالمخزن</label><input type="number" id="st-net"></div>
+      <div class="fg"><label>الحد الأدنى للتنبيه</label><input type="number" id="st-min" placeholder="مثال: 10"></div>
+      <div class="fg" style="grid-column:span 2"><label>ملاحظات</label><textarea id="st-notes" rows="1"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p" onclick="saveStock()" id="st-save-btn">💾 حفظ</button>
+      <button class="btn btn-s" onclick="resetStock()">↩️ إلغاء</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 سجل المخزون</div>
+    <div class="search-bar"><input type="text" id="st-search" placeholder="🔍 بحث في الأصناف..." oninput="filterStock()"><span class="rc" id="st-count">0</span></div>
+    <div class="loader" id="st-loader"><div class="spinner"></div>جاري التحميل...</div>
+    <div class="tw"><table><thead><tr><th>الصنف</th><th>التصنيف</th><th>الوحدة</th><th>الإجمالي</th><th>الصافي</th><th>الحد الأدنى</th><th>الحالة</th><th>ملاحظات</th><th>إجراءات</th></tr></thead><tbody id="st-tbody"><tr><td colspan="9" class="empty">لا توجد بيانات</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ==================== PROJECTS PANEL ==================== -->
+<div id="panel-projects" class="panel">
+  <div class="card">
+    <div class="card-title" id="pj-form-title">➕ إضافة سجل مشروع</div>
+    <input type="hidden" id="pj-id">
+    <div class="gf">
+      <div class="fg"><label>العميل</label><input list="dl-clients" id="pj-client" placeholder="اختر أو اكتب..."><datalist id="dl-clients"></datalist></div>
+      <div class="fg"><label>المشروع</label><input list="dl-projects" id="pj-project" placeholder="اختر أو اكتب..."><datalist id="dl-projects"></datalist></div>
+      <div class="fg"><label>الصنف المستخدم</label><input list="dl-items-pj" id="pj-item" placeholder="اختر من المخزون..."><datalist id="dl-items-pj"></datalist></div>
+      <div class="fg"><label>الكمية المستخدمة</label><input type="text" id="pj-qty"></div>
+      <div class="fg"><label>مرحلة التصنيع</label><input list="dl-mfg" id="pj-mfg" placeholder="اختر..."><datalist id="dl-mfg"></datalist></div>
+      <div class="fg"><label>مرحلة التوريد</label><input list="dl-supply" id="pj-supply" placeholder="اختر..."><datalist id="dl-supply"></datalist></div>
+      <div class="fg"><label>مرحلة التسليم</label><input list="dl-delivery" id="pj-delivery" placeholder="اختر..."><datalist id="dl-delivery"></datalist></div>
+      <div class="fg" style="grid-column:span 2"><label>ملاحظات</label><textarea id="pj-notes" rows="1"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p" onclick="saveProject()" id="pj-save-btn">💾 حفظ</button>
+      <button class="btn btn-s" onclick="resetProject()">↩️ إلغاء</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 سجل المشاريع</div>
+    <div class="search-bar"><input type="text" id="pj-search" placeholder="🔍 بحث في العملاء والمشاريع..." oninput="filterProjects()"><span class="rc" id="pj-count">0</span></div>
+    <div class="loader" id="pj-loader"><div class="spinner"></div>جاري التحميل...</div>
+    <div class="tw"><table><thead><tr><th>العميل</th><th>المشروع</th><th>الصنف</th><th>الكمية</th><th>التصنيع</th><th>التوريد</th><th>التسليم</th><th>ملاحظات</th><th>إجراءات</th></tr></thead><tbody id="pj-tbody"><tr><td colspan="9" class="empty">لا توجد بيانات</td></tr></tbody></table></div>
+  </div>
+</div>
+
+</div>
 <script>
-    // ⚠️ PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6psUk9lHv0LiYo8r_w2ZuU48mtq2CHVFTsKEZOssRJp_jFdAdOGHjCfqb6J-JLb9R/exec';
+// ⚠️ REPLACE WITH YOUR WEB APP URL
+const API='https://script.google.com/macros/s/AKfycbztg-Tm4OkYRx22QNyBuUl-DCWZjIRoN6ZhOyZhf6G8uNjVnMWEe31hNg_A2H7n1MXx/exec';
+let stockData=[],projData=[];
 
-    let allRecords = [];
+document.addEventListener('DOMContentLoaded',()=>{loadStock();loadProjects();loadDropdowns()});
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadData();
-        loadDropdowns();
-    });
+// === TOAST ===
+function toast(msg,type='ok'){const c=document.getElementById('tc'),t=document.createElement('div');t.className=`toast toast-${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000)}
 
-    // ========== TOAST NOTIFICATION ==========
-    function showToast(message, type = 'success') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
+// === TABS ===
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
 
-    // ========== LOAD DATA ==========
-    async function loadData() {
-        document.getElementById('loader').style.display = 'block';
-        try {
-            const res = await fetch(API_URL);
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            allRecords = json.data || [];
-            renderTable(allRecords);
-        } catch (err) {
-            showToast('خطأ في تحميل البيانات: ' + err.message, 'error');
-        } finally {
-            document.getElementById('loader').style.display = 'none';
-        }
-    }
+// === DROPDOWNS ===
+async function loadDropdowns(){
+  try{
+    const r=await fetch(`${API}?type=dropdowns`),j=await r.json();if(!j.success)return;
+    const fill=(id,arr)=>{const el=document.getElementById(id);if(el&&arr)el.innerHTML=arr.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">`).join('')};
+    fill('dl-items',j.data.items);fill('dl-items-pj',j.data.items);
+    fill('dl-clients',j.data.clients);fill('dl-projects',j.data.projects);
+    fill('dl-mfg',j.data.mfgStages);fill('dl-supply',j.data.supplyStages);fill('dl-delivery',j.data.deliveryStages);
+  }catch(e){console.warn(e)}
+}
 
-    // ========== LOAD DROPDOWNS ==========
-    async function loadDropdowns() {
-        try {
-            const res = await fetch(`${API_URL}?type=dropdowns`);
-            const json = await res.json();
-            if (!json.success) return;
-            
-            const mapping = {
-                'dl-clients': json.data.clients,
-                'dl-projects': json.data.projects,
-                'dl-items': json.data.items,
-                'dl-mfg': json.data.mfgStages,
-                'dl-supply': json.data.supplyStages,
-                'dl-delivery': json.data.deliveryStages
-            };
-            
-            Object.entries(mapping).forEach(([id, values]) => {
-                const dl = document.getElementById(id);
-                if (dl && values) dl.innerHTML = values.map(v => `<option value="${v.replace(/"/g, '&quot;')}">`).join('');
-            });
-        } catch (err) { console.warn('Dropdown load failed:', err); }
-    }
+// ===================== STOCK CRUD =====================
+async function loadStock(){
+  document.getElementById('st-loader').style.display='block';
+  try{const r=await fetch(`${API}?type=stock`),j=await r.json();stockData=j.data||[];renderStock(stockData)}
+  catch(e){toast('خطأ تحميل المخزون','err')}
+  finally{document.getElementById('st-loader').style.display='none'}
+}
+function renderStock(data){
+  const tb=document.getElementById('st-tbody');
+  document.getElementById('st-count').textContent=`${data.length} صنف`;
+  if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty">لا توجد أصناف</td></tr>';return}
+  tb.innerHTML=data.map(r=>{
+    const net=Number(r['الصافي بالمخزن (Net Stock)'])||0;
+    const min=Number(r['الحد الأدنى (Min Level)'])||0;
+    const low=min>0&&net<=min;
+    const badge=low?'<span class="badge b-low">⚠️ منخفض</span>':'<span class="badge b-ok">متوفر</span>';
+    const safe=JSON.stringify(r).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    return `<tr>
+      <td class="iname">${r['الصنف (Item)']||'-'}</td>
+      <td>${r['التصنيف (Category)']||'-'}</td>
+      <td>${r['الوحدة (Unit)']||'-'}</td>
+      <td>${r['الكمية الاجمالية (Total Qty)']||'-'}</td>
+      <td>${net}</td>
+      <td>${min||'-'}</td>
+      <td>${badge}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r['ملاحظات (Notes)']||''}">${r['ملاحظات (Notes)']||'-'}</td>
+      <td style="white-space:nowrap"><button class="btn-ed" onclick='editStock(${safe})'>✏️</button> <button class="btn-de" onclick="delStock('${r.ID}')">🗑️</button></td>
+    </tr>`}).join('');
+}
+function filterStock(){const q=document.getElementById('st-search').value.toLowerCase();renderStock(q?stockData.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q))):stockData)}
+async function saveStock(){
+  const id=document.getElementById('st-id').value;
+  const p={target:'stock',action:id?'update':'create',id:id||null,
+    item:document.getElementById('st-item').value.trim(),cat:document.getElementById('st-cat').value.trim(),
+    unit:document.getElementById('st-unit').value.trim(),totalQty:document.getElementById('st-total').value,
+    netStock:document.getElementById('st-net').value,minLevel:document.getElementById('st-min').value,
+    notes:document.getElementById('st-notes').value.trim()};
+  if(!p.item){toast('يرجى إدخال اسم الصنف','err');return}
+  document.getElementById('st-save-btn').disabled=true;
+  try{const r=await fetch(API,{method:'POST',body:JSON.stringify(p)}),j=await r.json();
+    if(!j.success)throw new Error(j.error);toast(j.message);resetStock();await loadStock();await loadDropdowns()}
+  catch(e){toast('فشل: '+e.message,'err')}
+  finally{document.getElementById('st-save-btn').disabled=false}
+}
+function editStock(r){
+  document.getElementById('st-id').value=r.ID;
+  document.getElementById('st-item').value=r['الصنف (Item)']||'';
+  document.getElementById('st-cat').value=r['التصنيف (Category)']||'';
+  document.getElementById('st-unit').value=r['الوحدة (Unit)']||'';
+  document.getElementById('st-total').value=r['الكمية الاجمالية (Total Qty)']||'';
+  document.getElementById('st-net').value=r['الصافي بالمخزن (Net Stock)']||'';
+  document.getElementById('st-min').value=r['الحد الأدنى (Min Level)']||'';
+  document.getElementById('st-notes').value=r['ملاحظات (Notes)']||'';
+  document.getElementById('st-form-title').textContent='✏️ تعديل صنف';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function delStock(id){if(!confirm('حذف هذا الصنف؟'))return;
+  try{const r=await fetch(API,{method:'POST',body:JSON.stringify({target:'stock',action:'delete',id})}),j=await r.json();
+    if(!j.success)throw new Error(j.error);toast(j.message);await loadStock()}catch(e){toast('فشل الحذف','err')}}
+function resetStock(){
+  document.getElementById('st-id').value='';
+  ['st-item','st-cat','st-unit','st-total','st-net','st-min','st-notes'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('st-form-title').textContent='➕ إضافة صنف للمخزون';
+}
 
-    // ========== RENDER TABLE ==========
-    function renderTable(records) {
-        const tbody = document.getElementById('tableBody');
-        document.getElementById('recordCount').textContent = `${records.length} سجل`;
-        
-        if (!records.length) {
-            tbody.innerHTML = '<tr><td colspan="10" class="empty-state">لا توجد نتائج مطابقة</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = records.map(row => {
-            const delivery = row['مرحلة تسليم العميل (Delivery)'] || '';
-            const notes = row['ملاحظات (Notes)'] || '';
-            let badgeClass = 'badge-pending';
-            if (delivery.includes('تم')) badgeClass = 'badge-done';
-            else if (notes || delivery.includes('ملاحظات')) badgeClass = 'badge-notes';
-            
-            const safeRow = JSON.stringify(row).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            
-            return `<tr>
-                <td>${row['العميل (Client)'] || '-'}</td>
-                <td>${row['المشروع (Project)'] || '-'}</td>
-                <td class="item-name">${row['مخزون الالمنيوم (Item)'] || '-'}</td>
-                <td>${row['الكمية الاجمالية (Total Qty)'] || '-'}</td>
-                <td>${row['الصافي بالمخزن (Net Stock)'] || '-'}</td>
-                <td>${row['مراحل التصنيع (Mfg Stage)'] || '-'}</td>
-                <td>${row['مراحل التوريد (Supply Stage)'] || '-'}</td>
-                <td><span class="badge ${badgeClass}">${delivery || '-'}</span></td>
-                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${notes}">${notes || '-'}</td>
-                <td style="white-space:nowrap">
-                    <button class="btn-edit-sm" onclick='editRecord(${safeRow})'>✏️</button>
-                    <button class="btn-danger-sm" onclick="deleteRecord('${row.ID}')">🗑️</button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    // ========== SEARCH / FILTER ==========
-    function filterTable() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
-        if (!q) { renderTable(allRecords); return; }
-        const filtered = allRecords.filter(r => 
-            Object.values(r).some(v => String(v).toLowerCase().includes(q))
-        );
-        renderTable(filtered);
-    }
-
-    // ========== SAVE (CREATE / UPDATE) ==========
-    async function saveRecord() {
-        const id = document.getElementById('recordId').value;
-        const payload = {
-            action: id ? 'update' : 'create',
-            id: id || null,
-            client: document.getElementById('client').value.trim(),
-            project: document.getElementById('project').value.trim(),
-            item: document.getElementById('item').value.trim(),
-            totalQty: document.getElementById('totalQty').value.trim(),
-            netStock: document.getElementById('netStock').value.trim(),
-            mfgStage: document.getElementById('mfgStage').value.trim(),
-            supplyStage: document.getElementById('supplyStage').value.trim(),
-            deliveryStage: document.getElementById('deliveryStage').value.trim(),
-            notes: document.getElementById('notes').value.trim()
-        };
-
-        if (!payload.item && !payload.client) {
-            showToast('يرجى إدخال العميل أو الصنف على الأقل', 'error');
-            return;
-        }
-
-        document.getElementById('btnSave').disabled = true;
-        document.getElementById('btnSave').textContent = '⏳ جاري الحفظ...';
-        
-        try {
-            const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            
-            showToast(json.message, 'success');
-            resetForm();
-            await loadData();
-            await loadDropdowns(); // Refresh dropdowns with new values
-        } catch (err) {
-            showToast('فشل الحفظ: ' + err.message, 'error');
-        } finally {
-            document.getElementById('btnSave').disabled = false;
-            document.getElementById('btnSave').textContent = '💾 حفظ السجل';
-        }
-    }
-
-    // ========== EDIT ==========
-    function editRecord(row) {
-        document.getElementById('recordId').value = row.ID;
-        document.getElementById('client').value = row['العميل (Client)'] || '';
-        document.getElementById('project').value = row['المشروع (Project)'] || '';
-        document.getElementById('item').value = row['مخزون الالمنيوم (Item)'] || '';
-        document.getElementById('totalQty').value = row['الكمية الاجمالية (Total Qty)'] || '';
-        document.getElementById('netStock').value = row['الصافي بالمخزن (Net Stock)'] || '';
-        document.getElementById('mfgStage').value = row['مراحل التصنيع (Mfg Stage)'] || '';
-        document.getElementById('supplyStage').value = row['مراحل التوريد (Supply Stage)'] || '';
-        document.getElementById('deliveryStage').value = row['مرحلة تسليم العميل (Delivery)'] || '';
-        document.getElementById('notes').value = row['ملاحظات (Notes)'] || '';
-        
-        document.getElementById('formTitle').textContent = '✏️ تعديل السجل';
-        document.getElementById('btnSave').textContent = '💾 تحديث السجل';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ========== DELETE ==========
-    async function deleteRecord(id) {
-        if (!confirm('هل أنت متأكد من حذف هذا السجل؟')) return;
-        try {
-            const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', id }) });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            showToast(json.message, 'success');
-            await loadData();
-        } catch (err) {
-            showToast('فشل الحذف: ' + err.message, 'error');
-        }
-    }
-
-    // ========== RESET FORM ==========
-    function resetForm() {
-        document.getElementById('recordId').value = '';
-        ['client','project','item','totalQty','netStock','mfgStage','supplyStage','deliveryStage','notes']
-            .forEach(id => document.getElementById(id).value = '');
-        document.getElementById('formTitle').textContent = '➕ إضافة سجل جديد';
-        document.getElementById('btnSave').textContent = '💾 حفظ السجل';
-    }
-</script>
-</body>
-</html>
+// ===================== PROJECTS CRUD =====================
+async function loadProjects(){
+  document.getElementById('pj-loader').style.display='block';
+  try{const r=await fetch(`${API}?type=projects`),j=await r.json();projData=j.data||[];renderProjects(projData)}
+  catch(e){toast('خطأ تحميل المشاريع','err')}
+  finally{document.getElementById('pj-loader').style.display='none'}
+}
+function renderProjects(data){
+  const tb=document.getElementById('pj-tbody');
+  document.getElementById('pj-count').textContent=`${data.length} سجل`;
+  if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty">لا توجد مشاريع</td></tr>';return}
+  tb.innerHTML=data.map(r=>{
+    const del=r['مرحلة التسليم (Delivery)']||'';const nt=r['ملاحظات (Notes)']||'';
+    let bc='b-gray';if(del.includes('تم'))bc='b-ok';else if(nt||del.includes('ملاحظات'))bc='b-warn';
+    const safe=JSON.stringify(r).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    return `<tr>
+      <td>${r['العميل (Client)']||'-'}</td><td>${r['المشروع (Project)']||'-'}</td>
+      <td class="iname">${r['الصنف المستخدم (Item)']||'-'}</td><td>${r['الكمية المستخدمة (Qty)']||'-'}</td>
+      <td>${r['مرحلة التصنيع (Mfg Stage)']||'-'}</td><td>${r['مرحلة التوريد (Supply Stage)']||'-'}</td>
+      <td><span class="badge ${bc}">${del||'-'}</span></td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${nt}">${nt||'-'}</td>
+      <td style="white-space:nowrap"><button class="btn-ed" onclick='editProject(${safe})'>✏️</button> <button class="btn-de" onclick="delProject('${r.ID}')">🗑️</button></td>
+    </tr>`}).join('');
+}
+function filterProjects(){const q=document.getElementById('pj-search').value.toLowerCase();renderProjects(q?projData.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q))):projData)}
+async function saveProject(){
+  const id=document.getElementById('pj-id').value;
+  const p={target:'projects',action:id?'update':'create',id:id||null,
+    client:document.getElementById('pj-client').value.trim(),project:document.getElementById('pj-project').value.trim(),
+    item:document.getElementById('pj-item').value.trim(),qty:document.getElementById('pj-qty').value.trim(),
+    mfgStage:document.getElementById('pj-mfg').value.trim(),supplyStage:document.getElementById('pj-supply').value.trim(),
+    deliveryStage:document.getElementById('pj-delivery').value.trim(),notes:document.getElementById('pj-notes').value.trim()};
+  if(!p.client&&!p.item){toast('يرجى إدخال العميل أو الصنف','err');return}
+  document.getElementById('pj-save-btn').disabled=true;
+  try{const r=await fetch(API,{method:'POST',body:JSON.stringify(p)}),j=await r.json();
+    if(!j.success)throw new Error(j.error);toast(j.message);resetProject();await loadProjects();await loadDropdowns()}
+  catch(e){toast('فشل: '+e.message,'err')}
+  finally{document.getElementById('pj-save-btn').disabled=false}
+}
+function editProject(r){
+  document.getElementById('pj-id').value=r.ID;
+  document.getElementById('pj-client').value=r['العميل (Client)']||'';
+  document.getElementById('pj-project').value=r['المشروع (Project)']||'';
+  document.getElementById('pj-item').value=r['الصنف المستخدم (Item)']||'';
+  document.getElementById('pj-qty').value=r['الكمية المستخدمة (Qty)']||'';
+  document.getElementById('pj-mfg').value=r['مرحلة التصنيع (Mfg Stage)']||'';
+  document.getElementById('pj-supply').value=r['مرحلة التوريد (Supply Stage)']||'';
+  document.getElementById('pj-delivery').value=r['مرحلة التسليم (Delivery)']||'';
+  document.getElementById('pj-notes').value=r['ملاحظات (Notes)']||'';
+  document.getElementById('pj-form-title
