@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الألمنيوم | Aluminum System</title>
+    <style>
+        :root { --primary: #1a73e8; --danger: #d93025; --bg: #f8f9fa; --card: #ffffff; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #333; padding: 20px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; color: var(--primary); }
+        
+        /* Form Styling */
+        .form-card { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
+        
+        .btn-group { margin-top: 15px; display: flex; gap: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-cancel { background: #666; color: white; }
+        .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
+        .btn-edit { background: #f9ab00; color: white; padding: 5px 10px; font-size: 12px; margin-left: 5px;}
+        
+        /* Table Styling */
+        .table-container { overflow-x: auto; background: var(--card); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f1f3f4; position: sticky; top: 0; }
+        tr:hover { background: #f8f9fa; }
+        
+        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .status-done { background: #e6f4ea; color: #1e8e3e; }
+        .status-pending { background: #fef7e0; color: #b06000; }
+        
+        #loading { text-align: center; padding: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏭 نظام العميل والأداء والمخزون</h1>
+        
+        <!-- INPUT FORM -->
+        <div class="form-card">
+            <input type="hidden" id="recordId">
+            <div class="grid-form">
+                <div><label>العميل</label><input type="text" id="client"></div>
+                <div><label>المشروع</label><input type="text" id="project"></div>
+                <div><label>مخزون الالمنيوم</label><input type="text" id="item"></div>
+                <div><label>الكمية الاجمالية</label><input type="text" id="totalQty"></div>
+                <div><label>الصافي بالمخزن</label><input type="text" id="netStock"></div>
+                <div><label>مرحلة التصنيع</label><input type="text" id="mfgStage"></div>
+                <div><label>مرحلة التوريد</label><input type="text" id="supplyStage"></div>
+                <div><label>مرحلة التسليم</label><input type="text" id="deliveryStage"></div>
+                <div style="grid-column: span 2;"><label>ملاحظات</label><textarea id="notes" rows="1"></textarea></div>
+            </div>
+            <div class="btn-group">
+                <button class="btn-save" onclick="saveRecord()">💾 حفظ</button>
+                <button class="btn-cancel" onclick="resetForm()">🔄 إلغاء / جديد</button>
+            </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div id="loading">⏳ جاري تحميل البيانات...</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>العميل</th><th>المشروع</th><th>الصنف</th>
+                        <th>الكمية</th><th>الصافي</th>
+                        <th>التصنيع</th><th>التوريد</th><th>التسليم</th>
+                        <th>ملاحظات</th><th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+    // ⚠️ REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyviPVyMYhrtOtVejbepeXWvek29yzH0eLxFa7dvSMSDTQe47TvjNhMI_aou2fvnpVl/exec';
+
+    // Load data on page start
+    document.addEventListener('DOMContentLoaded', loadData);
+
+    async function loadData() {
+        document.getElementById('loading').style.display = 'block';
+        try {
+            const res = await fetch(API_URL);
+            const json = await res.json();
+            renderTable(json.data);
+        } catch (err) {
+            alert('خطأ في الاتصال: ' + err.message);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('dataTableBody');
+        tbody.innerHTML = '';
+        
+        // Sort: Projects first, then stock items
+        data.sort((a,b) => (b['العميل (Client)'] || '').localeCompare(a['العميل (Client)'] || ''));
+        
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            const delivery = row['مرحلة تسليم العميل (Delivery)'] || '';
+            const badgeClass = delivery.includes('تم') ? 'status-done' : 'status-pending';
+            
+            tr.innerHTML = `
+                <td>${row['العميل (Client)'] || '-'}</td>
+                <td>${row['المشروع (Project)'] || '-'}</td>
+                <td><strong>${row['مخزون الالمنيوم (Item)'] || ''}</strong></td>
+                <td>${row['الكمية الاجمالية (Total Qty)'] || ''}</td>
+                <td>${row['الصافي بالمخزن (Net Stock)'] || ''}</td>
+                <td>${row['مراحل التصنيع (Mfg Stage)'] || ''}</td>
+                <td>${row['مراحل التوريد (Supply Stage)'] || ''}</td>
+                <td><span class="status-badge ${badgeClass}">${delivery || '-'}</span></td>
+                <td>${row['ملاحظات (Notes)'] || ''}</td>
+                <td>
+                    <button class="btn-edit" onclick='editRecord(${JSON.stringify(row)})'>✏️</button>
+                    <button class="btn-delete" onclick="deleteRecord('${row.ID}')">🗑️</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function saveRecord() {
+        const id = document.getElementById('recordId').value;
+        const payload = {
+            action: id ? 'update' : 'create',
+            id: id || null,
+            client: document.getElementById('client').value,
+            project: document.getElementById('project').value,
+            item: document.getElementById('item').value,
+            totalQty: document.getElementById('totalQty').value,
+            netStock: document.getElementById('netStock').value,
+            mfgStage: document.getElementById('mfgStage').value,
+            supplyStage: document.getElementById('supplyStage').value,
+            deliveryStage: document.getElementById('deliveryStage').value,
+            notes: document.getElementById('notes').value
+        };
+
+        try {
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+            resetForm();
+            loadData();
+        } catch (err) {
+            alert('فشل الحفظ: ' + err.message);
+        }
+    }
+
+    function editRecord(row) {
+        document.getElementById('recordId').value = row.ID;
+        document.getElementById('client').value = row['العميل (Client)'] || '';
+        document.getElementById('project').value = row['المشروع (Project)'] || '';
+        document.getElementById('item').value = row['مخزون الالمنيوم (Item)'] || '';
+        document.getElementById('totalQty').value = row['الكمية الاجمالية (Total Qty)'] || '';
+        document.getElementById('netStock').value = row['الصافي بالمخزن (Net Stock)'] || '';
+        document.getElementById('mfgStage').value = row['مراحل التصنيع (Mfg Stage)'] || '';
+        document.getElementById('supplyStage').value = row['مراحل التوريد (Supply Stage)'] || '';
+        document.getElementById('deliveryStage').value = row['مرحلة تسليم العميل (Delivery)'] || '';
+        document.getElementById('notes').value = row['ملاحظات (Notes)'] || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteRecord(id) {
+        if (!confirm('هل أنت متأكد من الحذف؟')) return;
+        try {
+            await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: 'delete', id: id }) 
+            });
+            loadData();
+        } catch (err) {
+            alert('فشل الحذف: ' + err.message);
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('recordId').value = '';
+        ['client','project','item','totalQty','netStock','mfgStage','supplyStage','deliveryStage','notes']
+            .forEach(id => document.getElementById(id).value = '');
+    }
+</script>
+</body>
+</html>
