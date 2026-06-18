@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نظام الصفوة للألمنيوم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -12,27 +13,21 @@ body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:40px}
 .header-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .header h1{font-size:20px;font-weight:700}
 .container{max-width:1280px;margin:0 auto;padding:0 20px}
-
-/* Tabs */
 .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--card);padding:4px;border-radius:var(--rad);box-shadow:var(--sh);border:1px solid var(--brd)}
 .tab{flex:1;padding:12px;text-align:center;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:600;border-radius:8px;transition:.2s;color:#64748b}
 .tab.active{background:var(--pri);color:#fff;box-shadow:0 2px 4px rgba(15,118,110,.3)}
 .tab:hover:not(.active){background:#f1f5f9}
 .panel{display:none}.panel.active{display:block}
-
-/* Toast */
 .toast-c{position:fixed;top:20px;left:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
 .toast{padding:12px 20px;border-radius:var(--rad);color:#fff;font-size:14px;font-weight:500;animation:slideIn .3s ease,fadeOut .3s ease 2.7s forwards;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast-ok{background:var(--ok)}.toast-err{background:var(--danger)}
 @keyframes slideIn{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes fadeOut{to{opacity:0;transform:translateY(-10px)}}
-
-/* Cards & Forms */
 .card{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);padding:20px;margin-bottom:16px;border:1px solid var(--brd)}
 .card-title{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--pri)}
 .gf{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .fg label{display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#475569}
-.fg input,.fg textarea,.fg select{width:100%;padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;transition:.2s;background:#fafbfc;outline:none}
+.fg input,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;transition:.2s;background:#fafbfc;outline:none}
 .fg input:focus,.fg textarea:focus{border-color:var(--pri);background:#fff;box-shadow:0 0 0 3px var(--pri-l)}
 .btn-row{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
 .btn{padding:9px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:5px}
@@ -43,8 +38,6 @@ body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:40px}
 .btn-de:hover{background:var(--danger);color:#fff}
 .btn-ed{background:#fffbeb;color:var(--warn);border:1px solid #fde68a;padding:5px 10px;font-size:11px;border-radius:6px}
 .btn-ed:hover{background:var(--warn);color:#fff}
-
-/* Search & Table */
 .search-bar{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
 .search-bar input{flex:1;min-width:180px;padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;outline:none}
 .search-bar input:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l)}
@@ -70,14 +63,12 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f8fafc}
 <div class="toast-c" id="tc"></div>
 <div class="header"><div class="header-inner"><h1>🏭 نظام الصفوة للألمنيوم</h1><span style="background:rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:11px">مخزون · مشاريع · تصنيع</span></div></div>
 <div class="container">
-
-<!-- TABS -->
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('stock')">📦 إدارة المخزون</button>
-  <button class="tab" onclick="switchTab('projects')">👷 المشاريع والعملاء</button>
+  <button class="tab active" onclick="switchTab('stock',this)">📦 إدارة المخزون</button>
+  <button class="tab" onclick="switchTab('projects',this)">👷 المشاريع والعملاء</button>
 </div>
 
-<!-- ==================== STOCK PANEL ==================== -->
+<!-- STOCK PANEL -->
 <div id="panel-stock" class="panel active">
   <div class="card">
     <div class="card-title" id="st-form-title">➕ إضافة صنف للمخزون</div>
@@ -104,7 +95,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f8fafc}
   </div>
 </div>
 
-<!-- ==================== PROJECTS PANEL ==================== -->
+<!-- PROJECTS PANEL -->
 <div id="panel-projects" class="panel">
   <div class="card">
     <div class="card-title" id="pj-form-title">➕ إضافة سجل مشروع</div>
@@ -131,149 +122,263 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f8fafc}
     <div class="tw"><table><thead><tr><th>العميل</th><th>المشروع</th><th>الصنف</th><th>الكمية</th><th>التصنيع</th><th>التوريد</th><th>التسليم</th><th>ملاحظات</th><th>إجراءات</th></tr></thead><tbody id="pj-tbody"><tr><td colspan="9" class="empty">لا توجد بيانات</td></tr></tbody></table></div>
   </div>
 </div>
-
 </div>
-<script>
-// ⚠️ REPLACE WITH YOUR WEB APP URL
-const API='https://script.google.com/macros/s/AKfycbztg-Tm4OkYRx22QNyBuUl-DCWZjIRoN6ZhOyZhf6G8uNjVnMWEe31hNg_A2H7n1MXx/exec';
-let stockData=[],projData=[];
 
-document.addEventListener('DOMContentLoaded',()=>{loadStock();loadProjects();loadDropdowns()});
+<script>
+// ⚠️ REPLACE WITH YOUR ACTUAL GOOGLE APPS SCRIPT WEB APP URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbztg-Tm4OkYRx22QNyBuUl-DCWZjIRoN6ZhOyZhf6G8uNjVnMWEe31hNg_A2H7n1MXx/exec';
+
+let stockData = [], projData = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadDropdowns();
+  loadStock();
+  loadProjects();
+});
 
 // === TOAST ===
-function toast(msg,type='ok'){const c=document.getElementById('tc'),t=document.createElement('div');t.className=`toast toast-${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000)}
+function toast(msg, type = 'ok') {
+  const c = document.getElementById('tc');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
 
 // === TABS ===
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  event.target.classList.add('active');
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
   document.getElementById(`panel-${tab}`).classList.add('active');
 }
 
-// === DROPDOWNS ===
-async function loadDropdowns(){
-  try{
-    const r=await fetch(`${API}?type=dropdowns`),j=await r.json();if(!j.success)return;
-    const fill=(id,arr)=>{const el=document.getElementById(id);if(el&&arr)el.innerHTML=arr.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">`).join('')};
-    fill('dl-items',j.data.items);fill('dl-items-pj',j.data.items);
-    fill('dl-clients',j.data.clients);fill('dl-projects',j.data.projects);
-    fill('dl-mfg',j.data.mfgStages);fill('dl-supply',j.data.supplyStages);fill('dl-delivery',j.data.deliveryStages);
-  }catch(e){console.warn(e)}
+// === DROPDOWNS (FIXED: redirect follow for GAS CORS) ===
+async function loadDropdowns() {
+  try {
+    const res = await fetch(`${API_URL}?type=dropdowns`, { redirect: 'follow' });
+    const json = await res.json();
+    if (!json.success) return;
+
+    const fill = (id, arr) => {
+      const el = document.getElementById(id);
+      if (el && arr) el.innerHTML = arr.map(v => `<option value="${String(v).replace(/"/g, '&quot;')}">`).join('');
+    };
+
+    fill('dl-items', json.data.items);
+    fill('dl-items-pj', json.data.items);
+    fill('dl-clients', json.data.clients);
+    fill('dl-projects', json.data.projects);
+    fill('dl-mfg', json.data.mfgStages);
+    fill('dl-supply', json.data.supplyStages);
+    fill('dl-delivery', json.data.deliveryStages);
+  } catch (e) {
+    console.error('Dropdown fetch failed:', e);
+    toast('فشل تحميل القوائم المنسدلة', 'err');
+  }
 }
 
-// ===================== STOCK CRUD =====================
-async function loadStock(){
-  document.getElementById('st-loader').style.display='block';
-  try{const r=await fetch(`${API}?type=stock`),j=await r.json();stockData=j.data||[];renderStock(stockData)}
-  catch(e){toast('خطأ تحميل المخزون','err')}
-  finally{document.getElementById('st-loader').style.display='none'}
-}
-function renderStock(data){
-  const tb=document.getElementById('st-tbody');
-  document.getElementById('st-count').textContent=`${data.length} صنف`;
-  if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty">لا توجد أصناف</td></tr>';return}
-  tb.innerHTML=data.map(r=>{
-    const net=Number(r['الصافي بالمخزن (Net Stock)'])||0;
-    const min=Number(r['الحد الأدنى (Min Level)'])||0;
-    const low=min>0&&net<=min;
-    const badge=low?'<span class="badge b-low">⚠️ منخفض</span>':'<span class="badge b-ok">متوفر</span>';
-    const safe=JSON.stringify(r).replace(/'/g,"\\'").replace(/"/g,'&quot;');
-    return `<tr>
-      <td class="iname">${r['الصنف (Item)']||'-'}</td>
-      <td>${r['التصنيف (Category)']||'-'}</td>
-      <td>${r['الوحدة (Unit)']||'-'}</td>
-      <td>${r['الكمية الاجمالية (Total Qty)']||'-'}</td>
-      <td>${net}</td>
-      <td>${min||'-'}</td>
-      <td>${badge}</td>
-      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r['ملاحظات (Notes)']||''}">${r['ملاحظات (Notes)']||'-'}</td>
-      <td style="white-space:nowrap"><button class="btn-ed" onclick='editStock(${safe})'>✏️</button> <button class="btn-de" onclick="delStock('${r.ID}')">🗑️</button></td>
-    </tr>`}).join('');
-}
-function filterStock(){const q=document.getElementById('st-search').value.toLowerCase();renderStock(q?stockData.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q))):stockData)}
-async function saveStock(){
-  const id=document.getElementById('st-id').value;
-  const p={target:'stock',action:id?'update':'create',id:id||null,
-    item:document.getElementById('st-item').value.trim(),cat:document.getElementById('st-cat').value.trim(),
-    unit:document.getElementById('st-unit').value.trim(),totalQty:document.getElementById('st-total').value,
-    netStock:document.getElementById('st-net').value,minLevel:document.getElementById('st-min').value,
-    notes:document.getElementById('st-notes').value.trim()};
-  if(!p.item){toast('يرجى إدخال اسم الصنف','err');return}
-  document.getElementById('st-save-btn').disabled=true;
-  try{const r=await fetch(API,{method:'POST',body:JSON.stringify(p)}),j=await r.json();
-    if(!j.success)throw new Error(j.error);toast(j.message);resetStock();await loadStock();await loadDropdowns()}
-  catch(e){toast('فشل: '+e.message,'err')}
-  finally{document.getElementById('st-save-btn').disabled=false}
-}
-function editStock(r){
-  document.getElementById('st-id').value=r.ID;
-  document.getElementById('st-item').value=r['الصنف (Item)']||'';
-  document.getElementById('st-cat').value=r['التصنيف (Category)']||'';
-  document.getElementById('st-unit').value=r['الوحدة (Unit)']||'';
-  document.getElementById('st-total').value=r['الكمية الاجمالية (Total Qty)']||'';
-  document.getElementById('st-net').value=r['الصافي بالمخزن (Net Stock)']||'';
-  document.getElementById('st-min').value=r['الحد الأدنى (Min Level)']||'';
-  document.getElementById('st-notes').value=r['ملاحظات (Notes)']||'';
-  document.getElementById('st-form-title').textContent='✏️ تعديل صنف';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-async function delStock(id){if(!confirm('حذف هذا الصنف؟'))return;
-  try{const r=await fetch(API,{method:'POST',body:JSON.stringify({target:'stock',action:'delete',id})}),j=await r.json();
-    if(!j.success)throw new Error(j.error);toast(j.message);await loadStock()}catch(e){toast('فشل الحذف','err')}}
-function resetStock(){
-  document.getElementById('st-id').value='';
-  ['st-item','st-cat','st-unit','st-total','st-net','st-min','st-notes'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('st-form-title').textContent='➕ إضافة صنف للمخزون';
+// ===================== STOCK =====================
+async function loadStock() {
+  document.getElementById('st-loader').style.display = 'block';
+  try {
+    const res = await fetch(`${API_URL}?type=stock`, { redirect: 'follow' });
+    const json = await res.json();
+    stockData = json.data || [];
+    renderStock(stockData);
+  } catch (e) {
+    toast('خطأ تحميل المخزون: ' + e.message, 'err');
+  } finally {
+    document.getElementById('st-loader').style.display = 'none';
+  }
 }
 
-// ===================== PROJECTS CRUD =====================
-async function loadProjects(){
-  document.getElementById('pj-loader').style.display='block';
-  try{const r=await fetch(`${API}?type=projects`),j=await r.json();projData=j.data||[];renderProjects(projData)}
-  catch(e){toast('خطأ تحميل المشاريع','err')}
-  finally{document.getElementById('pj-loader').style.display='none'}
-}
-function renderProjects(data){
-  const tb=document.getElementById('pj-tbody');
-  document.getElementById('pj-count').textContent=`${data.length} سجل`;
-  if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty">لا توجد مشاريع</td></tr>';return}
-  tb.innerHTML=data.map(r=>{
-    const del=r['مرحلة التسليم (Delivery)']||'';const nt=r['ملاحظات (Notes)']||'';
-    let bc='b-gray';if(del.includes('تم'))bc='b-ok';else if(nt||del.includes('ملاحظات'))bc='b-warn';
-    const safe=JSON.stringify(r).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+function renderStock(data) {
+  const tb = document.getElementById('st-tbody');
+  document.getElementById('st-count').textContent = `${data.length} صنف`;
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="9" class="empty">لا توجد أصناف</td></tr>'; return; }
+  tb.innerHTML = data.map(r => {
+    const net = Number(r['الصافي بالمخزن (Net Stock)']) || 0;
+    const min = Number(r['الحد الأدنى (Min Level)']) || 0;
+    const low = min > 0 && net <= min;
+    const badge = low ? '<span class="badge b-low">⚠️ منخفض</span>' : '<span class="badge b-ok">متوفر</span>';
+    const safe = JSON.stringify(r).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
     return `<tr>
-      <td>${r['العميل (Client)']||'-'}</td><td>${r['المشروع (Project)']||'-'}</td>
-      <td class="iname">${r['الصنف المستخدم (Item)']||'-'}</td><td>${r['الكمية المستخدمة (Qty)']||'-'}</td>
-      <td>${r['مرحلة التصنيع (Mfg Stage)']||'-'}</td><td>${r['مرحلة التوريد (Supply Stage)']||'-'}</td>
-      <td><span class="badge ${bc}">${del||'-'}</span></td>
-      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${nt}">${nt||'-'}</td>
-      <td style="white-space:nowrap"><button class="btn-ed" onclick='editProject(${safe})'>✏️</button> <button class="btn-de" onclick="delProject('${r.ID}')">🗑️</button></td>
-    </tr>`}).join('');
+      <td class="iname">${r['الصنف (Item)'] || '-'}</td>
+      <td>${r['التصنيف (Category)'] || '-'}</td>
+      <td>${r['الوحدة (Unit)'] || '-'}</td>
+      <td>${r['الكمية الاجمالية (Total Qty)'] || '-'}</td>
+      <td>${net}</td><td>${min || '-'}</td><td>${badge}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r['ملاحظات (Notes)'] || ''}">${r['ملاحظات (Notes)'] || '-'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-ed" onclick='editStock(${safe})'>✏️</button>
+        <button class="btn-de" onclick="delStock('${r.ID}')">🗑️</button>
+      </td></tr>`;
+  }).join('');
 }
-function filterProjects(){const q=document.getElementById('pj-search').value.toLowerCase();renderProjects(q?projData.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q))):projData)}
-async function saveProject(){
-  const id=document.getElementById('pj-id').value;
-  const p={target:'projects',action:id?'update':'create',id:id||null,
-    client:document.getElementById('pj-client').value.trim(),project:document.getElementById('pj-project').value.trim(),
-    item:document.getElementById('pj-item').value.trim(),qty:document.getElementById('pj-qty').value.trim(),
-    mfgStage:document.getElementById('pj-mfg').value.trim(),supplyStage:document.getElementById('pj-supply').value.trim(),
-    deliveryStage:document.getElementById('pj-delivery').value.trim(),notes:document.getElementById('pj-notes').value.trim()};
-  if(!p.client&&!p.item){toast('يرجى إدخال العميل أو الصنف','err');return}
-  document.getElementById('pj-save-btn').disabled=true;
-  try{const r=await fetch(API,{method:'POST',body:JSON.stringify(p)}),j=await r.json();
-    if(!j.success)throw new Error(j.error);toast(j.message);resetProject();await loadProjects();await loadDropdowns()}
-  catch(e){toast('فشل: '+e.message,'err')}
-  finally{document.getElementById('pj-save-btn').disabled=false}
+
+function filterStock() {
+  const q = document.getElementById('st-search').value.toLowerCase();
+  renderStock(q ? stockData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))) : stockData);
 }
-function editProject(r){
-  document.getElementById('pj-id').value=r.ID;
-  document.getElementById('pj-client').value=r['العميل (Client)']||'';
-  document.getElementById('pj-project').value=r['المشروع (Project)']||'';
-  document.getElementById('pj-item').value=r['الصنف المستخدم (Item)']||'';
-  document.getElementById('pj-qty').value=r['الكمية المستخدمة (Qty)']||'';
-  document.getElementById('pj-mfg').value=r['مرحلة التصنيع (Mfg Stage)']||'';
-  document.getElementById('pj-supply').value=r['مرحلة التوريد (Supply Stage)']||'';
-  document.getElementById('pj-delivery').value=r['مرحلة التسليم (Delivery)']||'';
-  document.getElementById('pj-notes').value=r['ملاحظات (Notes)']||'';
-  document.getElementById('pj-form-title
+
+async function saveStock() {
+  const id = document.getElementById('st-id').value;
+  const payload = {
+    target: 'stock', action: id ? 'update' : 'create', id: id || null,
+    item: document.getElementById('st-item').value.trim(),
+    category: document.getElementById('st-cat').value.trim(),
+    unit: document.getElementById('st-unit').value.trim(),
+    totalQty: document.getElementById('st-total').value,
+    netStock: document.getElementById('st-net').value,
+    minLevel: document.getElementById('st-min').value,
+    notes: document.getElementById('st-notes').value.trim()
+  };
+  if (!payload.item) { toast('يرجى إدخال اسم الصنف', 'err'); return; }
+
+  const btn = document.getElementById('st-save-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    toast(json.message); resetStock(); await loadStock(); await loadDropdowns();
+  } catch (e) { toast('فشل الحفظ: ' + e.message, 'err'); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ'; }
+}
+
+function editStock(r) {
+  document.getElementById('st-id').value = r.ID;
+  document.getElementById('st-item').value = r['الصنف (Item)'] || '';
+  document.getElementById('st-cat').value = r['التصنيف (Category)'] || '';
+  document.getElementById('st-unit').value = r['الوحدة (Unit)'] || '';
+  document.getElementById('st-total').value = r['الكمية الاجمالية (Total Qty)'] || '';
+  document.getElementById('st-net').value = r['الصافي بالمخزن (Net Stock)'] || '';
+  document.getElementById('st-min').value = r['الحد الأدنى (Min Level)'] || '';
+  document.getElementById('st-notes').value = r['ملاحظات (Notes)'] || '';
+  document.getElementById('st-form-title').textContent = '✏️ تعديل صنف';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function delStock(id) {
+  if (!confirm('حذف هذا الصنف؟')) return;
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ target: 'stock', action: 'delete', id }), redirect: 'follow' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    toast(json.message); await loadStock();
+  } catch (e) { toast('فشل الحذف: ' + e.message, 'err'); }
+}
+
+function resetStock() {
+  document.getElementById('st-id').value = '';
+  ['st-item','st-cat','st-unit','st-total','st-net','st-min','st-notes'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('st-form-title').textContent = '➕ إضافة صنف للمخزون';
+}
+
+// ===================== PROJECTS =====================
+async function loadProjects() {
+  document.getElementById('pj-loader').style.display = 'block';
+  try {
+    const res = await fetch(`${API_URL}?type=projects`, { redirect: 'follow' });
+    const json = await res.json();
+    projData = json.data || [];
+    renderProjects(projData);
+  } catch (e) {
+    toast('خطأ تحميل المشاريع: ' + e.message, 'err');
+  } finally {
+    document.getElementById('pj-loader').style.display = 'none';
+  }
+}
+
+function renderProjects(data) {
+  const tb = document.getElementById('pj-tbody');
+  document.getElementById('pj-count').textContent = `${data.length} سجل`;
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="9" class="empty">لا توجد مشاريع</td></tr>'; return; }
+  tb.innerHTML = data.map(r => {
+    const del = r['مرحلة التسليم (Delivery)'] || '';
+    const nt = r['ملاحظات (Notes)'] || '';
+    let bc = 'b-gray';
+    if (del.includes('تم')) bc = 'b-ok';
+    else if (nt || del.includes('ملاحظات')) bc = 'b-warn';
+    const safe = JSON.stringify(r).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `<tr>
+      <td>${r['العميل (Client)'] || '-'}</td>
+      <td>${r['المشروع (Project)'] || '-'}</td>
+      <td class="iname">${r['الصنف المستخدم (Item)'] || '-'}</td>
+      <td>${r['الكمية المستخدمة (Qty)'] || '-'}</td>
+      <td>${r['مرحلة التصنيع (Mfg Stage)'] || '-'}</td>
+      <td>${r['مرحلة التوريد (Supply Stage)'] || '-'}</td>
+      <td><span class="badge ${bc}">${del || '-'}</span></td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${nt}">${nt || '-'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-ed" onclick='editProject(${safe})'>✏️</button>
+        <button class="btn-de" onclick="delProject('${r.ID}')">🗑️</button>
+      </td></tr>`;
+  }).join('');
+}
+
+function filterProjects() {
+  const q = document.getElementById('pj-search').value.toLowerCase();
+  renderProjects(q ? projData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))) : projData);
+}
+
+async function saveProject() {
+  const id = document.getElementById('pj-id').value;
+  const payload = {
+    target: 'projects', action: id ? 'update' : 'create', id: id || null,
+    client: document.getElementById('pj-client').value.trim(),
+    project: document.getElementById('pj-project').value.trim(),
+    item: document.getElementById('pj-item').value.trim(),
+    qty: document.getElementById('pj-qty').value.trim(),
+    mfgStage: document.getElementById('pj-mfg').value.trim(),
+    supplyStage: document.getElementById('pj-supply').value.trim(),
+    deliveryStage: document.getElementById('pj-delivery').value.trim(),
+    notes: document.getElementById('pj-notes').value.trim()
+  };
+  if (!payload.client && !payload.item) { toast('يرجى إدخال العميل أو الصنف', 'err'); return; }
+
+  const btn = document.getElementById('pj-save-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    toast(json.message); resetProject(); await loadProjects(); await loadDropdowns();
+  } catch (e) { toast('فشل الحفظ: ' + e.message, 'err'); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ'; }
+}
+
+function editProject(r) {
+  document.getElementById('pj-id').value = r.ID;
+  document.getElementById('pj-client').value = r['العميل (Client)'] || '';
+  document.getElementById('pj-project').value = r['المشروع (Project)'] || '';
+  document.getElementById('pj-item').value = r['الصنف المستخدم (Item)'] || '';
+  document.getElementById('pj-qty').value = r['الكمية المستخدمة (Qty)'] || '';
+  document.getElementById('pj-mfg').value = r['مرحلة التصنيع (Mfg Stage)'] || '';
+  document.getElementById('pj-supply').value = r['مرحلة التوريد (Supply Stage)'] || '';
+  document.getElementById('pj-delivery').value = r['مرحلة التسليم (Delivery)'] || '';
+  document.getElementById('pj-notes').value = r['ملاحظات (Notes)'] || '';
+  document.getElementById('pj-form-title').textContent = '✏️ تعديل سجل مشروع';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function delProject(id) {
+  if (!confirm('حذف هذا السجل؟')) return;
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ target: 'projects', action: 'delete', id }), redirect: 'follow' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    toast(json.message); await loadProjects();
+  } catch (e) { toast('فشل الحذف: ' + e.message, 'err'); }
+}
+
+function resetProject() {
+  document.getElementById('pj-id').value = '';
+  ['pj-client','pj-project','pj-item','pj-qty','pj-mfg','pj-supply','pj-delivery','pj-notes'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('pj-form-title').textContent = '➕ إضافة سجل مشروع';
+}
+</script>
+</body>
+</html>
