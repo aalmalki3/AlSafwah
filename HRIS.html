@@ -253,7 +253,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4WFSR9KKtHf82dzvwTKDfLLxUcL7pu_o4f_Wbbq22hHteC_AcCt35aO_i685hDfs/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCfsPAL0JpfRIS2wTd-eLwZhHBNjUscoDla67JHOezrn03NNuiQ-A1NiB719jRFp4/exec';
 
 function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -390,8 +390,8 @@ async function loadEmployees() {
 
                 return `<tr>
                     <td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${emp[2]||''}</td><td>${emp[11]||''}</td>
-                    <td>${parseFloat(emp[9]||0).toLocaleString('ar-SA',{minimumFractionDigits:2})}</td>
-                    <td>${docBadge}</td><td>${conBadge}</td><td>${gosiBadge}</td><td>${qiwaBadge}</td>
+<td>${parseFloat(emp[9]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2})}</td>
+<td>${docBadge}</td><td>${conBadge}</td><td>${gosiBadge}</td><td>${qiwaBadge}</td>
                 </tr>`;
             }).join('');
         }
