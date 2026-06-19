@@ -1,0 +1,19 @@
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGeZWcDaiAbZBUHgfkAq07hegLZZNMYiHaB6_82epI0YlDH3PJAiJj3qVX5vO3kwY/exec';
+
+async function addEmployee(formData) {
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Required for Apps Script redirects
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add', ...formData })
+    });
+    
+    // Note: no-cors returns opaque response. 
+ 7   // For confirmation, implement a callback pattern or 
+    // use a secondary GET endpoint to verify insertion.
+    alert('تم إرسال البيانات بنجاح');
+  } catch (error) {
+    console.error('HRIS Error:', error);
+  }
+}
