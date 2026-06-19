@@ -324,6 +324,7 @@ function jsonpRequest(params, timeoutMs = 20000) { // Increased to 20s for large
     });
 }
 <script>
+// === CONFIGURATION ===
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA1F1F4ZchUmlZoEo-VdQV5HVMAygM0v5MjYIUcu0jAguc_KJbaipHeaAlGIP6W0o/exec';
 
 // === TAB SWITCHING ===
@@ -331,27 +332,32 @@ function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
     
-    document.getElementById('dashboardSection').classList.toggle('hidden', tab !== 'dashboard');
-    document.getElementById('addSection').classList.toggle('hidden', tab !== 'add');
-    document.getElementById('viewSection').classList.toggle('hidden', tab !== 'view');
+    const sections = ['dashboardSection', 'addSection', 'viewSection'];
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id.replace('Section','') !== tab);
+    });
     
-    if (tab === 'dashboard') loadDashboard();
-    if (tab === 'view') loadEmployees();
+    if (tab === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
+    if (tab === 'view' && typeof loadEmployees === 'function') loadEmployees();
 }
 
 // === AUTO CALCULATE TOTAL SALARY ===
 function calcTotal() {
     const f = document.getElementById('hrisForm');
+    if (!f) return;
     const t = (parseFloat(f.basic.value)||0) + 
               (parseFloat(f.housing.value)||0) + 
               (parseFloat(f.commissions.value)||0) + 
               (parseFloat(f.other.value)||0);
-    document.getElementById('totalSalaryDisplay').value = t.toFixed(2);
+    const display = document.getElementById('totalSalaryDisplay');
+    if (display) display.value = t.toFixed(2);
 }
 
 // === TOAST NOTIFICATION ===
 function showToast(msg, type='success') {
     const t = document.getElementById('toast');
+    if (!t) return;
     t.textContent = msg; 
     t.className = `toast ${type} show`;
     setTimeout(() => t.classList.remove('show'), 3500);
@@ -359,7 +365,8 @@ function showToast(msg, type='success') {
 
 // === ACTIVATION GUIDE MODAL ===
 function showGuide() { 
-    document.getElementById('guideModal').classList.remove('hidden'); 
+    const modal = document.getElementById('guideModal');
+    if (modal) modal.classList.remove('hidden'); 
 }
 
 // === ROBUST JSONP REQUEST HANDLER ===
@@ -367,13 +374,14 @@ function jsonpRequest(params, timeoutMs = 20000) {
     return new Promise((resolve, reject) => {
         const callbackName = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
         let resolved = false;
+        let scriptEl = null;
 
         window[callbackName] = (response) => {
             if (resolved) return;
             resolved = true;
             clearTimeout(timer);
             delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
+            if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
             resolve(response);
         };
 
@@ -381,57 +389,66 @@ function jsonpRequest(params, timeoutMs = 20000) {
             if (resolved) return;
             resolved = true;
             delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
+            if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
             reject(new Error('انتهت مهلة الاتصال (20 ثانية)'));
         }, timeoutMs);
 
-        const queryString = new URLSearchParams({ callback: callbackName, ...params }).toString();
-        const script = document.createElement('script');
-        script.src = `${APPS_SCRIPT_URL}?${queryString}`;
-        
-        script.onerror = () => {
-            if (resolved) return;
-            resolved = true;
-            clearTimeout(timer);
-            delete window[callbackName];
-            reject(new Error('فشل تحميل السكربت من الخادم'));
-        };
-        
-        document.head.appendChild(script);
+        try {
+            const queryString = new URLSearchParams({ callback: callbackName, ...params }).toString();
+            scriptEl = document.createElement('script');
+            scriptEl.src = `${APPS_SCRIPT_URL}?${queryString}`;
+            
+            scriptEl.onerror = () => {
+                if (resolved) return;
+                resolved = true;
+                clearTimeout(timer);
+                delete window[callbackName];
+                reject(new Error('فشل تحميل السكربت من الخادم'));
+            };
+            
+            document.head.appendChild(scriptEl);
+        } catch (e) {
+            reject(new Error('خطأ في إنشاء طلب JSONP: ' + e.message));
+        }
     });
 }
 
-// === LOAD DASHBOARD (FIXED CLOSING BRACES) ===
+// === LOAD DASHBOARD ===
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
     const ub = document.getElementById('urgentBody');
+    if (!btn || !ub) return;
     
     btn.disabled = true; 
     btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     
-    ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio']
-        .forEach(id => document.getElementById(id).textContent = '...');
+    const kpiIds = ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio'];
+    kpiIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '...';
+    });
     
     ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
 
     try {
         const r = await jsonpRequest({ action: 'dashboard' });
         
-        if (r.metrics) {
+        if (r && r.metrics) {
             const m = r.metrics;
-            document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
-            document.getElementById('kpi-total').textContent = m.total_employees ?? '0';
-            document.getElementById('kpi-iqama').textContent = m.iqama_expiring_30d ?? '0';
-            document.getElementById('kpi-contracts').textContent = m.contracts_expiring_90d ?? '0';
-            document.getElementById('kpi-gosi').textContent = m.gosi_unregistered ?? '0';
-            document.getElementById('kpi-qiwa').textContent = m.qiwa_unregistered ?? '0';
-            document.getElementById('kpi-wps').textContent = m.wps_rejections ?? '0';
-            document.getElementById('kpi-ratio').textContent = `${m.saudi_count ?? 0}/${m.non_saudi_count ?? 0}`;
+            const setVal = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val??'--'; };
+            setVal('kpi-saudization', m.saudization_pct);
+            setVal('kpi-total', m.total_employees ?? '0');
+            setVal('kpi-iqama', m.iqama_expiring_30d ?? '0');
+            setVal('kpi-contracts', m.contracts_expiring_90d ?? '0');
+            setVal('kpi-gosi', m.gosi_unregistered ?? '0');
+            setVal('kpi-qiwa', m.qiwa_unregistered ?? '0');
+            setVal('kpi-wps', m.wps_rejections ?? '0');
+            setVal('kpi-ratio', `${m.saudi_count ?? 0}/${m.non_saudi_count ?? 0}`);
         }
         
-        if (r.urgentActions && r.urgentActions.length > 0) {
+        if (r && r.urgentActions && r.urgentActions.length > 0) {
             ub.innerHTML = r.urgentActions.map(i => {
-                const bc = i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
+                const bc = i.riskLevel && i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
                 return `<tr>
                     <td>${i.name || ''}</td>
                     <td>${i.nationalId || ''}</td>
@@ -454,31 +471,33 @@ async function loadDashboard() {
         btn.disabled = false;
         btn.textContent = 'تحديث اللوحة';
     }
-} // ← FIXED: Properly closed
+}
 
 // === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
+    if (!btn) return;
     const orig = btn.textContent;
     
     btn.disabled = true; 
     btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
     
     const fd = Object.fromEntries(new FormData(e.target));
-    fd.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value) || 0;
+    const totalDisplay = document.getElementById('totalSalaryDisplay');
+    fd.totalSalary = totalDisplay ? parseFloat(totalDisplay.value) || 0 : 0;
     fd.action = 'add';
 
     try {
         const r = await jsonpRequest({ data: JSON.stringify(fd) });
         
-        if (r.status === 'success') {
+        if (r && r.status === 'success') {
             showToast('✅ تم حفظ بيانات الموظف بنجاح');
             e.target.reset();
-            document.getElementById('totalSalaryDisplay').value = '0.00';
-            e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
+            if (totalDisplay) totalDisplay.value = '0.00';
+            if (e.target.entityName) e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
         } else {
-            throw new Error(r.error || 'حدث خطأ غير معروف');
+            throw new Error(r?.error || 'حدث خطأ غير معروف');
         }
     } catch(err) {
         try {
@@ -502,6 +521,7 @@ async function handleAddEmployee(e) {
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     const tb = document.getElementById('tableBody');
+    if (!btn || !tb) return;
     
     btn.disabled = true; 
     btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
@@ -509,7 +529,7 @@ async function loadEmployees() {
 
     try {
         const r = await jsonpRequest({ action: 'get' });
-        const emps = r.data;
+        const emps = r?.data;
         
         if (!emps || !emps.length) {
             tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
@@ -533,11 +553,11 @@ async function loadEmployees() {
                 const docExp = emp[17]; 
                 if (docExp) {
                     const d = Math.ceil((new Date(docExp) - new Date()) / 86400000);
-                    if (d <= 0) docBadge = '<span class="badge badge-red"> منتهي</span>';
-                    else if (d <= 30) docBadge = '<span class="badge badge-red">🔴 قريب</span>';
-                    else if (d <= 90) docBadge = '<span class="badge badge-yellow"> قارب</span>';
+                    if (d <= 0) docBadge = '<span class="badge badge-red">منتهي</span>';
+                    else if (d <= 30) docBadge = '<span class="badge badge-red"> قريب</span>';
+                    else if (d <= 90) docBadge = '<span class="badge badge-yellow">قارب</span>';
                 } else if (!nat.includes('سعودي')) { 
-                    docBadge = '<span class="badge badge-red">⛔ غير محدد</span>'; 
+                    docBadge = '<span class="badge badge-red"> غير محدد</span>'; 
                 }
                 
                 // Contract Expiry Check
@@ -547,10 +567,10 @@ async function loadEmployees() {
                     if (d <= 0) conBadge = '<span class="badge badge-red">⛔ منتهي</span>';
                     else if (d <= 90) conBadge = '<span class="badge badge-yellow">🟡 تجديد</span>';
                 } else { 
-                    conBadge = '<span class="badge badge-yellow">⚠️ غير محدد</span>'; 
+                    conBadge = '<span class="badge badge-yellow">️ غير محدد</span>'; 
                 }
 
-                // ENGLISH SALARY FORMAT APPLIED HERE
+                // ENGLISH SALARY FORMAT
                 const salaryFormatted = parseFloat(emp[9] || 0).toLocaleString('en-US', {
                     style: 'currency', 
                     currency: 'SAR', 
@@ -579,7 +599,9 @@ async function loadEmployees() {
 }
 
 // Auto-load dashboard on page open
-document.addEventListener('DOMContentLoaded', () => loadDashboard());
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof loadDashboard === 'function') loadDashboard();
+});
 </script>
 </body>
 </html>
