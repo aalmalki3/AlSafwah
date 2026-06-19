@@ -323,15 +323,100 @@ function jsonpRequest(params, timeoutMs = 20000) { // Increased to 20s for large
         document.head.appendChild(script);
     });
 }
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA1F1F4ZchUmlZoEo-VdQV5HVMAygM0v5MjYIUcu0jAguc_KJbaipHeaAlGIP6W0o/exec';
+
+// === TAB SWITCHING ===
+function switchTab(tab, btnElement) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+    
+    document.getElementById('dashboardSection').classList.toggle('hidden', tab !== 'dashboard');
+    document.getElementById('addSection').classList.toggle('hidden', tab !== 'add');
+    document.getElementById('viewSection').classList.toggle('hidden', tab !== 'view');
+    
+    if (tab === 'dashboard') loadDashboard();
+    if (tab === 'view') loadEmployees();
+}
+
+// === AUTO CALCULATE TOTAL SALARY ===
+function calcTotal() {
+    const f = document.getElementById('hrisForm');
+    const t = (parseFloat(f.basic.value)||0) + 
+              (parseFloat(f.housing.value)||0) + 
+              (parseFloat(f.commissions.value)||0) + 
+              (parseFloat(f.other.value)||0);
+    document.getElementById('totalSalaryDisplay').value = t.toFixed(2);
+}
+
+// === TOAST NOTIFICATION ===
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; 
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// === ACTIVATION GUIDE MODAL ===
+function showGuide() { 
+    document.getElementById('guideModal').classList.remove('hidden'); 
+}
+
+// === ROBUST JSONP REQUEST HANDLER ===
+function jsonpRequest(params, timeoutMs = 20000) {
+    return new Promise((resolve, reject) => {
+        const callbackName = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        let resolved = false;
+
+        window[callbackName] = (response) => {
+            if (resolved) return;
+            resolved = true;
+            clearTimeout(timer);
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            resolve(response);
+        };
+
+        const timer = setTimeout(() => {
+            if (resolved) return;
+            resolved = true;
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            reject(new Error('انتهت مهلة الاتصال (20 ثانية)'));
+        }, timeoutMs);
+
+        const queryString = new URLSearchParams({ callback: callbackName, ...params }).toString();
+        const script = document.createElement('script');
+        script.src = `${APPS_SCRIPT_URL}?${queryString}`;
+        
+        script.onerror = () => {
+            if (resolved) return;
+            resolved = true;
+            clearTimeout(timer);
+            delete window[callbackName];
+            reject(new Error('فشل تحميل السكربت من الخادم'));
+        };
+        
+        document.head.appendChild(script);
+    });
+}
+
+// === LOAD DASHBOARD (FIXED CLOSING BRACES) ===
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
     const ub = document.getElementById('urgentBody');
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio'].forEach(id => document.getElementById(id).textContent = '...');
+    
+    btn.disabled = true; 
+    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    
+    ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio']
+        .forEach(id => document.getElementById(id).textContent = '...');
+    
     ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
 
     try {
-        const r = await jsonpRequest({action:'dashboard'});
+        const r = await jsonpRequest({ action: 'dashboard' });
+        
         if (r.metrics) {
             const m = r.metrics;
             document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
@@ -341,98 +426,159 @@ async function loadDashboard() {
             document.getElementById('kpi-gosi').textContent = m.gosi_unregistered ?? '0';
             document.getElementById('kpi-qiwa').textContent = m.qiwa_unregistered ?? '0';
             document.getElementById('kpi-wps').textContent = m.wps_rejections ?? '0';
-            document.getElementById('kpi-ratio').textContent = `${m.saudi_count??0}/${m.non_saudi_count??0}`;
+            document.getElementById('kpi-ratio').textContent = `${m.saudi_count ?? 0}/${m.non_saudi_count ?? 0}`;
         }
+        
         if (r.urgentActions && r.urgentActions.length > 0) {
             ub.innerHTML = r.urgentActions.map(i => {
                 const bc = i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr><td>${i.name||''}</td><td>${i.nationalId||''}</td><td><span class="badge ${bc}">${i.riskLevel||''}</span></td><td>${i.actionRequired||''}</td></tr>`;
+                return `<tr>
+                    <td>${i.name || ''}</td>
+                    <td>${i.nationalId || ''}</td>
+                    <td><span class="badge ${bc}">${i.riskLevel || ''}</span></td>
+                    <td>${i.actionRequired || ''}</td>
+                </tr>`;
             }).join('');
         } else {
             ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
+        
     } catch (err) {
-    console.error('Dashboard Load Failed:', err); // ← CRITICAL: Check Console (F12)
-    ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">
-        ❌ ${err.message}<br>
-        <small style="color:#666">افتح وحدة التحكم (F12) لمزيد من التفاصيل</small>
-    </td></tr>`;
-    showToast('فشل تحميل لوحة الامتثال', 'error');
-}
+        console.error('Dashboard Load Failed:', err);
+        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">
+            ❌ ${err.message}<br>
+            <small style="color:#666">افتح وحدة التحكم (F12) لمزيد من التفاصيل</small>
+        </td></tr>`;
+        showToast('فشل تحميل لوحة الامتثال', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تحديث اللوحة';
+    }
+} // ← FIXED: Properly closed
 
+// === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     const orig = btn.textContent;
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
+    
+    btn.disabled = true; 
+    btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
+    
     const fd = Object.fromEntries(new FormData(e.target));
-    fd.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value)||0;
+    fd.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value) || 0;
     fd.action = 'add';
 
     try {
-        const r = await jsonpRequest({data:JSON.stringify(fd)});
+        const r = await jsonpRequest({ data: JSON.stringify(fd) });
+        
         if (r.status === 'success') {
             showToast('✅ تم حفظ بيانات الموظف بنجاح');
             e.target.reset();
             document.getElementById('totalSalaryDisplay').value = '0.00';
             e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
-        } else throw new Error(r.error || 'حدث خطأ غير معروف');
+        } else {
+            throw new Error(r.error || 'حدث خطأ غير معروف');
+        }
     } catch(err) {
         try {
-            await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)});
-            showToast('تم إرسال البيانات (لم يتم التأكيد)','success');
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fd)
+            });
+            showToast('تم إرسال البيانات (لم يتم التأكيد)', 'success');
             e.target.reset();
-        } catch { showToast('❌ '+err.message,'error'); }
-    } finally { btn.disabled = false; btn.textContent = orig; }
+        } catch { 
+            showToast('❌ ' + err.message, 'error'); 
+        }
+    } finally { 
+        btn.disabled = false; 
+        btn.textContent = orig; 
+    }
 }
 
+// === LOAD EMPLOYEES TABLE ===
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     const tb = document.getElementById('tableBody');
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    
+    btn.disabled = true; 
+    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
 
     try {
-        const r = await jsonpRequest({action:'get'});
+        const r = await jsonpRequest({ action: 'get' });
         const emps = r.data;
+        
         if (!emps || !emps.length) {
             tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
         } else {
             tb.innerHTML = emps.map(emp => {
-                // Compute status badges client-side from raw data
-                const nat = String(emp[2]||'');
-                const gosiReg = String(emp[21]||'').includes('نعم');
-                const qiwaReg = String(emp[22]||'').includes('نعم');
-                const gosiBadge = gosiReg ? '<span class="badge badge-green">✅</span>' : '<span class="badge badge-red">❌</span>';
-                const qiwaBadge = qiwaReg ? '<span class="badge badge-green">✅</span>' : '<span class="badge badge-yellow">❌</span>';
-                // Doc/Contract status computed simply for table view
-                const docExp = emp[17]; const conExp = emp[19];
+                const nat = String(emp[2] || '');
+                const gosiReg = String(emp[21] || '').includes('نعم');
+                const qiwaReg = String(emp[22] || '').includes('نعم');
+                
+                const gosiBadge = gosiReg 
+                    ? '<span class="badge badge-green">✅</span>' 
+                    : '<span class="badge badge-red">❌</span>';
+                const qiwaBadge = qiwaReg 
+                    ? '<span class="badge badge-green">✅</span>' 
+                    : '<span class="badge badge-yellow">❌</span>';
+                
                 let docBadge = '<span class="badge badge-green">✅</span>';
                 let conBadge = '<span class="badge badge-green">✅</span>';
+                
+                // Document Expiry Check
+                const docExp = emp[17]; 
                 if (docExp) {
-                    const d = Math.ceil((new Date(docExp)-new Date())/86400000);
-                    if (d<=0) docBadge='<span class="badge badge-red">⛔ منتهي</span>';
-                    else if (d<=30) docBadge='<span class="badge badge-red">🔴 قريب</span>';
-                    else if (d<=90) docBadge='<span class="badge badge-yellow">🟡 قارب</span>';
-                } else if (!nat.includes('سعودي')) { docBadge='<span class="badge badge-red">⛔ غير محدد</span>'; }
+                    const d = Math.ceil((new Date(docExp) - new Date()) / 86400000);
+                    if (d <= 0) docBadge = '<span class="badge badge-red"> منتهي</span>';
+                    else if (d <= 30) docBadge = '<span class="badge badge-red">🔴 قريب</span>';
+                    else if (d <= 90) docBadge = '<span class="badge badge-yellow"> قارب</span>';
+                } else if (!nat.includes('سعودي')) { 
+                    docBadge = '<span class="badge badge-red">⛔ غير محدد</span>'; 
+                }
+                
+                // Contract Expiry Check
+                const conExp = emp[19]; 
                 if (conExp) {
-                    const d = Math.ceil((new Date(conExp)-new Date())/86400000);
-                    if (d<=0) conBadge='<span class="badge badge-red">⛔ منتهي</span>';
-                    else if (d<=90) conBadge='<span class="badge badge-yellow">🟡 تجديد</span>';
-                } else { conBadge='<span class="badge badge-yellow">⚠️ غير محدد</span>'; }
+                    const d = Math.ceil((new Date(conExp) - new Date()) / 86400000);
+                    if (d <= 0) conBadge = '<span class="badge badge-red">⛔ منتهي</span>';
+                    else if (d <= 90) conBadge = '<span class="badge badge-yellow">🟡 تجديد</span>';
+                } else { 
+                    conBadge = '<span class="badge badge-yellow">⚠️ غير محدد</span>'; 
+                }
+
+                // ENGLISH SALARY FORMAT APPLIED HERE
+                const salaryFormatted = parseFloat(emp[9] || 0).toLocaleString('en-US', {
+                    style: 'currency', 
+                    currency: 'SAR', 
+                    minimumFractionDigits: 2
+                });
 
                 return `<tr>
-                    <td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${emp[2]||''}</td><td>${emp[11]||''}</td>
-<td>${parseFloat(emp[9]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2})}</td>
-<td>${docBadge}</td><td>${conBadge}</td><td>${gosiBadge}</td><td>${qiwaBadge}</td>
+                    <td>${emp[0] || ''}</td>
+                    <td>${emp[1] || ''}</td>
+                    <td>${emp[2] || ''}</td>
+                    <td>${emp[11] || ''}</td>
+                    <td>${salaryFormatted}</td>
+                    <td>${docBadge}</td>
+                    <td>${conBadge}</td>
+                    <td>${gosiBadge}</td>
+                    <td>${qiwaBadge}</td>
                 </tr>`;
             }).join('');
         }
     } catch(err) {
         tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
-    } finally { btn.disabled = false; btn.textContent = 'تحديث البيانات'; }
+    } finally { 
+        btn.disabled = false; 
+        btn.textContent = 'تحديث البيانات'; 
+    }
 }
 
+// Auto-load dashboard on page open
 document.addEventListener('DOMContentLoaded', () => loadDashboard());
 </script>
 </body>
