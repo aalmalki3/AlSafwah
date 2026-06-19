@@ -1,19 +1,437 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGeZWcDaiAbZBUHgfkAq07hegLZZNMYiHaB6_82epI0YlDH3PJAiJj3qVX5vO3kwY/exec';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام موارد الصفوة | HRIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-hover: #1e40af;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --success: #16a34a;
+            --error: #dc2626;
+            --radius: 12px;
+        }
 
-async function addEmployee(formData) {
-  try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Required for Apps Script redirects
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'add', ...formData })
-    });
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 { font-size: 1.5rem; color: var(--primary); }
+
+        .nav-tabs { display: flex; gap: 0.5rem; }
+        
+        .tab-btn {
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Main Container */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* Form Card */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group.full-width { grid-column: 1 / -1; }
+
+        label { font-size: 0.85rem; font-weight: 500; color: var(--text-light); }
+
+        input, select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
+        input[readonly] { background: #f1f5f9; color: var(--text-light); }
+
+        .btn-submit {
+            margin-top: 1.5rem;
+            padding: 0.85rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn-submit:hover { background: var(--primary-hover); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Data Table */
+        .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { background: #f8fafc; font-weight: 700; color: var(--text-light); position: sticky; top: 0; }
+        tr:hover { background: #f8fafc; }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 1rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .container { padding: 0 1rem; margin: 1rem auto; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>🏢 نظام موارد الصفوة</h1>
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('add')">إضافة موظف</button>
+        <button class="tab-btn" onclick="switchTab('view')">سجل الموظفين</button>
+    </nav>
+</header>
+
+<main class="container">
+    <!-- ADD EMPLOYEE FORM -->
+    <section id="addSection" class="card">
+        <form id="hrisForm" onsubmit="handleAddEmployee(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>اسم المشترك *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهوية *</label>
+                    <input type="text" name="nationalId" required pattern="\d{10}" title="أدخل 10 أرقام">
+                </div>
+                <div class="form-group">
+                    <label>الجنسية *</label>
+                    <select name="nationality" required>
+                        <option value="">اختر الجنسية</option>
+                        <option value="سعودي">سعودي</option>
+                        <option value="غير سعودي">غير سعودي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الجنس *</label>
+                    <select name="gender" required>
+                        <option value="">اختر</option>
+                        <option value="ذكر">ذكر</option>
+                        <option value="أنثى">أنثى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الميلاد *</label>
+                    <input type="date" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label>المهنة *</label>
+                    <input type="text" name="jobTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الإلتحاق *</label>
+                    <input type="date" name="joinDate" required>
+                </div>
+                <div class="form-group">
+                    <label>الأجر الأساسي</label>
+                    <input type="number" name="basic" step="0.01" min="0" value="0" oninput="calcTotal()">
+                </div>
+                <div class="form-group">
+                    <label>السكن</label>
+                    <input type="number" name="housing" step="0.01" min="0" value="0" oninput="calcTotal()">
+                </div>
+                <div class="form-group">
+                    <label>العمولات</label>
+                    <input type="number" name="commissions" step="0.01" min="0" value="0" oninput="calcTotal()">
+                </div>
+                <div class="form-group">
+                    <label>البدلات الأخرى</label>
+                    <input type="number" name="other" step="0.01" min="0" value="0" oninput="calcTotal()">
+                </div>
+                <div class="form-group">
+                    <label>إجمالي الأجر</label>
+                    <input type="text" id="totalSalaryDisplay" readonly value="0.00">
+                </div>
+                <div class="form-group">
+                    <label>الاجر الخاضع للاشتراك</label>
+                    <input type="number" name="gosiSalary" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label>الاهلية للتأمينات 1445هـ</label>
+                    <select name="gosiEligible">
+                        <option value="نعم">نعم</option>
+                        <option value="لا">لا</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>اسم المنشأة</label>
+                    <input type="text" name="entityName" value="مصنع الصفوة للألمنيوم">
+                </div>
+                <div class="form-group">
+                    <label>رقم المنشأة</label>
+                    <input type="text" name="entityNumber">
+                </div>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">حفظ بيانات الموظف</button>
+        </form>
+    </section>
+
+    <!-- VIEW EMPLOYEES TABLE -->
+    <section id="viewSection" class="card hidden">
+        <div class="table-wrapper">
+            <table id="employeesTable">
+                <thead>
+                    <tr>
+                        <th>اسم المشترك</th>
+                        <th>رقم الهوية</th>
+                        <th>الجنسية</th>
+                        <th>الجنس</th>
+                        <th>المهنة</th>
+                        <th>تاريخ الإلتحاق</th>
+                        <th>إجمالي الأجر</th>
+                        <th>التأمينات</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="8" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn-submit" style="margin-top:1rem;" onclick="loadEmployees()" id="refreshBtn">تحديث البيانات</button>
+    </section>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwyCRDWqXV3XnAOPAv37bYNkQe1FAXa6TNsPVvnP8YY7B932YwUwG1q-OXHmGfHj8E/exec';
+
+// === TAB SWITCHING ===
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
     
-    // Note: no-cors returns opaque response. 
- 7   // For confirmation, implement a callback pattern or 
-    // use a secondary GET endpoint to verify insertion.
-    alert('تم إرسال البيانات بنجاح');
-  } catch (error) {
-    console.error('HRIS Error:', error);
-  }
+    document.getElementById('addSection').classList.toggle('hidden', tab !== 'add');
+    document.getElementById('viewSection').classList.toggle('hidden', tab !== 'view');
+    
+    if (tab === 'view') loadEmployees();
 }
+
+// === AUTO CALCULATE TOTAL ===
+function calcTotal() {
+    const form = document.getElementById('hrisForm');
+    const total = (parseFloat(form.basic.value) || 0) + 
+                  (parseFloat(form.housing.value) || 0) + 
+                  (parseFloat(form.commissions.value) || 0) + 
+                  (parseFloat(form.other.value) || 0);
+    document.getElementById('totalSalaryDisplay').value = total.toFixed(2);
+}
+
+// === TOAST NOTIFICATION ===
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// === ADD EMPLOYEE (with JSONP callback for reliable no-cors feedback) ===
+async function handleAddEmployee(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const originalText = btn.textContent;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
+    
+    const formData = Object.fromEntries(new FormData(e.target));
+    formData.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value) || 0;
+    formData.action = 'add';
+    
+    // JSONP callback approach for reliable response with no-cors
+    const callbackName = '_hris_cb_' + Date.now();
+    
+    try {
+        await new Promise((resolve, reject) => {
+            window[callbackName] = (response) => {
+                delete window[callbackName];
+                document.head.removeChild(script);
+                if (response.status === 'success') resolve(response);
+                else reject(new Error(response.error || 'حدث خطأ غير معروف'));
+            };
+            
+            const script = document.createElement('script');
+            script.src = `${APPS_SCRIPT_URL}?callback=${callbackName}&data=${encodeURIComponent(JSON.stringify(formData))}`;
+            script.onerror = () => {
+                delete window[callbackName];
+                reject(new Error('فشل الاتصال بالخادم'));
+            };
+            document.head.appendChild(script);
+            
+            // Timeout fallback
+            setTimeout(() => reject(new Error('انتهت مهلة الاتصال')), 15000);
+        });
+        
+        showToast('✅ تم حفظ بيانات الموظف بنجاح');
+        e.target.reset();
+        document.getElementById('totalSalaryDisplay').value = '0.00';
+        // Restore default entity name
+        e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
+        
+    } catch (err) {
+        // Fallback: If JSONP fails, try regular POST (fire-and-forget)
+        try {
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            showToast('تم إرسال البيانات (لم يتم التأكيد)', 'success');
+            e.target.reset();
+        } catch {
+            showToast('❌ ' + err.message, 'error');
+        }
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+
+// === LOAD EMPLOYEES ===
+async function loadEmployees() {
+    const btn = document.getElementById('refreshBtn');
+    const tbody = document.getElementById('tableBody');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
+    
+    const callbackName = '_hris_load_' + Date.now();
+    
+    try {
+        const employees = await new Promise((resolve, reject) => {
+            window[callbackName] = (response) => {
+                delete window[callbackName];
+                document.head.removeChild(script);
+                if (response.data) resolve(response.data);
+                else reject(new Error(response.error || 'لا توجد بيانات'));
+            };
+            
+            const script = document.createElement('script');
+            script.src = `${APPS_SCRIPT_URL}?callback=${callbackName}&action=get`;
+            script.onerror = () => reject(new Error('فشل تحميل البيانات'));
+            document.head.appendChild(script);
+            setTimeout(() => reject(new Error('انتهت مهلة التحميل')), 15000);
+        });
+        
+        if (!employees.length) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
+        } else {
+            tbody.innerHTML = employees.map(emp => `
+                <tr>
+                    <td>${emp[0] || ''}</td>
+                    <td>${emp[1] || ''}</td>
+                    <td>${emp[2] || ''}</td>
+                    <td>${emp[3] || ''}</td>
+                    <td>${emp[11] || ''}</td>
+                    <td>${emp[12] || ''}</td>
+                    <td>${parseFloat(emp[9] || 0).toLocaleString('ar-SA', {minimumFractionDigits: 2})}</td>
+                    <td>${emp[13] || ''}</td>
+                </tr>
+            `).join('');
+        }
+        
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تحديث البيانات';
+    }
+}
+</script>
+</body>
+</html>
