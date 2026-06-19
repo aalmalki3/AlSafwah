@@ -19,191 +19,73 @@
             --error: #dc2626;
             --radius: 12px;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
 
-        /* Header */
-        .header {
-            background: var(--card);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
+        .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .header h1 { font-size: 1.5rem; color: var(--primary); }
-
         .nav-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        
-        .tab-btn {
-            padding: 0.5rem 1.25rem;
-            border: 1px solid var(--border);
-            background: transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
+        .tab-btn { padding: 0.5rem 1.25rem; border: 1px solid var(--border); background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* Main Container */
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .card { background: var(--card); border-radius: var(--radius); padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-        /* Card */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        /* Dashboard KPI Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .kpi-card {
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            border: 1px solid;
-        }
-
-        .kpi-label { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem; }
-        .kpi-value { font-size: 2.25rem; font-weight: 700; line-height: 1.2; }
-
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .kpi-card { padding: 1.5rem; border-radius: var(--radius); border: 1px solid; }
+        .kpi-label { font-size: 0.8rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.2; }
         .kpi-green { background: #f0fdf4; border-color: #bbf7d0; }
-        .kpi-green .kpi-label { color: var(--success); }
-        .kpi-green .kpi-value { color: #15803d; }
-
+        .kpi-green .kpi-label { color: var(--success); } .kpi-green .kpi-value { color: #15803d; }
         .kpi-red { background: #fef2f2; border-color: #fecaca; }
-        .kpi-red .kpi-label { color: var(--error); }
-        .kpi-red .kpi-value { color: #b91c1c; }
-
+        .kpi-red .kpi-label { color: var(--error); } .kpi-red .kpi-value { color: #b91c1c; }
         .kpi-yellow { background: #fffbeb; border-color: #fde68a; }
-        .kpi-yellow .kpi-label { color: var(--warning); }
-        .kpi-yellow .kpi-value { color: #b45309; }
-
+        .kpi-yellow .kpi-label { color: var(--warning); } .kpi-yellow .kpi-value { color: #b45309; }
         .kpi-blue { background: #eff6ff; border-color: #bfdbfe; }
-        .kpi-blue .kpi-label { color: var(--primary); }
-        .kpi-blue .kpi-value { color: var(--primary-hover); }
+        .kpi-blue .kpi-label { color: var(--primary); } .kpi-blue .kpi-value { color: var(--primary-hover); }
 
-        /* Risk Badges */
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
         .badge-red { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
         .badge-yellow { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; }
+        .badge-green { background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0; }
 
-        /* Section Title */
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; margin-top: 1.5rem; color: var(--text); }
+        .section-title:first-child { margin-top: 0; }
 
-        /* Form Grid */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-        }
-
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-
         label { font-size: 0.85rem; font-weight: 500; color: var(--text-light); }
-
-        input, select {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
-            outline: none;
-        }
-
+        input, select { padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; outline: none; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
         input[readonly] { background: #f1f5f9; color: var(--text-light); }
 
-        .btn-submit {
-            margin-top: 1.5rem;
-            padding: 0.85rem 2rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
+        .btn-submit { margin-top: 1.5rem; padding: 0.85rem 2rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; }
         .btn-submit:hover { background: var(--primary-hover); }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 0.5rem; }
+        .btn-outline:hover { background: var(--primary); color: white; }
 
-        /* Data Table */
         .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
-        
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         th, td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
         th { background: #f8fafc; font-weight: 700; color: var(--text-light); position: sticky; top: 0; }
         tr:hover { background: #f8fafc; }
 
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); padding: 0.75rem 1.5rem; border-radius: 8px; color: white; font-weight: 500; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
 
-        /* Spinner */
-        .spinner {
-            display: inline-block;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-left: 0.5rem;
-            vertical-align: middle;
-        }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; margin-left: 0.5rem; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .hidden { display: none !important; }
+
+        /* Activation Guide Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
+        .modal { background: var(--card); border-radius: var(--radius); padding: 2rem; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal h2 { margin-bottom: 1rem; color: var(--primary); }
+        .modal table { margin-bottom: 1rem; }
+        .modal-close { margin-top: 1rem; padding: 0.6rem 1.5rem; background: var(--text-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
 
         @media (max-width: 768px) {
             .header { flex-direction: column; gap: 1rem; }
@@ -211,10 +93,7 @@
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .container { padding: 0 1rem; margin: 1rem auto; }
         }
-
-        @media (max-width: 480px) {
-            .kpi-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -230,40 +109,55 @@
 
 <main class="container">
 
-    <!-- DASHBOARD SECTION -->
+    <!-- ===== DASHBOARD ===== -->
     <section id="dashboardSection" class="card">
-        <div class="section-title">📊 مؤشرات الامتثال والموارد البشرية</div>
-        
+        <div class="section-title">📊 مؤشرات الموارد البشرية والتوطين</div>
         <div class="kpi-grid">
             <div class="kpi-card kpi-green">
-                <div class="kpi-label">نسبة التوطين</div>
+                <div class="kpi-label">نسبة التوطين (Nitaqat)</div>
                 <div class="kpi-value" id="kpi-saudization">--</div>
             </div>
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-label">إجمالي الموظفين</div>
+                <div class="kpi-value" id="kpi-total">--</div>
+            </div>
             <div class="kpi-card kpi-red">
-                <div class="kpi-label">إقامات تنتهي خلال 30 يوم</div>
+                <div class="kpi-label">وثائق تنتهي خلال 30 يوم</div>
                 <div class="kpi-value" id="kpi-iqama">--</div>
             </div>
             <div class="kpi-card kpi-yellow">
                 <div class="kpi-label">عقود قريبة الانتهاء (90 يوم)</div>
                 <div class="kpi-value" id="kpi-contracts">--</div>
             </div>
+        </div>
+
+        <div class="section-title">🏛️ الامتثال التنظيمي</div>
+        <div class="kpi-grid">
+            <div class="kpi-card kpi-red">
+                <div class="kpi-label">غير مسجلين في GOSI</div>
+                <div class="kpi-value" id="kpi-gosi">--</div>
+            </div>
+            <div class="kpi-card kpi-yellow">
+                <div class="kpi-label">غير موثقين في Qiwa</div>
+                <div class="kpi-value" id="kpi-qiwa">--</div>
+            </div>
+            <div class="kpi-card kpi-red">
+                <div class="kpi-label">مشاكل WPS / Mudad</div>
+                <div class="kpi-value" id="kpi-wps">--</div>
+            </div>
             <div class="kpi-card kpi-blue">
-                <div class="kpi-label">إجمالي الموظفين</div>
-                <div class="kpi-value" id="kpi-total">--</div>
+                <div class="kpi-label">سعودي / غير سعودي</div>
+                <div class="kpi-value" id="kpi-ratio">--</div>
             </div>
         </div>
 
-        <div class="section-title">🚨 إجراءات مطلوبة</div>
-        <div class="table-wrapper">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;">
+            <div class="section-title" style="margin:0;">🚨 إجراءات مطلوبة</div>
+            <button class="btn-submit btn-outline" style="width:auto;margin:0;padding:0.5rem 1rem;font-size:0.85rem;" onclick="showGuide()">📋 دليل تفعيل الامتثال</button>
+        </div>
+        <div class="table-wrapper" style="margin-top:1rem;">
             <table id="urgentTable">
-                <thead>
-                    <tr>
-                        <th>الموظف</th>
-                        <th>رقم الهوية</th>
-                        <th>مستوى الخطورة</th>
-                        <th>الإجراء المطلوب</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>الموظف</th><th>رقم الهوية</th><th>مستوى الخطورة</th><th>الإجراء المطلوب</th></tr></thead>
                 <tbody id="urgentBody">
                     <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light);">اضغط على "تحديث اللوحة" للتحميل</td></tr>
                 </tbody>
@@ -272,108 +166,64 @@
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadDashboard()" id="dashRefreshBtn">تحديث اللوحة</button>
     </section>
 
-    <!-- ADD EMPLOYEE FORM -->
+    <!-- ===== ADD EMPLOYEE ===== -->
     <section id="addSection" class="card hidden">
         <form id="hrisForm" onsubmit="handleAddEmployee(event)">
+            <div class="section-title">👤 البيانات الشخصية والوظيفية</div>
             <div class="form-grid">
-                <div class="form-group">
-                    <label>اسم المشترك *</label>
-                    <input type="text" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label>رقم الهوية *</label>
-                    <input type="text" name="nationalId" required pattern="\d{10}" title="أدخل 10 أرقام">
-                </div>
-                <div class="form-group">
-                    <label>الجنسية *</label>
-                    <select name="nationality" required>
-                        <option value="">اختر الجنسية</option>
-                        <option value="سعودي">سعودي</option>
-                        <option value="غير سعودي">غير سعودي</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>الجنس *</label>
-                    <select name="gender" required>
-                        <option value="">اختر</option>
-                        <option value="ذكر">ذكر</option>
-                        <option value="أنثى">أنثى</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>تاريخ الميلاد *</label>
-                    <input type="date" name="dob" required>
-                </div>
-                <div class="form-group">
-                    <label>المهنة *</label>
-                    <input type="text" name="jobTitle" required>
-                </div>
-                <div class="form-group">
-                    <label>تاريخ الإلتحاق *</label>
-                    <input type="date" name="joinDate" required>
-                </div>
-                <div class="form-group">
-                    <label>الأجر الأساسي</label>
-                    <input type="number" name="basic" step="0.01" min="0" value="0" oninput="calcTotal()">
-                </div>
-                <div class="form-group">
-                    <label>السكن</label>
-                    <input type="number" name="housing" step="0.01" min="0" value="0" oninput="calcTotal()">
-                </div>
-                <div class="form-group">
-                    <label>العمولات</label>
-                    <input type="number" name="commissions" step="0.01" min="0" value="0" oninput="calcTotal()">
-                </div>
-                <div class="form-group">
-                    <label>البدلات الأخرى</label>
-                    <input type="number" name="other" step="0.01" min="0" value="0" oninput="calcTotal()">
-                </div>
-                <div class="form-group">
-                    <label>إجمالي الأجر</label>
-                    <input type="text" id="totalSalaryDisplay" readonly value="0.00">
-                </div>
-                <div class="form-group">
-                    <label>الاجر الخاضع للاشتراك</label>
-                    <input type="number" name="gosiSalary" step="0.01" min="0">
-                </div>
-                <div class="form-group">
-                    <label>الاهلية للتأمينات 1445هـ</label>
-                    <select name="gosiEligible">
-                        <option value="نعم">نعم</option>
-                        <option value="لا">لا</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>اسم المنشأة</label>
-                    <input type="text" name="entityName" value="مصنع الصفوة للألمنيوم">
-                </div>
-                <div class="form-group">
-                    <label>رقم المنشأة</label>
-                    <input type="text" name="entityNumber">
-                </div>
+                <div class="form-group"><label>اسم المشترك *</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>رقم الهوية *</label><input type="text" name="nationalId" required pattern="\d{10}" title="أدخل 10 أرقام"></div>
+                <div class="form-group"><label>الجنسية *</label><select name="nationality" required><option value="">اختر</option><option value="سعودي">سعودي</option><option value="غير سعودي">غير سعودي</option></select></div>
+                <div class="form-group"><label>الجنس *</label><select name="gender" required><option value="">اختر</option><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                <div class="form-group"><label>تاريخ الميلاد *</label><input type="date" name="dob" required></div>
+                <div class="form-group"><label>المهنة *</label><input type="text" name="jobTitle" required></div>
+                <div class="form-group"><label>تاريخ الإلتحاق *</label><input type="date" name="joinDate" required></div>
             </div>
+
+            <div class="section-title">💰 بيانات الرواتب</div>
+            <div class="form-grid">
+                <div class="form-group"><label>الأجر الأساسي</label><input type="number" name="basic" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
+                <div class="form-group"><label>السكن</label><input type="number" name="housing" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
+                <div class="form-group"><label>العمولات</label><input type="number" name="commissions" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
+                <div class="form-group"><label>البدلات الأخرى</label><input type="number" name="other" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
+                <div class="form-group"><label>إجمالي الأجر</label><input type="text" id="totalSalaryDisplay" readonly value="0.00"></div>
+                <div class="form-group"><label>الاجر الخاضع للاشتراك</label><input type="number" name="gosiSalary" step="0.01" min="0"></div>
+                <div class="form-group"><label>الاهلية للتأمينات 1445هـ</label><select name="gosiEligible"><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
+            </div>
+
+            <div class="section-title">🏛️ الامتثال والوثائق</div>
+            <div class="form-grid">
+                <div class="form-group"><label>رقم الإقامة / الجواز</label><input type="text" name="docNumber"></div>
+                <div class="form-group"><label>تاريخ انتهاء الوثيقة</label><input type="date" name="docExpiry"></div>
+                <div class="form-group"><label>نوع العقد</label><select name="contractType"><option value="">اختر</option><option value="عقد عمل محدد المدة">عقد عمل محدد المدة</option><option value="عقد عمل غير محدد المدة">عقد عمل غير محدد المدة</option><option value="عقد تدريب">عقد تدريب</option><option value="عقد موسمي">عقد موسمي</option></select></div>
+                <div class="form-group"><label>تاريخ انتهاء العقد</label><input type="date" name="contractExpiry"></div>
+                <div class="form-group"><label>حالة WPS آخر شهر</label><select name="wpsStatus"><option value="غير مفحوص">غير مفحوص</option><option value="تم الصرف">تم الصرف</option><option value="مرفوض">مرفوض</option><option value="متأخر">متأخر</option></select></div>
+                <div class="form-group"><label>مسجل في GOSI</label><select name="gosiRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                <div class="form-group"><label>مسجل في Qiwa</label><select name="qiwaRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+            </div>
+
+            <div class="section-title">🏢 بيانات المنشأة</div>
+            <div class="form-grid">
+                <div class="form-group"><label>اسم المنشأة</label><input type="text" name="entityName" value="مصنع الصفوة للألمنيوم"></div>
+                <div class="form-group"><label>رقم المنشأة</label><input type="text" name="entityNumber"></div>
+            </div>
+
             <button type="submit" class="btn-submit" id="submitBtn">حفظ بيانات الموظف</button>
         </form>
     </section>
 
-    <!-- VIEW EMPLOYEES TABLE -->
+    <!-- ===== VIEW EMPLOYEES ===== -->
     <section id="viewSection" class="card hidden">
         <div class="table-wrapper">
             <table id="employeesTable">
                 <thead>
                     <tr>
-                        <th>اسم المشترك</th>
-                        <th>رقم الهوية</th>
-                        <th>الجنسية</th>
-                        <th>الجنس</th>
-                        <th>المهنة</th>
-                        <th>تاريخ الإلتحاق</th>
-                        <th>إجمالي الأجر</th>
-                        <th>التأمينات</th>
+                        <th>اسم المشترك</th><th>رقم الهوية</th><th>الجنسية</th><th>المهنة</th>
+                        <th>إجمالي الأجر</th><th>حالة الوثيقة</th><th>حالة العقد</th><th>GOSI</th><th>Qiwa</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr><td colspan="8" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr>
+                    <tr><td colspan="9" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr>
                 </tbody>
             </table>
         </div>
@@ -382,199 +232,174 @@
 
 </main>
 
+<!-- ACTIVATION GUIDE MODAL -->
+<div id="guideModal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="modal">
+        <h2>📋 دليل تفعيل الامتثال التنظيمي</h2>
+        <table>
+            <thead><tr><th>النظام</th><th>كيفية التفعيل</th><th>الرابط</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Qiwa</strong></td><td>بوابة المنشأة → العقود → توثيق عقد جديد لكل موظف غير موثق</td><td><a href="https://qiwa.sa" target="_blank">qiwa.sa</a></td></tr>
+                <tr><td><strong>GOSI</strong></td><td>بوابة التأمينات → الخدمات الإلكترونية → تسجيل مشترك جديد</td><td><a href="https://www.gosi.gov.sa" target="_blank">gosi.gov.sa</a></td></tr>
+                <tr><td><strong>Mudad / WPS</strong></td><td>منصة مدد → رفع ملف الرواتب الشهري بصيغة WPS المعتمدة</td><td><a href="https://mudad.com.sa" target="_blank">mudad.com.sa</a></td></tr>
+                <tr><td><strong>Muqeem</strong></td><td>خدمات المقيمين → تجديد إقامة / إصدار تأشيرة خروج وعودة</td><td><a href="https://muqeem.sa" target="_blank">muqeem.sa</a></td></tr>
+            </tbody>
+        </table>
+        <p style="color:var(--warning);font-size:0.9rem;">⚠️ بعد إتمام التسجيل في أي منصة، عد إلى نموذج "إضافة موظف" أو سجل الموظفين وحدّث حالة التسجيل يدوياً حتى تنعكس في لوحة الامتثال.</p>
+        <button class="modal-close" onclick="document.getElementById('guideModal').classList.add('hidden')">إغلاق</button>
+    </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA1F1F4ZchUmlZoEo-VdQV5HVMAygM0v5MjYIUcu0jAguc_KJbaipHeaAlGIP6W0o/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4WFSR9KKtHf82dzvwTKDfLLxUcL7pu_o4f_Wbbq22hHteC_AcCt35aO_i685hDfs/exec';
 
-// === TAB SWITCHING ===
 function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
-    
     document.getElementById('dashboardSection').classList.toggle('hidden', tab !== 'dashboard');
     document.getElementById('addSection').classList.toggle('hidden', tab !== 'add');
     document.getElementById('viewSection').classList.toggle('hidden', tab !== 'view');
-    
     if (tab === 'dashboard') loadDashboard();
     if (tab === 'view') loadEmployees();
 }
 
-// === AUTO CALCULATE TOTAL ===
 function calcTotal() {
-    const form = document.getElementById('hrisForm');
-    const total = (parseFloat(form.basic.value) || 0) + 
-                  (parseFloat(form.housing.value) || 0) + 
-                  (parseFloat(form.commissions.value) || 0) + 
-                  (parseFloat(form.other.value) || 0);
-    document.getElementById('totalSalaryDisplay').value = total.toFixed(2);
+    const f = document.getElementById('hrisForm');
+    const t = (parseFloat(f.basic.value)||0)+(parseFloat(f.housing.value)||0)+(parseFloat(f.commissions.value)||0)+(parseFloat(f.other.value)||0);
+    document.getElementById('totalSalaryDisplay').value = t.toFixed(2);
 }
 
-// === TOAST NOTIFICATION ===
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = `toast ${type} show`;
-    setTimeout(() => toast.classList.remove('show'), 3500);
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-// === JSONP HELPER ===
-function jsonpRequest(params, timeoutMs = 15000) {
+function showGuide() { document.getElementById('guideModal').classList.remove('hidden'); }
+
+function jsonpRequest(params, timeoutMs=15000) {
     return new Promise((resolve, reject) => {
-        const callbackName = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-        const timer = setTimeout(() => {
-            cleanup();
-            reject(new Error('انتهت مهلة الاتصال'));
-        }, timeoutMs);
-
-        function cleanup() {
-            clearTimeout(timer);
-            delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-        }
-
-        window[callbackName] = (response) => {
-            cleanup();
-            resolve(response);
-        };
-
-        const queryString = new URLSearchParams({ callback: callbackName, ...params }).toString();
-        const script = document.createElement('script');
-        script.src = `${APPS_SCRIPT_URL}?${queryString}`;
-        script.onerror = () => { cleanup(); reject(new Error('فشل الاتصال بالخادم')); };
-        document.head.appendChild(script);
+        const cb = '_hris_cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+        const timer = setTimeout(() => { cleanup(); reject(new Error('انتهت مهلة الاتصال')); }, timeoutMs);
+        function cleanup() { clearTimeout(timer); delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s); }
+        window[cb] = (r) => { cleanup(); resolve(r); };
+        const qs = new URLSearchParams({callback:cb,...params}).toString();
+        const s = document.createElement('script');
+        s.src = `${APPS_SCRIPT_URL}?${qs}`;
+        s.onerror = () => { cleanup(); reject(new Error('فشل الاتصال بالخادم')); };
+        document.head.appendChild(s);
     });
 }
 
-// === LOAD DASHBOARD ===
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
-    const urgentBody = document.getElementById('urgentBody');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    
-    // Set loading state for KPIs
-    ['kpi-saudization','kpi-iqama','kpi-contracts','kpi-total'].forEach(id => {
-        document.getElementById(id).textContent = '...';
-    });
-    urgentBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
-    
+    const ub = document.getElementById('urgentBody');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio'].forEach(id => document.getElementById(id).textContent = '...');
+    ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
+
     try {
-        const response = await jsonpRequest({ action: 'dashboard' });
-        
-        if (response.metrics) {
-            const m = response.metrics;
+        const r = await jsonpRequest({action:'dashboard'});
+        if (r.metrics) {
+            const m = r.metrics;
             document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
+            document.getElementById('kpi-total').textContent = m.total_employees ?? '0';
             document.getElementById('kpi-iqama').textContent = m.iqama_expiring_30d ?? '0';
             document.getElementById('kpi-contracts').textContent = m.contracts_expiring_90d ?? '0';
-            document.getElementById('kpi-total').textContent = m.total_employees ?? '0';
+            document.getElementById('kpi-gosi').textContent = m.gosi_unregistered ?? '0';
+            document.getElementById('kpi-qiwa').textContent = m.qiwa_unregistered ?? '0';
+            document.getElementById('kpi-wps').textContent = m.wps_rejections ?? '0';
+            document.getElementById('kpi-ratio').textContent = `${m.saudi_count??0}/${m.non_saudi_count??0}`;
         }
-        
-        if (response.urgentActions && response.urgentActions.length > 0) {
-            urgentBody.innerHTML = response.urgentActions.map(item => {
-                const badgeClass = item.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr>
-                    <td>${item.name || ''}</td>
-                    <td>${item.nationalId || ''}</td>
-                    <td><span class="badge ${badgeClass}">${item.riskLevel || ''}</span></td>
-                    <td>${item.actionRequired || ''}</td>
-                </tr>`;
+        if (r.urgentActions && r.urgentActions.length > 0) {
+            ub.innerHTML = r.urgentActions.map(i => {
+                const bc = i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
+                return `<tr><td>${i.name||''}</td><td>${i.nationalId||''}</td><td><span class="badge ${bc}">${i.riskLevel||''}</span></td><td>${i.actionRequired||''}</td></tr>`;
             }).join('');
         } else {
-            urgentBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
+            ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
-        
-    } catch (err) {
-        urgentBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
-        showToast('فشل تحميل لوحة الامتثال', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'تحديث اللوحة';
-    }
+    } catch(err) {
+        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
+        showToast('فشل تحميل لوحة الامتثال','error');
+    } finally { btn.disabled = false; btn.textContent = 'تحديث اللوحة'; }
 }
 
-// === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
-    const originalText = btn.textContent;
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
-    
-    const formData = Object.fromEntries(new FormData(e.target));
-    formData.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value) || 0;
-    formData.action = 'add';
-    
+    const orig = btn.textContent;
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
+    const fd = Object.fromEntries(new FormData(e.target));
+    fd.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value)||0;
+    fd.action = 'add';
+
     try {
-        const response = await jsonpRequest({ data: JSON.stringify(formData) });
-        
-        if (response.status === 'success') {
+        const r = await jsonpRequest({data:JSON.stringify(fd)});
+        if (r.status === 'success') {
             showToast('✅ تم حفظ بيانات الموظف بنجاح');
             e.target.reset();
             document.getElementById('totalSalaryDisplay').value = '0.00';
             e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
-        } else {
-            throw new Error(response.error || 'حدث خطأ غير معروف');
-        }
-    } catch (err) {
-        // Fallback: fire-and-forget POST
+        } else throw new Error(r.error || 'حدث خطأ غير معروف');
+    } catch(err) {
         try {
-            await fetch(APPS_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            showToast('تم إرسال البيانات (لم يتم التأكيد)', 'success');
+            await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)});
+            showToast('تم إرسال البيانات (لم يتم التأكيد)','success');
             e.target.reset();
-        } catch {
-            showToast('❌ ' + err.message, 'error');
-        }
-    } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-    }
+        } catch { showToast('❌ '+err.message,'error'); }
+    } finally { btn.disabled = false; btn.textContent = orig; }
 }
 
-// === LOAD EMPLOYEES ===
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
-    const tbody = document.getElementById('tableBody');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
-    
+    const tb = document.getElementById('tableBody');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
+
     try {
-        const response = await jsonpRequest({ action: 'get' });
-        const employees = response.data;
-        
-        if (!employees || !employees.length) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
+        const r = await jsonpRequest({action:'get'});
+        const emps = r.data;
+        if (!emps || !emps.length) {
+            tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
         } else {
-            tbody.innerHTML = employees.map(emp => `
-                <tr>
-                    <td>${emp[0] || ''}</td>
-                    <td>${emp[1] || ''}</td>
-                    <td>${emp[2] || ''}</td>
-                    <td>${emp[3] || ''}</td>
-                    <td>${emp[11] || ''}</td>
-                    <td>${emp[12] || ''}</td>
-                    <td>${parseFloat(emp[9] || 0).toLocaleString('ar-SA', {minimumFractionDigits: 2})}</td>
-                    <td>${emp[13] || ''}</td>
-                </tr>
-            `).join('');
+            tb.innerHTML = emps.map(emp => {
+                // Compute status badges client-side from raw data
+                const nat = String(emp[2]||'');
+                const gosiReg = String(emp[21]||'').includes('نعم');
+                const qiwaReg = String(emp[22]||'').includes('نعم');
+                const gosiBadge = gosiReg ? '<span class="badge badge-green">✅</span>' : '<span class="badge badge-red">❌</span>';
+                const qiwaBadge = qiwaReg ? '<span class="badge badge-green">✅</span>' : '<span class="badge badge-yellow">❌</span>';
+                // Doc/Contract status computed simply for table view
+                const docExp = emp[17]; const conExp = emp[19];
+                let docBadge = '<span class="badge badge-green">✅</span>';
+                let conBadge = '<span class="badge badge-green">✅</span>';
+                if (docExp) {
+                    const d = Math.ceil((new Date(docExp)-new Date())/86400000);
+                    if (d<=0) docBadge='<span class="badge badge-red">⛔ منتهي</span>';
+                    else if (d<=30) docBadge='<span class="badge badge-red">🔴 قريب</span>';
+                    else if (d<=90) docBadge='<span class="badge badge-yellow">🟡 قارب</span>';
+                } else if (!nat.includes('سعودي')) { docBadge='<span class="badge badge-red">⛔ غير محدد</span>'; }
+                if (conExp) {
+                    const d = Math.ceil((new Date(conExp)-new Date())/86400000);
+                    if (d<=0) conBadge='<span class="badge badge-red">⛔ منتهي</span>';
+                    else if (d<=90) conBadge='<span class="badge badge-yellow">🟡 تجديد</span>';
+                } else { conBadge='<span class="badge badge-yellow">⚠️ غير محدد</span>'; }
+
+                return `<tr>
+                    <td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${emp[2]||''}</td><td>${emp[11]||''}</td>
+                    <td>${parseFloat(emp[9]||0).toLocaleString('ar-SA',{minimumFractionDigits:2})}</td>
+                    <td>${docBadge}</td><td>${conBadge}</td><td>${gosiBadge}</td><td>${qiwaBadge}</td>
+                </tr>`;
+            }).join('');
         }
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'تحديث البيانات';
-    }
+    } catch(err) {
+        tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
+    } finally { btn.disabled = false; btn.textContent = 'تحديث البيانات'; }
 }
 
-// Load dashboard on initial page load
 document.addEventListener('DOMContentLoaded', () => loadDashboard());
 </script>
 </body>
