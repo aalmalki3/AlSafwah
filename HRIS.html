@@ -279,20 +279,50 @@ function showToast(msg, type='success') {
 
 function showGuide() { document.getElementById('guideModal').classList.remove('hidden'); }
 
-function jsonpRequest(params, timeoutMs=15000) {
+function jsonpRequest(params, timeoutMs = 20000) { // Increased to 20s for large datasets
     return new Promise((resolve, reject) => {
-        const cb = '_hris_cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
-        const timer = setTimeout(() => { cleanup(); reject(new Error('انتهت مهلة الاتصال')); }, timeoutMs);
-        function cleanup() { clearTimeout(timer); delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s); }
-        window[cb] = (r) => { cleanup(); resolve(r); };
-        const qs = new URLSearchParams({callback:cb,...params}).toString();
-        const s = document.createElement('script');
-        s.src = `${APPS_SCRIPT_URL}?${qs}`;
-        s.onerror = () => { cleanup(); reject(new Error('فشل الاتصال بالخادم')); };
-        document.head.appendChild(s);
+        const callbackName = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        let resolved = false;
+
+        // Define callback BEFORE creating script tag
+        window[callbackName] = (response) => {
+            if (resolved) return; // Prevent double execution
+            resolved = true;
+            
+            clearTimeout(timer);
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            
+            resolve(response);
+        };
+
+        const timer = setTimeout(() => {
+            if (resolved) return;
+            resolved = true;
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            reject(new Error('انتهت مهلة الاتصال (20 ثانية)'));
+        }, timeoutMs);
+
+        const queryString = new URLSearchParams({ 
+            callback: callbackName, 
+            ...params 
+        }).toString();
+        
+        const script = document.createElement('script');
+        script.src = `${APPS_SCRIPT_URL}?${queryString}`;
+        
+        script.onerror = () => {
+            if (resolved) return;
+            resolved = true;
+            clearTimeout(timer);
+            delete window[callbackName];
+            reject(new Error('فشل تحميل السكربت من الخادم'));
+        };
+        
+        document.head.appendChild(script);
     });
 }
-
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
     const ub = document.getElementById('urgentBody');
@@ -321,10 +351,13 @@ async function loadDashboard() {
         } else {
             ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
-    } catch(err) {
-        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
-        showToast('فشل تحميل لوحة الامتثال','error');
-    } finally { btn.disabled = false; btn.textContent = 'تحديث اللوحة'; }
+    } catch (err) {
+    console.error('Dashboard Load Failed:', err); // ← CRITICAL: Check Console (F12)
+    ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">
+        ❌ ${err.message}<br>
+        <small style="color:#666">افتح وحدة التحكم (F12) لمزيد من التفاصيل</small>
+    </td></tr>`;
+    showToast('فشل تحميل لوحة الامتثال', 'error');
 }
 
 async function handleAddEmployee(e) {
