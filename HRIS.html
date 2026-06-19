@@ -15,6 +15,7 @@
             --text: #1e293b;
             --text-light: #64748b;
             --success: #16a34a;
+            --warning: #d97706;
             --error: #dc2626;
             --radius: 12px;
         }
@@ -44,7 +45,7 @@
 
         .header h1 { font-size: 1.5rem; color: var(--primary); }
 
-        .nav-tabs { display: flex; gap: 0.5rem; }
+        .nav-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         
         .tab-btn {
             padding: 0.5rem 1.25rem;
@@ -66,7 +67,7 @@
         /* Main Container */
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* Form Card */
+        /* Card */
         .card {
             background: var(--card);
             border-radius: var(--radius);
@@ -74,6 +75,54 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
+        /* Dashboard KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid;
+        }
+
+        .kpi-label { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .kpi-value { font-size: 2.25rem; font-weight: 700; line-height: 1.2; }
+
+        .kpi-green { background: #f0fdf4; border-color: #bbf7d0; }
+        .kpi-green .kpi-label { color: var(--success); }
+        .kpi-green .kpi-value { color: #15803d; }
+
+        .kpi-red { background: #fef2f2; border-color: #fecaca; }
+        .kpi-red .kpi-label { color: var(--error); }
+        .kpi-red .kpi-value { color: #b91c1c; }
+
+        .kpi-yellow { background: #fffbeb; border-color: #fde68a; }
+        .kpi-yellow .kpi-label { color: var(--warning); }
+        .kpi-yellow .kpi-value { color: #b45309; }
+
+        .kpi-blue { background: #eff6ff; border-color: #bfdbfe; }
+        .kpi-blue .kpi-label { color: var(--primary); }
+        .kpi-blue .kpi-value { color: var(--primary-hover); }
+
+        /* Risk Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .badge-red { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
+        .badge-yellow { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; }
+
+        /* Section Title */
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -81,7 +130,6 @@
         }
 
         .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-        .form-group.full-width { grid-column: 1 / -1; }
 
         label { font-size: 0.85rem; font-weight: 500; color: var(--text-light); }
 
@@ -160,7 +208,12 @@
         @media (max-width: 768px) {
             .header { flex-direction: column; gap: 1rem; }
             .form-grid { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .container { padding: 0 1rem; margin: 1rem auto; }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -169,14 +222,58 @@
 <header class="header">
     <h1>🏢 نظام موارد الصفوة</h1>
     <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('add')">إضافة موظف</button>
-        <button class="tab-btn" onclick="switchTab('view')">سجل الموظفين</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard', this)">لوحة الامتثال</button>
+        <button class="tab-btn" onclick="switchTab('add', this)">إضافة موظف</button>
+        <button class="tab-btn" onclick="switchTab('view', this)">سجل الموظفين</button>
     </nav>
 </header>
 
 <main class="container">
+
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="card">
+        <div class="section-title">📊 مؤشرات الامتثال والموارد البشرية</div>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card kpi-green">
+                <div class="kpi-label">نسبة التوطين</div>
+                <div class="kpi-value" id="kpi-saudization">--</div>
+            </div>
+            <div class="kpi-card kpi-red">
+                <div class="kpi-label">إقامات تنتهي خلال 30 يوم</div>
+                <div class="kpi-value" id="kpi-iqama">--</div>
+            </div>
+            <div class="kpi-card kpi-yellow">
+                <div class="kpi-label">عقود قريبة الانتهاء (90 يوم)</div>
+                <div class="kpi-value" id="kpi-contracts">--</div>
+            </div>
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-label">إجمالي الموظفين</div>
+                <div class="kpi-value" id="kpi-total">--</div>
+            </div>
+        </div>
+
+        <div class="section-title">🚨 إجراءات مطلوبة</div>
+        <div class="table-wrapper">
+            <table id="urgentTable">
+                <thead>
+                    <tr>
+                        <th>الموظف</th>
+                        <th>رقم الهوية</th>
+                        <th>مستوى الخطورة</th>
+                        <th>الإجراء المطلوب</th>
+                    </tr>
+                </thead>
+                <tbody id="urgentBody">
+                    <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light);">اضغط على "تحديث اللوحة" للتحميل</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn-submit" style="margin-top:1rem;" onclick="loadDashboard()" id="dashRefreshBtn">تحديث اللوحة</button>
+    </section>
+
     <!-- ADD EMPLOYEE FORM -->
-    <section id="addSection" class="card">
+    <section id="addSection" class="card hidden">
         <form id="hrisForm" onsubmit="handleAddEmployee(event)">
             <div class="form-grid">
                 <div class="form-group">
@@ -282,21 +379,24 @@
         </div>
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadEmployees()" id="refreshBtn">تحديث البيانات</button>
     </section>
+
 </main>
 
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiIpdtFhGvlBgzNYi23yGwfHT3FRZxm9CC3rajUGclC1RQSd8I7pum7qEzp_9FQrY/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA1F1F4ZchUmlZoEo-VdQV5HVMAygM0v5MjYIUcu0jAguc_KJbaipHeaAlGIP6W0o/exec';
 
 // === TAB SWITCHING ===
-function switchTab(tab) {
+function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (btnElement) btnElement.classList.add('active');
     
+    document.getElementById('dashboardSection').classList.toggle('hidden', tab !== 'dashboard');
     document.getElementById('addSection').classList.toggle('hidden', tab !== 'add');
     document.getElementById('viewSection').classList.toggle('hidden', tab !== 'view');
     
+    if (tab === 'dashboard') loadDashboard();
     if (tab === 'view') loadEmployees();
 }
 
@@ -318,7 +418,83 @@ function showToast(message, type = 'success') {
     setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-// === ADD EMPLOYEE (with JSONP callback for reliable no-cors feedback) ===
+// === JSONP HELPER ===
+function jsonpRequest(params, timeoutMs = 15000) {
+    return new Promise((resolve, reject) => {
+        const callbackName = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        const timer = setTimeout(() => {
+            cleanup();
+            reject(new Error('انتهت مهلة الاتصال'));
+        }, timeoutMs);
+
+        function cleanup() {
+            clearTimeout(timer);
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[callbackName] = (response) => {
+            cleanup();
+            resolve(response);
+        };
+
+        const queryString = new URLSearchParams({ callback: callbackName, ...params }).toString();
+        const script = document.createElement('script');
+        script.src = `${APPS_SCRIPT_URL}?${queryString}`;
+        script.onerror = () => { cleanup(); reject(new Error('فشل الاتصال بالخادم')); };
+        document.head.appendChild(script);
+    });
+}
+
+// === LOAD DASHBOARD ===
+async function loadDashboard() {
+    const btn = document.getElementById('dashRefreshBtn');
+    const urgentBody = document.getElementById('urgentBody');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    
+    // Set loading state for KPIs
+    ['kpi-saudization','kpi-iqama','kpi-contracts','kpi-total'].forEach(id => {
+        document.getElementById(id).textContent = '...';
+    });
+    urgentBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
+    
+    try {
+        const response = await jsonpRequest({ action: 'dashboard' });
+        
+        if (response.metrics) {
+            const m = response.metrics;
+            document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
+            document.getElementById('kpi-iqama').textContent = m.iqama_expiring_30d ?? '0';
+            document.getElementById('kpi-contracts').textContent = m.contracts_expiring_90d ?? '0';
+            document.getElementById('kpi-total').textContent = m.total_employees ?? '0';
+        }
+        
+        if (response.urgentActions && response.urgentActions.length > 0) {
+            urgentBody.innerHTML = response.urgentActions.map(item => {
+                const badgeClass = item.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
+                return `<tr>
+                    <td>${item.name || ''}</td>
+                    <td>${item.nationalId || ''}</td>
+                    <td><span class="badge ${badgeClass}">${item.riskLevel || ''}</span></td>
+                    <td>${item.actionRequired || ''}</td>
+                </tr>`;
+            }).join('');
+        } else {
+            urgentBody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
+        }
+        
+    } catch (err) {
+        urgentBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
+        showToast('فشل تحميل لوحة الامتثال', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تحديث اللوحة';
+    }
+}
+
+// === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
@@ -331,42 +507,22 @@ async function handleAddEmployee(e) {
     formData.totalSalary = parseFloat(document.getElementById('totalSalaryDisplay').value) || 0;
     formData.action = 'add';
     
-    // JSONP callback approach for reliable response with no-cors
-    const callbackName = '_hris_cb_' + Date.now();
-    
     try {
-        await new Promise((resolve, reject) => {
-            window[callbackName] = (response) => {
-                delete window[callbackName];
-                document.head.removeChild(script);
-                if (response.status === 'success') resolve(response);
-                else reject(new Error(response.error || 'حدث خطأ غير معروف'));
-            };
-            
-            const script = document.createElement('script');
-            script.src = `${APPS_SCRIPT_URL}?callback=${callbackName}&data=${encodeURIComponent(JSON.stringify(formData))}`;
-            script.onerror = () => {
-                delete window[callbackName];
-                reject(new Error('فشل الاتصال بالخادم'));
-            };
-            document.head.appendChild(script);
-            
-            // Timeout fallback
-            setTimeout(() => reject(new Error('انتهت مهلة الاتصال')), 15000);
-        });
+        const response = await jsonpRequest({ data: JSON.stringify(formData) });
         
-        showToast('✅ تم حفظ بيانات الموظف بنجاح');
-        e.target.reset();
-        document.getElementById('totalSalaryDisplay').value = '0.00';
-        // Restore default entity name
-        e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
-        
+        if (response.status === 'success') {
+            showToast('✅ تم حفظ بيانات الموظف بنجاح');
+            e.target.reset();
+            document.getElementById('totalSalaryDisplay').value = '0.00';
+            e.target.entityName.value = 'مصنع الصفوة للألمنيوم';
+        } else {
+            throw new Error(response.error || 'حدث خطأ غير معروف');
+        }
     } catch (err) {
-        // Fallback: If JSONP fails, try regular POST (fire-and-forget)
+        // Fallback: fire-and-forget POST
         try {
             await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
+                method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
@@ -390,25 +546,11 @@ async function loadEmployees() {
     btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
     
-    const callbackName = '_hris_load_' + Date.now();
-    
     try {
-        const employees = await new Promise((resolve, reject) => {
-            window[callbackName] = (response) => {
-                delete window[callbackName];
-                document.head.removeChild(script);
-                if (response.data) resolve(response.data);
-                else reject(new Error(response.error || 'لا توجد بيانات'));
-            };
-            
-            const script = document.createElement('script');
-            script.src = `${APPS_SCRIPT_URL}?callback=${callbackName}&action=get`;
-            script.onerror = () => reject(new Error('فشل تحميل البيانات'));
-            document.head.appendChild(script);
-            setTimeout(() => reject(new Error('انتهت مهلة التحميل')), 15000);
-        });
+        const response = await jsonpRequest({ action: 'get' });
+        const employees = response.data;
         
-        if (!employees.length) {
+        if (!employees || !employees.length) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين مسجلين بعد</td></tr>';
         } else {
             tbody.innerHTML = employees.map(emp => `
@@ -424,7 +566,6 @@ async function loadEmployees() {
                 </tr>
             `).join('');
         }
-        
     } catch (err) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
     } finally {
@@ -432,6 +573,9 @@ async function loadEmployees() {
         btn.textContent = 'تحديث البيانات';
     }
 }
+
+// Load dashboard on initial page load
+document.addEventListener('DOMContentLoaded', () => loadDashboard());
 </script>
 </body>
 </html>
