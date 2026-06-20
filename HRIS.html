@@ -249,28 +249,42 @@ async function loadDashboard() {
     const ub = document.getElementById('urgentBody');
     if (!btn || !ub) return;
     
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    btn.disabled = true; 
+    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
+    
     ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio']
-        .forEach(id => { const el=document.getElementById(id); if(el) el.textContent='...'; });
+        .forEach(id => { 
+            const el = document.getElementById(id); 
+            if(el) el.textContent = '...'; 
+        });
+    
     ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
 
     try {
-        const r = await jsonpRequest({action:'dashboard'});
+        const r = await jsonpRequest({ action: 'dashboard' });
         
-        // 🔧 DEBUG & SAFE ACCESS
-        console.log('📊 Raw Dashboard Response:', r);
+        //  DEBUG: Inspect exact keys available in response
+        console.log('📊 Response Keys:', Object.keys(r));
+        console.log('📊 Full Response:', JSON.stringify(r, null, 2));
         
-        // Handle case where response might be stringified or nested
-        let metrics = r?.metrics;
-        if (!metrics && typeof r === 'string') {
-            try { metrics = JSON.parse(r)?.metrics; } catch(e) {}
+        // FIX: Handle both nested {metrics: {...}} and flat root-level responses
+        let metrics = r.metrics;
+        if (!metrics && typeof r.total_employees !== 'undefined') {
+            // Backend returned flat structure - use entire response as metrics
+            metrics = r;
+            console.log('✅ Using flat response structure');
+        } else if (metrics) {
+            console.log('✅ Using nested metrics structure');
+        } else {
+            console.warn('⚠️ No valid metrics found. Available keys:', Object.keys(r));
         }
         
         if (metrics) {
             const setVal = (id, val) => { 
                 const el = document.getElementById(id); 
-                if (el) el.textContent = (val !== undefined && val !== null) ? val : '--'; 
+                if(el) el.textContent = (val !== undefined && val !== null) ? val : '--'; 
             };
+            
             setVal('kpi-saudization', metrics.saudization_pct);
             setVal('kpi-total', metrics.total_employees ?? '0');
             setVal('kpi-iqama', metrics.iqama_expiring_30d ?? '0');
@@ -278,30 +292,37 @@ async function loadDashboard() {
             setVal('kpi-gosi', metrics.gosi_unregistered ?? '0');
             setVal('kpi-qiwa', metrics.qiwa_unregistered ?? '0');
             setVal('kpi-wps', metrics.wps_rejections ?? '0');
-            setVal('kpi-ratio', `${metrics.saudi_count??0}/${metrics.non_saudi_count??0}`);
-        } else {
-            console.warn('⚠️ Metrics missing from response:', r);
-            ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--warning);">⚠️ لا توجد بيانات - تحقق من الكونسول</td></tr>';
+            setVal('kpi-ratio', `${metrics.saudi_count ?? 0}/${metrics.non_saudi_count ?? 0}`);
         }
         
-        const actions = r?.urgentActions || [];
+        // Handle urgent actions with same flexibility
+        const actions = r.urgentActions || r.actions || [];
         if (actions.length > 0) {
             ub.innerHTML = actions.map(i => {
-                const bc = i.riskLevel?.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr><td>${i.name||''}</td><td>${i.nationalId||''}</td><td><span class="badge ${bc}">${i.riskLevel||''}</span></td><td>${i.actionRequired||''}</td></tr>`;
+                const bc = i.riskLevel && i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
+                return `<tr>
+                    <td>${i.name || ''}</td>
+                    <td>${i.nationalId || ''}</td>
+                    <td><span class="badge ${bc}">${i.riskLevel || ''}</span></td>
+                    <td>${i.actionRequired || ''}</td>
+                </tr>`;
             }).join('');
         } else {
             ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
+        
     } catch (err) {
-        console.error('❌ Dashboard Failed:', err);
-        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}<br><small>افتح F12 للمزيد</small></td></tr>`;
-        showToast('فشل تحميل اللوحة', 'error');
+        console.error(' Dashboard Load Failed:', err);
+        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">
+            ❌ ${err.message}<br>
+            <small style="color:#666">افتح وحدة التحكم (F12) لمزيد من التفاصيل</small>
+        </td></tr>`;
+        showToast('فشل تحميل لوحة الامتثال', 'error');
     } finally {
-        btn.disabled = false; btn.textContent = 'تحديث اللوحة';
+        btn.disabled = false;
+        btn.textContent = 'تحديث اللوحة';
     }
 }
-
 async function handleAddEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
