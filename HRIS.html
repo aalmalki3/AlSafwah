@@ -6,75 +6,43 @@
     <title>نظام شركة الصفوة | HRIS</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1a56db; --primary-hover: #1e40af; --bg: #f8fafc; --card: #ffffff;
-            --border: #e2e8f0; --text: #1e293b; --text-light: #64748b;
-            --success: #16a34a; --warning: #d97706; --error: #dc2626; --radius: 12px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
-        .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .header h1 { font-size: 1.5rem; color: var(--primary); }
-        .nav-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .tab-btn { padding: 0.5rem 1.25rem; border: 1px solid var(--border); background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.2s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
-        .card { background: var(--card); border-radius: var(--radius); padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .kpi-card { padding: 1.5rem; border-radius: var(--radius); border: 1px solid; }
-        .kpi-label { font-size: 0.8rem; font-weight: 500; margin-bottom: 0.25rem; }
-        .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.2; }
-        .kpi-green { background: #f0fdf4; border-color: #bbf7d0; } .kpi-green .kpi-label { color: var(--success); } .kpi-green .kpi-value { color: #15803d; }
-        .kpi-red { background: #fef2f2; border-color: #fecaca; } .kpi-red .kpi-label { color: var(--error); } .kpi-red .kpi-value { color: #b91c1c; }
-        .kpi-yellow { background: #fffbeb; border-color: #fde68a; } .kpi-yellow .kpi-label { color: var(--warning); } .kpi-yellow .kpi-value { color: #b45309; }
-        .kpi-blue { background: #eff6ff; border-color: #bfdbfe; } .kpi-blue .kpi-label { color: var(--primary); } .kpi-blue .kpi-value { color: var(--primary-hover); }
-        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
-        .badge-red { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
-        .badge-yellow { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; }
-        .badge-green { background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0; }
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; margin-top: 1.5rem; color: var(--text); }
-        .section-title:first-child { margin-top: 0; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; }
-        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-        label { font-size: 0.85rem; font-weight: 500; color: var(--text-light); }
-        input, select { padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
-        input[readonly] { background: #f1f5f9; color: var(--text-light); }
-        .btn-submit { margin-top: 1.5rem; padding: 0.85rem 2rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; }
-        .btn-submit:hover { background: var(--primary-hover); }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 0.5rem; }
-        .btn-outline:hover { background: var(--primary); color: white; }
-        .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
-        th { background: #f8fafc; font-weight: 700; color: var(--text-light); position: sticky; top: 0; }
-        tr:hover { background: #f8fafc; }
-        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); padding: 0.75rem 1.5rem; border-radius: 8px; color: white; font-weight: 500; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast.success { background: var(--success); } .toast.error { background: var(--error); }
-        .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; margin-left: 0.5rem; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .hidden { display: none !important; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
-        .modal { background: var(--card); border-radius: var(--radius); padding: 2rem; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .modal h2 { margin-bottom: 1rem; color: var(--primary); }
-        .modal table { margin-bottom: 1rem; }
-        .modal-close { margin-top: 1rem; padding: 0.6rem 1.5rem; background: var(--text-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
-        @media (max-width: 768px) { .header { flex-direction: column; gap: 1rem; } .form-grid { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: repeat(2, 1fr); } .container { padding: 0 1rem; margin: 1rem auto; } }
-        @media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } }
+        :root { --primary:#1a56db;--primary-hover:#1e40af;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#1e293b;--text-light:#64748b;--success:#16a34a;--warning:#d97706;--error:#dc2626;--radius:12px; }
+        *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+        .header{background:var(--card);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}.header h1{font-size:1.5rem;color:var(--primary)}
+        .nav-tabs{display:flex;gap:.5rem;flex-wrap:wrap}.tab-btn{padding:.5rem 1.25rem;border:1px solid var(--border);background:transparent;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.9rem;transition:all .2s}.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .container{max-width:1200px;margin:2rem auto;padding:0 1.5rem}.card{background:var(--card);border-radius:var(--radius);padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:1.5rem}
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}.kpi-card{padding:1.5rem;border-radius:var(--radius);border:1px solid}.kpi-label{font-size:.8rem;font-weight:500;margin-bottom:.25rem}.kpi-value{font-size:2rem;font-weight:700;line-height:1.2}
+        .kpi-green{background:#f0fdf4;border-color:#bbf7d0}.kpi-green .kpi-label{color:var(--success)}.kpi-green .kpi-value{color:#15803d}
+        .kpi-red{background:#fef2f2;border-color:#fecaca}.kpi-red .kpi-label{color:var(--error)}.kpi-red .kpi-value{color:#b91c1c}
+        .kpi-yellow{background:#fffbeb;border-color:#fde68a}.kpi-yellow .kpi-label{color:var(--warning)}.kpi-yellow .kpi-value{color:#b45309}
+        .kpi-blue{background:#eff6ff;border-color:#bfdbfe}.kpi-blue .kpi-label{color:var(--primary)}.kpi-blue .kpi-value{color:var(--primary-hover)}
+        .badge{display:inline-block;padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:700}.badge-red{background:#fef2f2;color:var(--error);border:1px solid #fecaca}.badge-yellow{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}.badge-green{background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0}
+        .section-title{font-size:1.1rem;font-weight:700;margin-bottom:1rem;margin-top:1.5rem;color:var(--text)}.section-title:first-child{margin-top:0}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem}.form-group{display:flex;flex-direction:column;gap:.4rem}label{font-size:.85rem;font-weight:500;color:var(--text-light)}
+        input,select{padding:.75rem 1rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem;transition:border-color .2s;outline:none}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1)}input[readonly]{background:#f1f5f9;color:var(--text-light)}
+        .btn-submit{margin-top:1.5rem;padding:.85rem 2rem;background:var(--primary);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;width:100%}.btn-submit:hover{background:var(--primary-hover)}.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+        .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:.5rem}.btn-outline:hover{background:var(--primary);color:#fff}
+        .table-wrapper{overflow-x:auto;border-radius:var(--radius)}table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{padding:.75rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}th{background:#f8fafc;font-weight:700;color:var(--text-light);position:sticky;top:0}tr:hover{background:#f8fafc}
+        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);padding:.75rem 1.5rem;border-radius:8px;color:#fff;font-weight:500;opacity:0;transition:all .3s ease;z-index:1000}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}.toast.success{background:var(--success)}.toast.error{background:var(--error)}
+        .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-left:.5rem;vertical-align:middle}@keyframes spin{to{transform:rotate(360deg)}}
+        .hidden{display:none!important}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}.modal{background:var(--card);border-radius:var(--radius);padding:2rem;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}.modal h2{margin-bottom:1rem;color:var(--primary)}.modal table{margin-bottom:1rem}.modal-close{margin-top:1rem;padding:.6rem 1.5rem;background:var(--text-light);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit}
+        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem;transition:border-color .2s}.upload-zone:hover{border-color:var(--primary)}
+        @media(max-width:768px){.header{flex-direction:column;gap:1rem}.form-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.container{padding:0 1rem;margin:1rem auto}}@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
 <header class="header">
     <h1>🏢 نظام موارد الصفوة</h1>
     <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('dashboard', this)">لوحة الامتثال</button>
-        <button class="tab-btn" onclick="switchTab('add', this)">إضافة موظف</button>
-        <button class="tab-btn" onclick="switchTab('view', this)">سجل الموظفين</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard',this)">لوحة الامتثال</button>
+        <button class="tab-btn" onclick="switchTab('add',this)">إضافة موظف</button>
+        <button class="tab-btn" onclick="switchTab('view',this)">سجل الموظفين</button>
+        <button class="tab-btn" onclick="switchTab('data',this)">إدارة البيانات</button>
     </nav>
 </header>
 <main class="container">
+
     <!-- DASHBOARD -->
     <section id="dashboardSection" class="card">
         <div class="section-title">📊 مؤشرات الموارد البشرية والتوطين</div>
@@ -93,13 +61,11 @@
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;">
             <div class="section-title" style="margin:0;">🚨 إجراءات مطلوبة</div>
-            <button class="btn-submit btn-outline" style="width:auto;margin:0;padding:0.5rem 1rem;font-size:0.85rem;" onclick="showGuide()"> دليل تفعيل الامتثال</button>
+            <button class="btn-submit btn-outline" style="width:auto;margin:0;padding:.5rem 1rem;font-size:.85rem;" onclick="showGuide()">دليل تفعيل الامتثال</button>
         </div>
         <div class="table-wrapper" style="margin-top:1rem;">
-            <table id="urgentTable">
-                <thead><tr><th>الموظف</th><th>رقم الهوية</th><th>مستوى الخطورة</th><th>الإجراء المطلوب</th></tr></thead>
-                <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light);">اضغط على "تحديث اللوحة" للتحميل</td></tr></tbody>
-            </table>
+            <table id="urgentTable"><thead><tr><th>الموظف</th><th>رقم الهوية</th><th>مستوى الخطورة</th><th>الإجراء المطلوب</th></tr></thead>
+            <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light);">اضغط على "تحديث اللوحة" للتحميل</td></tr></tbody></table>
         </div>
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadDashboard()" id="dashRefreshBtn">تحديث اللوحة</button>
     </section>
@@ -149,41 +115,68 @@
     <!-- VIEW EMPLOYEES -->
     <section id="viewSection" class="card hidden">
         <div class="table-wrapper">
-            <table id="employeesTable">
-                <thead><tr><th>اسم المشترك</th><th>رقم الهوية</th><th>الجنسية</th><th>المهنة</th><th>إجمالي الأجر</th><th>حالة الوثيقة</th><th>حالة العقد</th><th>GOSI</th><th>Qiwa</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="9" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr></tbody>
-            </table>
+            <table id="employeesTable"><thead><tr><th>اسم المشترك</th><th>رقم الهوية</th><th>الجنسية</th><th>المهنة</th><th>إجمالي الأجر</th><th>حالة الوثيقة</th><th>حالة العقد</th><th>GOSI</th><th>Qiwa</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="9" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr></tbody></table>
         </div>
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadEmployees()" id="refreshBtn">تحديث البيانات</button>
     </section>
+
+    <!-- DATA MANAGEMENT (NEW) -->
+    <section id="dataSection" class="card hidden">
+        <div class="section-title">📥 تحميل نموذج التحديث</div>
+        <p style="margin-bottom:1rem;color:var(--text-light);">قم بتحميل الملف الحالي، حدّث أعمدة الامتثال (Qiwa, GOSI, Mudad, Ajeer, Muqeem) في Excel، ثم أعد رفعه.</p>
+        <button class="btn-submit btn-outline" onclick="downloadMasterData()" style="width:auto;">⬇️ تحميل ملف البيانات الرئيسي (CSV)</button>
+
+        <div class="section-title">📤 رفع تحديثات الامتثال</div>
+        <div class="upload-zone" id="dropZone">
+            <p style="margin-bottom:.5rem;font-weight:700;">اختر ملف CSV المحدث</p>
+            <input type="file" id="uploadFile" accept=".csv" style="padding:.5rem;">
+        </div>
+        <button class="btn-submit" onclick="handleUpload()" id="uploadBtn" style="width:auto;">رفع وتحديث البيانات</button>
+
+        <div class="section-title">ℹ️ دليل الأعمدة المطلوبة للتحديث</div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>العمود</th><th>الوصف</th><th>القيم المقبولة</th></tr></thead>
+                <tbody>
+                    <tr><td>حالة عقد Qiwa</td><td>حالة العقد في منصة قوى</td><td>ساري / منتهي / معلق / غير موثق</td></tr>
+                    <tr><td>رقم عقد Qiwa</td><td>الرقم المرجعي للعقد</td><td>أرقام فقط</td></tr>
+                    <tr><td>تاريخ ربط الأجر بـ GOSI</td><td>آخر تاريخ تم فيه ربط الراتب</td><td>YYYY-MM-DD</td></tr>
+                    <tr><td>حالة ملف Mudad</td><td>حالة آخر ملف رواتب</td><td>تم الصرف / مرفوض / متأخر / غير مفحوص</td></tr>
+                    <tr><td>رقم ترخيص Ajeer</td><td>رقم الترخيص النشط</td><td>أرقام فقط</td></tr>
+                    <tr><td>تاريخ انتهاء ترخيص Ajeer</td><td>تاريخ انتهاء الصلاحية</td><td>YYYY-MM-DD</td></tr>
+                    <tr><td>حالة تأشيرة الخروج/العودة</td><td>حالة التأشيرة في مقيم</td><td>سارية / منتهية / معلقة / لا يوجد</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </main>
 
 <!-- MODAL -->
 <div id="guideModal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
     <div class="modal">
         <h2>دليل تفعيل الامتثال التنظيمي</h2>
-        <table>
-            <thead><tr><th>النظام</th><th>كيفية التفعيل</th><th>الرابط</th></tr></thead>
-            <tbody>
-                <tr><td><strong>Qiwa</strong></td><td>بوابة المنشأة → العقود → توثيق عقد جديد</td><td><a href="https://qiwa.sa" target="_blank">qiwa.sa</a></td></tr>
-                <tr><td><strong>GOSI</strong></td><td>بوابة التأمينات → تسجيل مشترك جديد</td><td><a href="https://www.gosi.gov.sa" target="_blank">gosi.gov.sa</a></td></tr>
-                <tr><td><strong>Mudad/WPS</strong></td><td>منصة مدد → رفع ملف الرواتب</td><td><a href="https://mudad.com.sa" target="_blank">mudad.com.sa</a></td></tr>
-                <tr><td><strong>Muqeem</strong></td><td>خدمات المقيمين → تجديد إقامة</td><td><a href="https://muqeem.sa" target="_blank">muqeem.sa</a></td></tr>
-            </tbody>
-        </table>
-        <p style="color:var(--warning);font-size:0.9rem;">⚠️ بعد التسجيل، حدّث حالة الموظف يدوياً في النظام.</p>
+        <table><thead><tr><th>النظام</th><th>كيفية التفعيل</th><th>الرابط</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Qiwa</strong></td><td>بوابة المنشأة → العقود → توثيق عقد جديد</td><td><a href="https://qiwa.sa" target="_blank">qiwa.sa</a></td></tr>
+            <tr><td><strong>GOSI</strong></td><td>بوابة التأمينات → تسجيل مشترك جديد</td><td><a href="https://www.gosi.gov.sa" target="_blank">gosi.gov.sa</a></td></tr>
+            <tr><td><strong>Mudad/WPS</strong></td><td>منصة مدد → رفع ملف الرواتب</td><td><a href="https://mudad.com.sa" target="_blank">mudad.com.sa</a></td></tr>
+            <tr><td><strong>Muqeem</strong></td><td>خدمات المقيمين → تجديد إقامة</td><td><a href="https://muqeem.sa" target="_blank">muqeem.sa</a></td></tr>
+        </tbody></table>
+        <p style="color:var(--warning);font-size:.9rem;">⚠️ بعد التسجيل، حدّث حالة الموظف يدوياً في النظام أو عبر رفع ملف Excel.</p>
         <button class="modal-close" onclick="document.getElementById('guideModal').classList.add('hidden')">إغلاق</button>
     </div>
 </div>
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8UsWEhrfboNJOoxCCJ7MrM_Y7l-LTwPRZyyKcespypXGQeO1uqz7gPpgW2M_JYZY/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDb2uQ5lml6gVle7SNGyvS_zd6Z_fRgHI4-XJmFeuDhJ5q4iMppmkmHDBAhLDWR0M/exec';
 
 function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
-    ['dashboardSection','addSection','viewSection'].forEach(id => {
+    ['dashboardSection','addSection','viewSection','dataSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.toggle('hidden', id.replace('Section','') !== tab);
     });
@@ -192,99 +185,115 @@ function switchTab(tab, btnElement) {
 }
 
 function calcTotal() {
-    const f = document.getElementById('hrisForm');
-    if (!f) return;
+    const f = document.getElementById('hrisForm'); if (!f) return;
     const t = (parseFloat(f.basic.value)||0)+(parseFloat(f.housing.value)||0)+(parseFloat(f.commissions.value)||0)+(parseFloat(f.other.value)||0);
-    const d = document.getElementById('totalSalaryDisplay');
-    if (d) d.value = t.toFixed(2);
+    const d = document.getElementById('totalSalaryDisplay'); if (d) d.value = t.toFixed(2);
 }
 
 function showToast(msg, type='success') {
-    const t = document.getElementById('toast');
-    if (!t) return;
+    const t = document.getElementById('toast'); if (!t) return;
     t.textContent = msg; t.className = `toast ${type} show`;
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-function showGuide() { 
-    const m = document.getElementById('guideModal');
-    if (m) m.classList.remove('hidden'); 
-}
+function showGuide() { const m = document.getElementById('guideModal'); if (m) m.classList.remove('hidden'); }
 
 function jsonpRequest(params, timeoutMs = 20000) {
     return new Promise((resolve, reject) => {
         const cb = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
         let resolved = false, scriptEl = null;
-        
-        window[cb] = (resp) => {
-            if (resolved) return; resolved = true;
-            clearTimeout(timer); delete window[cb];
-            if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-            resolve(resp);
-        };
-        
-        const timer = setTimeout(() => {
-            if (resolved) return; resolved = true;
-            delete window[cb];
-            if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-            reject(new Error('انتهت مهلة الاتصال'));
-        }, timeoutMs);
-        
+        window[cb] = (resp) => { if (resolved) return; resolved = true; clearTimeout(timer); delete window[cb]; if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl); resolve(resp); };
+        const timer = setTimeout(() => { if (resolved) return; resolved = true; delete window[cb]; if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl); reject(new Error('انتهت مهلة الاتصال')); }, timeoutMs);
         try {
             const qs = new URLSearchParams({callback: cb, ...params}).toString();
-            scriptEl = document.createElement('script');
-            scriptEl.src = `${APPS_SCRIPT_URL}?${qs}`;
-            scriptEl.onerror = () => {
-                if(resolved) return; resolved=true; clearTimeout(timer); delete window[cb];
-                reject(new Error('فشل الاتصال بالخادم'));
-            };
+            scriptEl = document.createElement('script'); scriptEl.src = `${APPS_SCRIPT_URL}?${qs}`;
+            scriptEl.onerror = () => { if(resolved) return; resolved=true; clearTimeout(timer); delete window[cb]; reject(new Error('فشل الاتصال بالخادم')); };
             document.head.appendChild(scriptEl);
         } catch(e) { reject(new Error('خطأ JSONP: '+e.message)); }
     });
 }
 
-// === FIXED LOAD DASHBOARD WITH SAFE PARSING ===
+// === DOWNLOAD MASTER DATA ===
+function downloadMasterData() {
+    showToast('جاري تحضير الملف...', 'success');
+    window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank');
+}
+
+// === HANDLE CSV UPLOAD ===
+async function handleUpload() {
+    const fileInput = document.getElementById('uploadFile');
+    const btn = document.getElementById('uploadBtn');
+    if (!fileInput.files.length) { showToast('يرجى اختيار ملف CSV أولاً', 'error'); return; }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
+
+    reader.onload = async (e) => {
+        try {
+            const text = e.target.result;
+            const rows = parseCSV(text);
+            if (!rows.length) throw new Error('الملف فارغ أو غير صالح');
+
+            const batchSize = 100;
+            let totalUpdated = 0;
+
+            for (let i = 0; i < rows.length; i += batchSize) {
+                const batch = rows.slice(i, i + batchSize);
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'upload', rows: batch })
+                });
+                totalUpdated += batch.length;
+            }
+
+            showToast(`✅ تم تحديث ${totalUpdated} سجل بنجاح`, 'success');
+            fileInput.value = '';
+            setTimeout(() => loadDashboard(), 2000);
+        } catch (err) {
+            console.error('Upload failed:', err);
+            showToast('❌ فشل رفع الملف: ' + err.message, 'error');
+        } finally {
+            btn.disabled = false; btn.textContent = 'رفع وتحديث البيانات';
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+// === CSV PARSER FOR ARABIC DATA ===
+function parseCSV(text) {
+    const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+        const row = {};
+        headers.forEach((h, idx) => { row[h] = values[idx] ? values[idx].replace(/^"|"$/g, '').trim() : ''; });
+        row.nationalId = row['رقم الهوية'] || row['nationalId'] || '';
+        if (row.nationalId) result.push(row);
+    }
+    return result;
+}
+
+// === LOAD DASHBOARD ===
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
     const ub = document.getElementById('urgentBody');
     if (!btn || !ub) return;
-    
-    btn.disabled = true; 
-    btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio']
-        .forEach(id => { 
-            const el = document.getElementById(id); 
-            if(el) el.textContent = '...'; 
-        });
-    
+        .forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '...'; });
     ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
 
     try {
         const r = await jsonpRequest({ action: 'dashboard' });
-        
-        //  DEBUG: Inspect exact keys available in response
-        console.log('📊 Response Keys:', Object.keys(r));
-        console.log('📊 Full Response:', JSON.stringify(r, null, 2));
-        
-        // FIX: Handle both nested {metrics: {...}} and flat root-level responses
         let metrics = r.metrics;
-        if (!metrics && typeof r.total_employees !== 'undefined') {
-            // Backend returned flat structure - use entire response as metrics
-            metrics = r;
-            console.log('✅ Using flat response structure');
-        } else if (metrics) {
-            console.log('✅ Using nested metrics structure');
-        } else {
-            console.warn('⚠️ No valid metrics found. Available keys:', Object.keys(r));
-        }
-        
+        if (!metrics && typeof r.total_employees !== 'undefined') metrics = r;
+
         if (metrics) {
-            const setVal = (id, val) => { 
-                const el = document.getElementById(id); 
-                if(el) el.textContent = (val !== undefined && val !== null) ? val : '--'; 
-            };
-            
+            const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = (val !== undefined && val !== null) ? val : '--'; };
             setVal('kpi-saudization', metrics.saudization_pct);
             setVal('kpi-total', metrics.total_employees ?? '0');
             setVal('kpi-iqama', metrics.iqama_expiring_30d ?? '0');
@@ -294,98 +303,70 @@ async function loadDashboard() {
             setVal('kpi-wps', metrics.wps_rejections ?? '0');
             setVal('kpi-ratio', `${metrics.saudi_count ?? 0}/${metrics.non_saudi_count ?? 0}`);
         }
-        
-        // Handle urgent actions with same flexibility
+
         const actions = r.urgentActions || r.actions || [];
         if (actions.length > 0) {
             ub.innerHTML = actions.map(i => {
                 const bc = i.riskLevel && i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr>
-                    <td>${i.name || ''}</td>
-                    <td>${i.nationalId || ''}</td>
-                    <td><span class="badge ${bc}">${i.riskLevel || ''}</span></td>
-                    <td>${i.actionRequired || ''}</td>
-                </tr>`;
+                return `<tr><td>${i.name||''}</td><td>${i.nationalId||''}</td><td><span class="badge ${bc}">${i.riskLevel||''}</span></td><td>${i.actionRequired||''}</td></tr>`;
             }).join('');
         } else {
             ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
-        
     } catch (err) {
-        console.error(' Dashboard Load Failed:', err);
-        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">
-            ❌ ${err.message}<br>
-            <small style="color:#666">افتح وحدة التحكم (F12) لمزيد من التفاصيل</small>
-        </td></tr>`;
+        console.error('Dashboard Load Failed:', err);
+        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}<br><small style="color:#666">افتح وحدة التحكم (F12)</small></td></tr>`;
         showToast('فشل تحميل لوحة الامتثال', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'تحديث اللوحة';
-    }
+    } finally { btn.disabled = false; btn.textContent = 'تحديث اللوحة'; }
 }
+
+// === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    if (!btn) return;
+    const btn = document.getElementById('submitBtn'); if (!btn) return;
     const orig = btn.textContent;
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
-    
     const fd = Object.fromEntries(new FormData(e.target));
     const td = document.getElementById('totalSalaryDisplay');
     fd.totalSalary = td ? parseFloat(td.value)||0 : 0;
     fd.action = 'add';
-    
     try {
         const r = await jsonpRequest({data: JSON.stringify(fd)});
-        if (r?.status === 'success') {
-            showToast('✅ تم الحفظ بنجاح'); e.target.reset();
-            if(td) td.value='0.00'; if(e.target.entityName) e.target.entityName.value='مصنع الصفوة للألمنيوم';
-        } else throw new Error(r?.error || 'خطأ غير معروف');
+        if (r?.status === 'success') { showToast('✅ تم الحفظ بنجاح'); e.target.reset(); if(td) td.value='0.00'; if(e.target.entityName) e.target.entityName.value='مصنع الصفوة للألمنيوم'; }
+        else throw new Error(r?.error || 'خطأ غير معروف');
     } catch(err) {
-        try {
-            await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)});
-            showToast('تم الإرسال (بدون تأكيد)','success'); e.target.reset();
-        } catch { showToast(' '+err.message,'error'); }
+        try { await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)}); showToast('تم الإرسال (بدون تأكيد)','success'); e.target.reset(); }
+        catch { showToast('❌ '+err.message,'error'); }
     } finally { btn.disabled=false; btn.textContent=orig; }
 }
 
+// === LOAD EMPLOYEES ===
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     const tb = document.getElementById('tableBody');
     if (!btn || !tb) return;
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;">جاري التحميل...</td></tr>';
-    
     try {
         const r = await jsonpRequest({action:'get'});
         const emps = r?.data;
-        if (!emps?.length) {
-            tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين</td></tr>';
-        } else {
+        if (!emps?.length) { tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين</td></tr>'; }
+        else {
             tb.innerHTML = emps.map(emp => {
                 const nat = String(emp[2]||'');
                 const gR = String(emp[21]||'').includes('نعم');
                 const qR = String(emp[22]||'').includes('نعم');
                 const gB = gR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-red">❌</span>';
                 const qB = qR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-yellow">❌</span>';
-                
                 let dB='<span class="badge badge-green">✅</span>', cB='<span class="badge badge-green">✅</span>';
-                const dE = emp[17];
-                if(dE) { const d=Math.ceil((new Date(dE)-new Date())/86400000); if(d<=0)dB='<span class="badge badge-red">منتهي</span>'; else if(d<=30)dB='<span class="badge badge-red">قريب</span>'; else if(d<=90)dB='<span class="badge badge-yellow">قارب</span>'; }
-                else if(!nat.includes('سعودي')) dB='<span class="badge badge-red">غير محدد</span>';
-                
-                const cE = emp[19];
-                if(cE) { const d=Math.ceil((new Date(cE)-new Date())/86400000); if(d<=0)cB='<span class="badge badge-red">⛔ منتهي</span>'; else if(d<=90)cB='<span class="badge badge-yellow">تجديد</span>'; }
-                else cB='<span class="badge badge-yellow">غير محدد</span>';
-                
+                const dE = emp[17]; if(dE){const d=Math.ceil((new Date(dE)-new Date())/86400000);if(d<=0)dB='<span class="badge badge-red">منتهي</span>';else if(d<=30)dB='<span class="badge badge-red">قريب</span>';else if(d<=90)dB='<span class="badge badge-yellow">قارب</span>';}else if(!nat.includes('سعودي'))dB='<span class="badge badge-red">غير محدد</span>';
+                const cE = emp[19]; if(cE){const d=Math.ceil((new Date(cE)-new Date())/86400000);if(d<=0)cB='<span class="badge badge-red">⛔ منتهي</span>';else if(d<=90)cB='<span class="badge badge-yellow">تجديد</span>';}else cB='<span class="badge badge-yellow">غير محدد</span>';
                 const sal = parseFloat(emp[9]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2});
-                
                 return `<tr><td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${emp[2]||''}</td><td>${emp[11]||''}</td><td>${sal}</td><td>${dB}</td><td>${cB}</td><td>${gB}</td><td>${qB}</td></tr>`;
             }).join('');
         }
-    } catch(err) {
-        tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`;
-    } finally { btn.disabled=false; btn.textContent='تحديث البيانات'; }
+    } catch(err) { tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`; }
+    finally { btn.disabled=false; btn.textContent='تحديث البيانات'; }
 }
 
 document.addEventListener('DOMContentLoaded', () => { if(typeof loadDashboard==='function') loadDashboard(); });
