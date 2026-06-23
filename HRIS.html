@@ -28,6 +28,8 @@
         .hidden{display:none!important}
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}.modal{background:var(--card);border-radius:var(--radius);padding:2rem;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}.modal h2{margin-bottom:1rem;color:var(--primary)}.modal table{margin-bottom:1rem}.modal-close{margin-top:1rem;padding:.6rem 1.5rem;background:var(--text-light);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit}
         .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem;transition:border-color .2s}.upload-zone:hover{border-color:var(--primary)}
+        .search-bar{width:100%;padding:1rem;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:8px;font-size:1rem;outline:none;}
+        .search-bar:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1);}
         @media(max-width:768px){.header{flex-direction:column;gap:1rem}.form-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.container{padding:0 1rem;margin:1rem auto}}@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
     </style>
 </head>
@@ -43,12 +45,11 @@
 </header>
 <main class="container">
 
-    <!-- DASHBOARD -->
     <section id="dashboardSection" class="card">
         <div class="section-title">📊 مؤشرات الموارد البشرية والتوطين</div>
         <div class="kpi-grid">
             <div class="kpi-card kpi-green"><div class="kpi-label">نسبة التوطين (Nitaqat)</div><div class="kpi-value" id="kpi-saudization">--</div></div>
-            <div class="kpi-card kpi-blue"><div class="kpi-label">إجمالي الموظفين</div><div class="kpi-value" id="kpi-total">--</div></div>
+            <div class="kpi-card kpi-blue"><div class="kpi-label">الموظفين النشطين</div><div class="kpi-value" id="kpi-total">--</div></div>
             <div class="kpi-card kpi-red"><div class="kpi-label">وثائق تنتهي خلال 30 يوم</div><div class="kpi-value" id="kpi-iqama">--</div></div>
             <div class="kpi-card kpi-yellow"><div class="kpi-label">عقود قريبة الانتهاء (90 يوم)</div><div class="kpi-value" id="kpi-contracts">--</div></div>
         </div>
@@ -70,7 +71,6 @@
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadDashboard()" id="dashRefreshBtn">تحديث اللوحة</button>
     </section>
 
-    <!-- ADD EMPLOYEE -->
     <section id="addSection" class="card hidden">
         <form id="hrisForm" onsubmit="handleAddEmployee(event)">
             <div class="section-title">👤 البيانات الشخصية والوظيفية</div>
@@ -78,42 +78,41 @@
                 <div class="form-group"><label>اسم المشترك *</label><input type="text" name="name" required></div>
                 <div class="form-group"><label>رقم الهوية *</label><input type="text" name="nationalId" required pattern="\d{10}" title="أدخل 10 أرقام"></div>
                 <div class="form-group"><label>الجنسية *</label><select name="nationality" required><option value="">اختر</option><option value="سعودي">سعودي</option><option value="غير سعودي">غير سعودي</option></select></div>
+                <div class="form-group"><label>حالة الموظف *</label><select name="status" required><option value="على رأس العمل">على رأس العمل</option><option value="إجازة">إجازة</option><option value="منقطع">منقطع</option><option value="خروج نهائي">خروج نهائي</option><option value="نقل كفالة">نقل كفالة</option></select></div>
                 <div class="form-group"><label>الجنس *</label><select name="gender" required><option value="">اختر</option><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
                 <div class="form-group"><label>تاريخ الميلاد *</label><input type="date" name="dob" required></div>
                 <div class="form-group"><label>المهنة *</label><input type="text" name="jobTitle" required></div>
                 <div class="form-group"><label>تاريخ الإلتحاق *</label><input type="date" name="joinDate" required></div>
             </div>
-            <div class="section-title">💰 بيانات الرواتب</div>
+            
+            <div class="section-title">💰 بيانات الرواتب (حماية الأجور)</div>
             <div class="form-grid">
-                <div class="form-group"><label>الأجر الأساسي</label><input type="number" name="basic" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
-                <div class="form-group"><label>السكن</label><input type="number" name="housing" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
+                <div class="form-group"><label>الأجر الأساسي *</label><input type="number" name="basic" id="basicSal" step="0.01" min="0" value="0" required oninput="calcTotal()"></div>
+                <div class="form-group"><label>بدل السكن *</label><input type="number" name="housing" id="housingSal" step="0.01" min="0" value="0" required oninput="calcTotal()"></div>
                 <div class="form-group"><label>العمولات</label><input type="number" name="commissions" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
                 <div class="form-group"><label>البدلات الأخرى</label><input type="number" name="other" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
                 <div class="form-group"><label>إجمالي الأجر</label><input type="text" id="totalSalaryDisplay" readonly value="0.00"></div>
-                <div class="form-group"><label>الاجر الخاضع للاشتراك</label><input type="number" name="gosiSalary" step="0.01" min="0"></div>
+                <div class="form-group"><label>الأجر الخاضع لاشتراك التأمينات *</label><input type="number" name="gosiSalary" id="gosiSal" step="0.01" min="0" required oninput="validateGosi()">
+                <small id="gosiWarning" style="color:var(--error);font-size:0.75rem;display:none;">يجب أن يساوي (الأساسي + السكن) لتجنب رفض منصة مدد</small></div>
                 <div class="form-group"><label>الاهلية للتأمينات 1445هـ</label><select name="gosiEligible"><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
             </div>
+
             <div class="section-title">🏛️ الامتثال والوثائق</div>
             <div class="form-grid">
                 <div class="form-group"><label>رقم الإقامة / الجواز</label><input type="text" name="docNumber"></div>
                 <div class="form-group"><label>تاريخ انتهاء الوثيقة</label><input type="date" name="docExpiry"></div>
                 <div class="form-group"><label>نوع العقد</label><select name="contractType"><option value="">اختر</option><option value="عقد عمل محدد المدة">عقد عمل محدد المدة</option><option value="عقد عمل غير محدد المدة">عقد عمل غير محدد المدة</option><option value="عقد تدريب">عقد تدريب</option><option value="عقد موسمي">عقد موسمي</option></select></div>
                 <div class="form-group"><label>تاريخ انتهاء العقد</label><input type="date" name="contractExpiry"></div>
-                <div class="form-group"><label>حالة WPS آخر شهر</label><select name="wpsStatus"><option value="غير مفحوص">غير مفحوص</option><option value="تم الصرف">تم الصرف</option><option value="مرفوض">مرفوض</option><option value="متأخر">متأخر</option></select></div>
                 <div class="form-group"><label>مسجل في GOSI</label><select name="gosiRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
                 <div class="form-group"><label>مسجل في Qiwa</label><select name="qiwaRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
             </div>
-            <div class="section-title">بيانات المنشأة</div>
-            <div class="form-grid">
-                <div class="form-group"><label>اسم المنشأة</label><input type="text" name="entityName" value="مصنع الصفوة للألمنيوم"></div>
-                <div class="form-group"><label>رقم المنشأة</label><input type="text" name="entityNumber"></div>
-            </div>
+
             <button type="submit" class="btn-submit" id="submitBtn">حفظ بيانات الموظف</button>
         </form>
     </section>
 
-    <!-- VIEW EMPLOYEES -->
     <section id="viewSection" class="card hidden">
+        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 بحث برقم الهوية أو الاسم..." oninput="filterEmployees()">
         <div class="table-wrapper">
             <table id="employeesTable"><thead><tr><th>اسم المشترك</th><th>رقم الهوية</th><th>الجنسية</th><th>المهنة</th><th>إجمالي الأجر</th><th>حالة الوثيقة</th><th>حالة العقد</th><th>GOSI</th><th>Qiwa</th></tr></thead>
             <tbody id="tableBody"><tr><td colspan="9" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr></tbody></table>
@@ -121,57 +120,25 @@
         <button class="btn-submit" style="margin-top:1rem;" onclick="loadEmployees()" id="refreshBtn">تحديث البيانات</button>
     </section>
 
-    <!-- DATA MANAGEMENT (NEW) -->
     <section id="dataSection" class="card hidden">
         <div class="section-title">📥 تحميل نموذج التحديث</div>
         <p style="margin-bottom:1rem;color:var(--text-light);">قم بتحميل الملف الحالي، حدّث أعمدة الامتثال (Qiwa, GOSI, Mudad, Ajeer, Muqeem) في Excel، ثم أعد رفعه.</p>
         <button class="btn-submit btn-outline" onclick="downloadMasterData()" style="width:auto;">⬇️ تحميل ملف البيانات الرئيسي (CSV)</button>
 
-        <div class="section-title">📤 رفع تحديثات الامتثال</div>
+        <div class="section-title">📤 رفع التحديثات (المنصات الحكومية / Excel)</div>
         <div class="upload-zone" id="dropZone">
-            <p style="margin-bottom:.5rem;font-weight:700;">اختر ملف CSV المحدث</p>
+            <p style="margin-bottom:.5rem;font-weight:700;">اختر ملف CSV</p>
             <input type="file" id="uploadFile" accept=".csv" style="padding:.5rem;">
         </div>
         <button class="btn-submit" onclick="handleUpload()" id="uploadBtn" style="width:auto;">رفع وتحديث البيانات</button>
-
-        <div class="section-title">ℹ️ دليل الأعمدة المطلوبة للتحديث</div>
-        <div class="table-wrapper">
-            <table>
-                <thead><tr><th>العمود</th><th>الوصف</th><th>القيم المقبولة</th></tr></thead>
-                <tbody>
-                    <tr><td>حالة عقد Qiwa</td><td>حالة العقد في منصة قوى</td><td>ساري / منتهي / معلق / غير موثق</td></tr>
-                    <tr><td>رقم عقد Qiwa</td><td>الرقم المرجعي للعقد</td><td>أرقام فقط</td></tr>
-                    <tr><td>تاريخ ربط الأجر بـ GOSI</td><td>آخر تاريخ تم فيه ربط الراتب</td><td>YYYY-MM-DD</td></tr>
-                    <tr><td>حالة ملف Mudad</td><td>حالة آخر ملف رواتب</td><td>تم الصرف / مرفوض / متأخر / غير مفحوص</td></tr>
-                    <tr><td>رقم ترخيص Ajeer</td><td>رقم الترخيص النشط</td><td>أرقام فقط</td></tr>
-                    <tr><td>تاريخ انتهاء ترخيص Ajeer</td><td>تاريخ انتهاء الصلاحية</td><td>YYYY-MM-DD</td></tr>
-                    <tr><td>حالة تأشيرة الخروج/العودة</td><td>حالة التأشيرة في مقيم</td><td>سارية / منتهية / معلقة / لا يوجد</td></tr>
-                </tbody>
-            </table>
-        </div>
     </section>
-
 </main>
 
-<!-- MODAL -->
-<div id="guideModal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="modal">
-        <h2>دليل تفعيل الامتثال التنظيمي</h2>
-        <table><thead><tr><th>النظام</th><th>كيفية التفعيل</th><th>الرابط</th></tr></thead>
-        <tbody>
-            <tr><td><strong>Qiwa</strong></td><td>بوابة المنشأة → العقود → توثيق عقد جديد</td><td><a href="https://qiwa.sa" target="_blank">qiwa.sa</a></td></tr>
-            <tr><td><strong>GOSI</strong></td><td>بوابة التأمينات → تسجيل مشترك جديد</td><td><a href="https://www.gosi.gov.sa" target="_blank">gosi.gov.sa</a></td></tr>
-            <tr><td><strong>Mudad/WPS</strong></td><td>منصة مدد → رفع ملف الرواتب</td><td><a href="https://mudad.com.sa" target="_blank">mudad.com.sa</a></td></tr>
-            <tr><td><strong>Muqeem</strong></td><td>خدمات المقيمين → تجديد إقامة</td><td><a href="https://muqeem.sa" target="_blank">muqeem.sa</a></td></tr>
-        </tbody></table>
-        <p style="color:var(--warning);font-size:.9rem;">⚠️ بعد التسجيل، حدّث حالة الموظف يدوياً في النظام أو عبر رفع ملف Excel.</p>
-        <button class="modal-close" onclick="document.getElementById('guideModal').classList.add('hidden')">إغلاق</button>
-    </div>
-</div>
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDb2uQ5lml6gVle7SNGyvS_zd6Z_fRgHI4-XJmFeuDhJ5q4iMppmkmHDBAhLDWR0M/exec';
+// ضع رابط تطبيقك هنا
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytx-LVmEitfDmYO_q6FicwGf289Z2n8ehgqPIbKaju89EJujG7Uwom66Nv19ZpwY4/exec';
 
 function switchTab(tab, btnElement) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -185,9 +152,29 @@ function switchTab(tab, btnElement) {
 }
 
 function calcTotal() {
-    const f = document.getElementById('hrisForm'); if (!f) return;
-    const t = (parseFloat(f.basic.value)||0)+(parseFloat(f.housing.value)||0)+(parseFloat(f.commissions.value)||0)+(parseFloat(f.other.value)||0);
-    const d = document.getElementById('totalSalaryDisplay'); if (d) d.value = t.toFixed(2);
+    const b = parseFloat(document.getElementById('basicSal').value) || 0;
+    const h = parseFloat(document.getElementById('housingSal').value) || 0;
+    const c = parseFloat(document.getElementsByName('commissions')[0].value) || 0;
+    const o = parseFloat(document.getElementsByName('other')[0].value) || 0;
+    document.getElementById('totalSalaryDisplay').value = (b + h + c + o).toFixed(2);
+    validateGosi();
+}
+
+function validateGosi() {
+    const b = parseFloat(document.getElementById('basicSal').value) || 0;
+    const h = parseFloat(document.getElementById('housingSal').value) || 0;
+    const gosiVal = parseFloat(document.getElementById('gosiSal').value) || 0;
+    const warning = document.getElementById('gosiWarning');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // التحقق التقاطعي المالي (أساسي + سكن يجب أن يساوي أجر التأمينات)
+    if (Math.abs(gosiVal - (b + h)) > 0.01 && gosiVal > 0) {
+        warning.style.display = 'block';
+        submitBtn.disabled = true;
+    } else {
+        warning.style.display = 'none';
+        submitBtn.disabled = false;
+    }
 }
 
 function showToast(msg, type='success') {
@@ -196,30 +183,53 @@ function showToast(msg, type='success') {
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-function showGuide() { const m = document.getElementById('guideModal'); if (m) m.classList.remove('hidden'); }
-
-function jsonpRequest(params, timeoutMs = 20000) {
+// دالة اتصال مع إعادة محاولة تلقائية
+function jsonpRequest(params, retries = 2, timeoutMs = 20000) {
     return new Promise((resolve, reject) => {
-        const cb = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
-        let resolved = false, scriptEl = null;
-        window[cb] = (resp) => { if (resolved) return; resolved = true; clearTimeout(timer); delete window[cb]; if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl); resolve(resp); };
-        const timer = setTimeout(() => { if (resolved) return; resolved = true; delete window[cb]; if (scriptEl?.parentNode) scriptEl.parentNode.removeChild(scriptEl); reject(new Error('انتهت مهلة الاتصال')); }, timeoutMs);
-        try {
-            const qs = new URLSearchParams({callback: cb, ...params}).toString();
-            scriptEl = document.createElement('script'); scriptEl.src = `${APPS_SCRIPT_URL}?${qs}`;
-            scriptEl.onerror = () => { if(resolved) return; resolved=true; clearTimeout(timer); delete window[cb]; reject(new Error('فشل الاتصال بالخادم')); };
-            document.head.appendChild(scriptEl);
-        } catch(e) { reject(new Error('خطأ JSONP: '+e.message)); }
+        const attempt = (n) => {
+            const cb = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+            let resolved = false, scriptEl = null;
+            
+            const cleanup = () => {
+                resolved = true;
+                delete window[cb];
+                if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+            };
+
+            window[cb] = (resp) => {
+                cleanup();
+                if(resp.error) reject(new Error(resp.error));
+                else resolve(resp);
+            };
+
+            const timer = setTimeout(() => {
+                if (resolved) return;
+                cleanup();
+                if (n > 0) { console.log(`إعادة المحاولة... متبقي ${n}`); attempt(n - 1); }
+                else reject(new Error('انتهت مهلة الاتصال بالخادم.'));
+            }, timeoutMs);
+
+            try {
+                const qs = new URLSearchParams({callback: cb, ...params}).toString();
+                scriptEl = document.createElement('script'); scriptEl.src = `${APPS_SCRIPT_URL}?${qs}`;
+                scriptEl.onerror = () => {
+                    if (resolved) return;
+                    cleanup();
+                    clearTimeout(timer);
+                    if (n > 0) attempt(n - 1); else reject(new Error('فشل الاتصال بالشبكة.'));
+                };
+                document.head.appendChild(scriptEl);
+            } catch(e) { reject(new Error('خطأ في إعداد الطلب.')); }
+        };
+        attempt(retries);
     });
 }
 
-// === DOWNLOAD MASTER DATA ===
 function downloadMasterData() {
     showToast('جاري تحضير الملف...', 'success');
     window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank');
 }
 
-// === HANDLE CSV UPLOAD ===
 async function handleUpload() {
     const fileInput = document.getElementById('uploadFile');
     const btn = document.getElementById('uploadBtn');
@@ -235,7 +245,7 @@ async function handleUpload() {
             const rows = parseCSV(text);
             if (!rows.length) throw new Error('الملف فارغ أو غير صالح');
 
-            const batchSize = 100;
+            const batchSize = 50; // تقسيم الملف لمعالجة قيد الـ 15 ثانية
             let totalUpdated = 0;
 
             for (let i = 0; i < rows.length; i += batchSize) {
@@ -247,12 +257,10 @@ async function handleUpload() {
                 });
                 totalUpdated += batch.length;
             }
-
-            showToast(`✅ تم تحديث ${totalUpdated} سجل بنجاح`, 'success');
+            showToast(`✅ تم رفع وتحديث ${totalUpdated} سجل بنجاح`, 'success');
             fileInput.value = '';
             setTimeout(() => loadDashboard(), 2000);
         } catch (err) {
-            console.error('Upload failed:', err);
             showToast('❌ فشل رفع الملف: ' + err.message, 'error');
         } finally {
             btn.disabled = false; btn.textContent = 'رفع وتحديث البيانات';
@@ -261,7 +269,6 @@ async function handleUpload() {
     reader.readAsText(file, 'UTF-8');
 }
 
-// === CSV PARSER FOR ARABIC DATA ===
 function parseCSV(text) {
     const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
@@ -277,96 +284,101 @@ function parseCSV(text) {
     return result;
 }
 
-// === LOAD DASHBOARD ===
 async function loadDashboard() {
     const btn = document.getElementById('dashRefreshBtn');
     const ub = document.getElementById('urgentBody');
     if (!btn || !ub) return;
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    ['kpi-saudization','kpi-total','kpi-iqama','kpi-contracts','kpi-gosi','kpi-qiwa','kpi-wps','kpi-ratio']
-        .forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '...'; });
-    ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;">جاري تحميل البيانات...</td></tr>';
-
+    
     try {
         const r = await jsonpRequest({ action: 'dashboard' });
-        let metrics = r.metrics;
-        if (!metrics && typeof r.total_employees !== 'undefined') metrics = r;
-
+        const metrics = r.metrics;
         if (metrics) {
-            const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = (val !== undefined && val !== null) ? val : '--'; };
+            const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ?? '--'; };
             setVal('kpi-saudization', metrics.saudization_pct);
-            setVal('kpi-total', metrics.total_employees ?? '0');
+            setVal('kpi-total', metrics.total_active ?? '0');
             setVal('kpi-iqama', metrics.iqama_expiring_30d ?? '0');
             setVal('kpi-contracts', metrics.contracts_expiring_90d ?? '0');
             setVal('kpi-gosi', metrics.gosi_unregistered ?? '0');
             setVal('kpi-qiwa', metrics.qiwa_unregistered ?? '0');
             setVal('kpi-wps', metrics.wps_rejections ?? '0');
-            setVal('kpi-ratio', `${metrics.saudi_count ?? 0}/${metrics.non_saudi_count ?? 0}`);
+            setVal('kpi-ratio', `${metrics.saudi_count ?? 0} / ${metrics.non_saudi_count ?? 0}`);
         }
 
-        const actions = r.urgentActions || r.actions || [];
+        const actions = r.urgentActions || [];
         if (actions.length > 0) {
             ub.innerHTML = actions.map(i => {
-                const bc = i.riskLevel && i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr><td>${i.name||''}</td><td>${i.nationalId||''}</td><td><span class="badge ${bc}">${i.riskLevel||''}</span></td><td>${i.actionRequired||''}</td></tr>`;
+                const bc = i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
+                return `<tr><td>${i.name}</td><td>${i.nationalId}</td><td><span class="badge ${bc}">${i.riskLevel}</span></td><td>${i.actionRequired}</td></tr>`;
             }).join('');
         } else {
             ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
         }
     } catch (err) {
-        console.error('Dashboard Load Failed:', err);
-        ub.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}<br><small style="color:#666">افتح وحدة التحكم (F12)</small></td></tr>`;
-        showToast('فشل تحميل لوحة الامتثال', 'error');
+        showToast('فشل تحميل اللوحة', 'error');
     } finally { btn.disabled = false; btn.textContent = 'تحديث اللوحة'; }
 }
 
-// === ADD EMPLOYEE ===
 async function handleAddEmployee(e) {
     e.preventDefault();
-    const btn = document.getElementById('submitBtn'); if (!btn) return;
-    const orig = btn.textContent;
+    const btn = document.getElementById('submitBtn'); 
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
     const fd = Object.fromEntries(new FormData(e.target));
-    const td = document.getElementById('totalSalaryDisplay');
-    fd.totalSalary = td ? parseFloat(td.value)||0 : 0;
+    fd.totalSalary = document.getElementById('totalSalaryDisplay').value;
     fd.action = 'add';
     try {
-        const r = await jsonpRequest({data: JSON.stringify(fd)});
-        if (r?.status === 'success') { showToast('✅ تم الحفظ بنجاح'); e.target.reset(); if(td) td.value='0.00'; if(e.target.entityName) e.target.entityName.value='مصنع الصفوة للألمنيوم'; }
-        else throw new Error(r?.error || 'خطأ غير معروف');
+        await jsonpRequest({data: JSON.stringify(fd)});
+        showToast('✅ تم إضافة الموظف بنجاح');
+        e.target.reset(); document.getElementById('totalSalaryDisplay').value = '0.00';
     } catch(err) {
-        try { await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)}); showToast('تم الإرسال (بدون تأكيد)','success'); e.target.reset(); }
-        catch { showToast('❌ '+err.message,'error'); }
-    } finally { btn.disabled=false; btn.textContent=orig; }
+        if(err.message.includes('موجود مسبقاً')) showToast('❌ ' + err.message, 'error');
+        else showToast('❌ فشل الحفظ: ' + err.message, 'error');
+    } finally { btn.disabled=false; btn.textContent='حفظ بيانات الموظف'; }
 }
 
-// === LOAD EMPLOYEES ===
+let currentEmployees = [];
+
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     const tb = document.getElementById('tableBody');
-    if (!btn || !tb) return;
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
     tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;">جاري التحميل...</td></tr>';
     try {
         const r = await jsonpRequest({action:'get'});
-        const emps = r?.data;
-        if (!emps?.length) { tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا يوجد موظفين</td></tr>'; }
-        else {
-            tb.innerHTML = emps.map(emp => {
-                const nat = String(emp[2]||'');
-                const gR = String(emp[21]||'').includes('نعم');
-                const qR = String(emp[22]||'').includes('نعم');
-                const gB = gR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-red">❌</span>';
-                const qB = qR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-yellow">❌</span>';
-                let dB='<span class="badge badge-green">✅</span>', cB='<span class="badge badge-green">✅</span>';
-                const dE = emp[17]; if(dE){const d=Math.ceil((new Date(dE)-new Date())/86400000);if(d<=0)dB='<span class="badge badge-red">منتهي</span>';else if(d<=30)dB='<span class="badge badge-red">قريب</span>';else if(d<=90)dB='<span class="badge badge-yellow">قارب</span>';}else if(!nat.includes('سعودي'))dB='<span class="badge badge-red">غير محدد</span>';
-                const cE = emp[19]; if(cE){const d=Math.ceil((new Date(cE)-new Date())/86400000);if(d<=0)cB='<span class="badge badge-red">⛔ منتهي</span>';else if(d<=90)cB='<span class="badge badge-yellow">تجديد</span>';}else cB='<span class="badge badge-yellow">غير محدد</span>';
-                const sal = parseFloat(emp[9]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2});
-                return `<tr><td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${emp[2]||''}</td><td>${emp[11]||''}</td><td>${sal}</td><td>${dB}</td><td>${cB}</td><td>${gB}</td><td>${qB}</td></tr>`;
-            }).join('');
-        }
-    } catch(err) { tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ ${err.message}</td></tr>`; }
+        currentEmployees = r?.data || [];
+        renderEmployeeTable(currentEmployees);
+    } catch(err) { tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ فشل التحميل</td></tr>`; }
     finally { btn.disabled=false; btn.textContent='تحديث البيانات'; }
+}
+
+function filterEmployees() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = currentEmployees.filter(emp => 
+        String(emp[0]||'').toLowerCase().includes(term) || String(emp[1]||'').includes(term)
+    );
+    renderEmployeeTable(filtered);
+}
+
+function renderEmployeeTable(emps) {
+    const tb = document.getElementById('tableBody');
+    if (!emps.length) { tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا توجد بيانات متطابقة</td></tr>'; return; }
+    
+    tb.innerHTML = emps.map(emp => {
+        const nat = String(emp[2]||'');
+        const gR = String(emp[22]||'').includes('نعم'); // Index 22 is GOSI Reg
+        const qR = String(emp[23]||'').includes('نعم'); // Index 23 is Qiwa Reg
+        const gB = gR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-red">❌</span>';
+        const qB = qR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-yellow">❌</span>';
+        
+        let dB='<span class="badge badge-green">✅</span>', cB='<span class="badge badge-green">✅</span>';
+        const dE = emp[18]; // Doc expiry
+        if(dE){const d=Math.ceil((new Date(dE)-new Date())/86400000);if(d<=0)dB='<span class="badge badge-red">منتهي</span>';else if(d<=30)dB='<span class="badge badge-red">قريب</span>';}
+        const cE = emp[20]; // Contract expiry
+        if(cE){const d=Math.ceil((new Date(cE)-new Date())/86400000);if(d<=0)cB='<span class="badge badge-red">⛔ منتهي</span>';else if(d<=90)cB='<span class="badge badge-yellow">تجديد</span>';}
+        
+        const sal = parseFloat(emp[10]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2});
+        return `<tr><td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${nat}</td><td>${emp[12]||''}</td><td>${sal}</td><td>${dB}</td><td>${cB}</td><td>${gB}</td><td>${qB}</td></tr>`;
+    }).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => { if(typeof loadDashboard==='function') loadDashboard(); });
