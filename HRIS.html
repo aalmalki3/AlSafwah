@@ -168,9 +168,39 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPbk2DaKN8v1La-1dqXhUcRMWR2LYlq3G8p5wh_HbQtijfnq5BehQw7yjmho01G6s/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNT8OL891Oe4lXckhjpO6XcFmifnXPXOapFAanN06UuequBUAj_c5o4plfouO2jio/exec';
 let allEmployees = [];
 let auditResults = [];
+
+// ✅ CORRECTED: Exact 40-column mapping matching your Google Sheet
+const C = {
+    SEQ: 0, FILE_NO: 1, BORDER: 2, ENTRY_DATE: 3, IQAMA: 4,
+    IQAMA_EXP_H: 5, IQAMA_EXP_G: 6, NAME: 7, EST_NAME: 8,
+    WORK_LOC_MAIN: 9, WORK_LOC_CURR: 10, WORK_LOC_SUB: 11, CITY: 12,
+    NATIONALITY: 13, JOB: 14, AGENT: 15, EST_NO: 16, JOIN_DATE: 17,
+    EXCLUSION: 18, MOBILE: 19, DOB: 20, PASSPORT_NO: 21,
+    PASSPORT_ISSUE: 22, PASSPORT_EXP: 23, CONTRACT_SIGN: 24,
+    CONTRACT_EXP: 25, BANK_CODE: 26, IBAN: 27, BANK_USER: 28,
+    PIN: 29, INMA_CODE: 30, LEAVE_DUE: 31, LEAVE_RETURN: 32,
+    LEAVE_STATUS: 33, PAYSLIP_NO: 34, BASIC: 35, ALLOW: 36,
+    DEDUCTIONS: 37, TOTAL_SAL: 38, WORK_PLACE: 39
+};
+
+// ✅ FIX: Date formatter to prevent "2026-03-10T21:00:00.000Z" display
+function formatDateDisplay(val) {
+    if (!val) return '-';
+    const str = String(val).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+    
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    return str; // Fallback for Hijri strings
+}
 
 function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -200,7 +230,6 @@ async function jsonpRequest(params, retries=2) {
     });
 }
 
-// --- DASHBOARD ---
 async function loadDashboard() {
     try {
         const r = await jsonpRequest({action:'dashboard'});
@@ -223,48 +252,47 @@ async function loadDashboard() {
     } catch(e) { showToast(e.message, 'error'); }
 }
 
-// --- AUDIT ENGINE ---
 async function runFullAudit() {
     const btn = document.getElementById('auditBtn');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التدقيق...';
     try {
-        // Fetch fresh data if not loaded
         if(!allEmployees.length) {
             const r = await jsonpRequest({action:'get'});
             allEmployees = r.data || [];
         }
         
-        // Client-side audit for instant feedback (Server also validates on upload)
         auditResults = [];
         const today = new Date();
         
         allEmployees.forEach(emp => {
-            // Map indices based on provided headers
-            // 0:تسلسل, 6:رقم الاقامة, 8:تاريخ انتهاء الإقامة( ميلادى), 9:الاسم, 16:المهنة
-            // 25:تاريخ انتهاء العقد, 36:الراتب الاساسى, 37:بدلات أخرى, 39:المبلغ الاجمالى
+            // ✅ Skip excluded employees
+            if(emp[C.EXCLUSION]) return;
             
-            const name = emp[9] || '';
-            const id = emp[6] || emp[4] || ''; // Iqama or Border Number
-            const basic = parseFloat(emp[36]) || 0;
-            const allowances = parseFloat(emp[37]) || 0;
-            const total = parseFloat(emp[39]) || 0;
-            const iqamaExp = emp[8] ? new Date(emp[8]) : null;
-            const contractExp = emp[25] ? new Date(emp[25]) : null;
+            const name = emp[C.NAME] || '';
+            const id = emp[C.IQAMA] || emp[C.BORDER] || '';
+            const basic = parseFloat(emp[C.BASIC]) || 0;
+            const allowances = parseFloat(emp[C.ALLOW]) || 0;
+            const total = parseFloat(emp[C.TOTAL_SAL]) || 0;
+            const iqamaExp = emp[C.IQAMA_EXP_G] ? new Date(emp[C.IQAMA_EXP_G]) : null;
             
-            // Rule 1: Salary Mismatch
-            const calcTotal = basic + allowances;
-            if(Math.abs(calcTotal - total) > 1) {
-                auditResults.push({name, id, type:'salary', issue:'تباين إجمالي الراتب', actual:total, expected:calcTotal.toFixed(2)});
+            // Rule 1: Salary Mismatch (only when both fields exist)
+            if(emp[C.BASIC] !== '' && emp[C.TOTAL_SAL] !== '') {
+                const calcTotal = basic + allowances;
+                if(Math.abs(calcTotal - total) > 1) {
+                    auditResults.push({name, id, type:'salary', issue:'تباين إجمالي الراتب', actual:total, expected:calcTotal.toFixed(2)});
+                }
+            } else if(emp[C.BASIC] === '' && emp[C.TOTAL_SAL] === '') {
+                auditResults.push({name, id, type:'missing', issue:'بيانات الراتب غير مسجلة', actual:'-', expected:'أدخل الراتب الأساسي والإجمالي'});
             }
             
             // Rule 2: Expired Documents
             if(iqamaExp && iqamaExp < today) {
-                auditResults.push({name, id, type:'docs', issue:'إقامة منتهية', actual:iqamaExp.toLocaleDateString('ar-SA'), expected:'تجديد فوري'});
+                auditResults.push({name, id, type:'docs', issue:'إقامة منتهية', actual:formatDateDisplay(emp[C.IQAMA_EXP_G]), expected:'تجديد فوري'});
             }
             
             // Rule 3: Missing Critical Data
-            if(!emp[36] || !emp[9]) {
-                auditResults.push({name, id, type:'missing', issue:'بيانات راتب أو اسم ناقصة', actual:'-', expected:'استكمال البيانات'});
+            if(!emp[C.NAME]) {
+                auditResults.push({name, id, type:'missing', issue:'اسم الموظف مفقود', actual:'-', expected:'استكمال البيانات من مكتب العمل'});
             }
         });
         
@@ -302,7 +330,6 @@ function renderAuditTable() {
     }).join('');
 }
 
-// --- EMPLOYEES VIEW ---
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> تحميل...';
@@ -319,40 +346,46 @@ function filterEmployees() {
     const tbody = document.getElementById('tableBody');
     
     const filtered = allEmployees.filter(emp => 
-        String(emp[9]||'').toLowerCase().includes(term) || 
-        String(emp[6]||'').includes(term) || 
-        String(emp[4]||'').includes(term) ||
-        String(emp[3]||'').includes(term)
+        String(emp[C.NAME]||'').toLowerCase().includes(term) || 
+        String(emp[C.IQAMA]||'').includes(term) || 
+        String(emp[C.BORDER]||'').includes(term) ||
+        String(emp[C.FILE_NO]||'').includes(term)
     );
     
     if(!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem">لا توجد نتائج</td></tr>'; return; }
     
     tbody.innerHTML = filtered.map(emp => {
-        const total = parseFloat(emp[39]||0).toLocaleString('en-US',{style:'currency',currency:'SAR'});
-        const iqamaExp = emp[8] ? new Date(emp[8]) : null;
-        const conExp = emp[25] ? new Date(emp[25]) : null;
+        const total = parseFloat(emp[C.TOTAL_SAL]||0).toLocaleString('en-US',{style:'currency',currency:'SAR'});
+        
+        // ✅ Use raw dates for calculation, formatted dates for display
+        const iqamaExpRaw = emp[C.IQAMA_EXP_G];
+        const conExpRaw = emp[C.CONTRACT_EXP];
+        const iqamaExp = iqamaExpRaw ? new Date(iqamaExpRaw) : null;
+        const conExp = conExpRaw ? new Date(conExpRaw) : null;
         const today = new Date();
         
-        const iqamaBadge = iqamaExp ? (iqamaExp < today ? '<span class="badge badge-red">منتهي</span>' : 
-            (iqamaExp - today)/(1000*60*60*24) <= 30 ? '<span class="badge badge-yellow">قريب</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">غير محدد</span>';
+        const iqamaDays = iqamaExp ? Math.ceil((iqamaExp - today) / 86400000) : null;
+        const conDays = conExp ? Math.ceil((conExp - today) / 86400000) : null;
+        
+        const iqamaBadge = iqamaDays !== null ? (iqamaDays <= 0 ? '<span class="badge badge-red">منتهي</span>' : 
+            iqamaDays <= 30 ? '<span class="badge badge-yellow">قريب</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">-</span>';
             
-        const conBadge = conExp ? (conExp < today ? '<span class="badge badge-red">منتهي</span>' : 
-            (conExp - today)/(1000*60*60*24) <= 90 ? '<span class="badge badge-yellow">تجديد</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">-</span>';
+        const conBadge = conDays !== null ? (conDays <= 0 ? '<span class="badge badge-red">منتهي</span>' : 
+            conDays <= 90 ? '<span class="badge badge-yellow">تجديد</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">-</span>';
 
         return `<tr>
-            <td>${emp[9]||''}</td>
-            <td>${emp[6]||emp[4]||''}</td>
-            <td>${emp[15]||''}</td>
-            <td>${emp[16]||''}</td>
+            <td>${emp[C.NAME]||''}</td>
+            <td>${emp[C.IQAMA]||emp[C.BORDER]||''}</td>
+            <td>${emp[C.NATIONALITY]||''}</td>
+            <td>${emp[C.JOB]||''}</td>
             <td style="font-family:sans-serif">${total}</td>
-            <td>${iqamaBadge}</td>
-            <td>${conBadge}</td>
-            <td>${emp[40]||emp[13]||''}</td>
+            <td>${iqamaBadge} <small style="color:var(--text-light)">${formatDateDisplay(iqamaExpRaw)}</small></td>
+            <td>${conBadge} <small style="color:var(--text-light)">${formatDateDisplay(conExpRaw)}</small></td>
+            <td>${emp[C.WORK_PLACE]||emp[C.WORK_LOC_CURR]||''}</td>
         </tr>`;
     }).join('');
 }
 
-// --- DATA UPLOAD ---
 function downloadMasterData() { window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank'); }
 
 async function handleUpload() {
@@ -367,7 +400,6 @@ async function handleUpload() {
             const rows = parseCSV(e.target.result);
             if(!rows.length) throw new Error('ملف فارغ');
             
-            // Batch upload to avoid timeout
             const batchSize = 50;
             for(let i=0; i<rows.length; i+=batchSize) {
                 await fetch(APPS_SCRIPT_URL, {
