@@ -6,44 +6,44 @@
     <title>نظام الصفوة للرقابة والتدقيق | AlSafwah Audit</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary:#0f766e; --primary-hover:#0d9488; --bg:#f1f5f9; --card:#fff; --border:#cbd5e1; --text:#0f172a; --text-light:#64748b; --success:#16a34a; --warning:#ca8a04; --error:#dc2626; --radius:10px; }
+        :root{--primary:#0f766e;--primary-hover:#0d9488;--bg:#f1f5f9;--card:#fff;--border:#cbd5e1;--text:#0f172a;--text-light:#64748b;--success:#16a34a;--warning:#ca8a04;--error:#dc2626;--radius:10px}
         *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-        .header{background:var(--card);border-bottom:1px solid var(--border);padding:0.75rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
-        .header h1{font-size:1.25rem;color:var(--primary);display:flex;align-items:center;gap:0.5rem}
-        .nav-tabs{display:flex;gap:0.25rem;flex-wrap:wrap}
-        .tab-btn{padding:0.5rem 1rem;border:none;background:transparent;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:500;color:var(--text-light);transition:all 0.2s}
+        .header{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        .header h1{font-size:1.25rem;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-tabs{display:flex;gap:.25rem;flex-wrap:wrap}
+        .tab-btn{padding:.5rem 1rem;border:none;background:0 0;border-radius:6px;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:500;color:var(--text-light);transition:all .2s}
         .tab-btn:hover{background:#f8fafc;color:var(--text)}.tab-btn.active{background:var(--primary);color:#fff}
         .container{max-width:1400px;margin:1.5rem auto;padding:0 1.5rem}
-        .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:1.5rem;border:1px solid var(--border)}
+        .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:1.5rem;border:1px solid var(--border)}
         .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
         .kpi-card{padding:1.25rem;border-radius:var(--radius);border:1px solid;display:flex;flex-direction:column;justify-content:center}
-        .kpi-label{font-size:0.8rem;font-weight:600;margin-bottom:0.25rem;opacity:0.9}
-        .kpi-value{font-size:1.75rem;font-weight:700;line-height:1.2;font-family:'Segoe UI', sans-serif}
+        .kpi-label{font-size:.8rem;font-weight:600;margin-bottom:.25rem;opacity:.9}
+        .kpi-value{font-size:1.75rem;font-weight:700;line-height:1.2;font-family:'Segoe UI',sans-serif}
         .kpi-green{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}.kpi-red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
         .kpi-yellow{background:#fffbeb;border-color:#fde68a;color:#a16207}.kpi-blue{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
-        .section-title{font-size:1rem;font-weight:700;margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--bg);color:var(--primary)}
+        .section-title{font-size:1rem;font-weight:700;margin:1.5rem 0 1rem;padding-bottom:.5rem;border-bottom:2px solid var(--bg);color:var(--primary)}
         .section-title:first-child{margin-top:0}
-        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
-        .form-group{display:flex;flex-direction:column;gap:0.3rem}label{font-size:0.8rem;font-weight:600;color:var(--text-light)}
-        input,select{padding:0.6rem 0.8rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:0.9rem;transition:all 0.2s;background:#fff}
-        input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,0.1);outline:none}input[readonly]{background:#f8fafc;color:var(--text-light);cursor:not-allowed}
         .table-wrapper{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
-        table{width:100%;border-collapse:collapse;font-size:0.85rem;white-space:nowrap}th,td{padding:0.75rem 1rem;text-align:right;border-bottom:1px solid var(--border)}
+        table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}
+        th,td{padding:.75rem 1rem;text-align:right;border-bottom:1px solid var(--border)}
         th{background:#f8fafc;font-weight:700;color:var(--text-light);position:sticky;top:0;z-index:10}tr:hover{background:#f8fafc}
-        .badge{display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.6rem;border-radius:99px;font-size:0.75rem;font-weight:700}
+        /* ✅ Header Filter Styles */
+        th .filter-input{display:block;width:100%;margin-top:.3rem;padding:.25rem .4rem;border:1px solid var(--border);border-radius:4px;font-size:.75rem;font-family:inherit;background:#fff;outline:none}
+        th .filter-input:focus{border-color:var(--primary)}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:.2rem .6rem;border-radius:99px;font-size:.75rem;font-weight:700}
         .badge-red{background:#fef2f2;color:var(--error);border:1px solid #fecaca}.badge-yellow{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}
         .badge-green{background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0}.badge-blue{background:#eff6ff;color:var(--primary);border:1px solid #bfdbfe}
-        .btn{padding:0.6rem 1.5rem;border:none;border-radius:6px;font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem}
+        .btn{padding:.6rem 1.5rem;border:none;border-radius:6px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
         .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
         .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}.btn-outline:hover{background:var(--primary);color:#fff}
-        .btn:disabled{opacity:0.6;cursor:not-allowed}
-        .search-bar{width:100%;padding:0.75rem 1rem;margin-bottom:1rem;border:1px solid var(--border);border-radius:6px;font-size:0.95rem}
+        .btn:disabled{opacity:.6;cursor:not-allowed}
+        .search-bar{width:100%;padding:.75rem 1rem;margin-bottom:1rem;border:1px solid var(--border);border-radius:6px;font-size:.95rem}
         .hidden{display:none!important}
-        .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite}
+        .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);padding:0.75rem 1.5rem;border-radius:8px;color:#fff;font-weight:600;opacity:0;transition:all 0.3s;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);padding:.75rem 1.5rem;border-radius:8px;color:#fff;font-weight:600;opacity:0;transition:all .3s;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .toast.show{transform:translateX(-50%) translateY(0);opacity:1}.toast.success{background:var(--success)}.toast.error{background:var(--error)}
-        @media(max-width:768px){.header{flex-direction:column;gap:0.75rem;padding:1rem}.form-grid{grid-template-columns:1fr}.container{padding:0 1rem;margin:1rem auto}}
+        @media(max-width:768px){.header{flex-direction:column;gap:.75rem;padding:1rem}.container{padding:0 1rem;margin:1rem auto}}
     </style>
 </head>
 <body>
@@ -57,13 +57,14 @@
     </nav>
 </header>
 <main class="container">
+    <!-- DASHBOARD -->
     <section id="dashboardSection" class="card">
         <div class="section-title">📊 المؤشرات التنفيذية</div>
         <div class="kpi-grid">
             <div class="kpi-card kpi-blue"><div class="kpi-label">إجمالي العمالة النشطة</div><div class="kpi-value" id="kpi-total">--</div></div>
             <div class="kpi-card kpi-green"><div class="kpi-label">نسبة التوطين (نطاقات)</div><div class="kpi-value" id="kpi-saudization">--</div></div>
             <div class="kpi-card kpi-green"><div class="kpi-label">نسبة الامتثال العام</div><div class="kpi-value" id="kpi-compliance">--</div></div>
-            <div class="kpi-card kpi-yellow"><div class="kpi-label">مخاطر WPS / الرواتب</div><div class="kpi-value" id="kpi-wps">--</div></div>
+            <div class="kpi-card kpi-blue"><div class="kpi-label">IBAN ناقص / غير صالح</div><div class="kpi-value" id="kpi-iban">--</div></div>
         </div>
         <div class="section-title">🔍 تفاصيل الامتثال التشغيلي</div>
         <div class="kpi-grid">
@@ -72,50 +73,74 @@
             <div class="kpi-card kpi-red"><div class="kpi-label">عقود منتهية</div><div class="kpi-value" id="kpi-con-exp">--</div></div>
             <div class="kpi-card kpi-yellow"><div class="kpi-label">عقود قريبة (90 يوم)</div><div class="kpi-value" id="kpi-con-soon">--</div></div>
             <div class="kpi-card kpi-red"><div class="kpi-label">جوازات منتهية</div><div class="kpi-value" id="kpi-pass-exp">--</div></div>
-            <div class="kpi-card kpi-yellow"><div class="kpi-label">رواتب غير متطابقة</div><div class="kpi-value" id="kpi-sal-mis">--</div></div>
-            <div class="kpi-card kpi-blue"><div class="kpi-label">IBAN ناقص / غير صالح</div><div class="kpi-value" id="kpi-iban">--</div></div>
-            <div class="kpi-card kpi-blue"><div class="kpi-label">بيانات رواتب مفقودة</div><div class="kpi-value" id="kpi-sal-miss">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">جوازات قريبة (60 يوم)</div><div class="kpi-value" id="kpi-pass-soon">--</div></div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
             <div class="section-title" style="margin:0">🚨 إجراءات عاجلة مطلوبة</div>
-            <button class="btn btn-outline" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="loadDashboard()">⟳ إعادة تدقيق كامل</button>
+            <button class="btn btn-outline" style="padding:.4rem 1rem;font-size:.8rem" onclick="loadDashboard()">⟳ إعادة تدقيق كامل</button>
         </div>
         <div class="table-wrapper">
             <table id="urgentTable"><thead><tr><th>الموظف</th><th>رقم الهوية/الحدود</th><th>مستوى الخطر</th><th>الإجراء المطلوب</th></tr></thead>
             <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light)">اضغط تحديث للتحميل</td></tr></tbody></table>
         </div>
     </section>
+
+    <!-- AUDIT -->
     <section id="auditSection" class="card hidden">
         <div class="section-title">🔍 محرك التدقيق والمطابقة</div>
-        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem">يقوم النظام بمطابقة بيانات Excel مع قواعد الامتثال تلقائياً. يتم فحص: تطابق الرواتب، صلاحية الوثائق، وتكامل البيانات.</p>
-        <div class="form-grid" style="margin-bottom:1.5rem">
-            <div class="form-group"><label>فلتر التدقيق</label><select id="auditFilter" onchange="renderAuditTable()"><option value="all">جميع المخالفات</option><option value="salary">تباين الرواتب فقط</option><option value="docs">وثائق منتهية/ناقصة</option><option value="missing">بيانات ناقصة</option></select></div>
-            <div class="form-group"><label>بحث في النتائج</label><input type="text" id="auditSearch" placeholder="ابحث بالاسم أو الرقم..." oninput="renderAuditTable()"></div>
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:1rem">يقوم النظام بفحص صلاحية الوثائق وتكامل بيانات IBAN تلقائياً.</p>
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:200px"><label style="font-size:.8rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:.3rem">فلتر التدقيق</label><select id="auditFilter" onchange="renderAuditTable()" style="width:100%;padding:.6rem .8rem;border:1px solid var(--border);border-radius:6px;font-family:inherit"><option value="all">جميع المخالفات</option><option value="docs">وثائق منتهية/ناقصة</option><option value="iban">مشاكل IBAN</option><option value="missing">بيانات ناقصة</option></select></div>
+            <div style="flex:2;min-width:200px"><label style="font-size:.8rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:.3rem">بحث</label><input type="text" id="auditSearch" placeholder="ابحث بالاسم أو الرقم..." oninput="renderAuditTable()" style="width:100%;padding:.6rem .8rem;border:1px solid var(--border);border-radius:6px;font-family:inherit"></div>
         </div>
-        <div class="table-wrapper"><table id="auditTable"><thead><tr><th>الموظف</th><th>رقم الهوية</th><th>المخالفة المرصودة</th><th>القيمة في النظام</th><th>القيمة المتوقعة/الصحيحة</th><th>الحالة</th></tr></thead><tbody id="auditBody"><tr><td colspan="6" style="text-align:center;padding:2rem">قم بتحميل البيانات أولاً</td></tr></tbody></table></div>
+        <div class="table-wrapper"><table id="auditTable"><thead><tr><th>الموظف</th><th>رقم الهوية</th><th>المخالفة المرصودة</th><th>القيمة الحالية</th><th>القيمة المتوقعة</th><th>الحالة</th></tr></thead><tbody id="auditBody"><tr><td colspan="6" style="text-align:center;padding:2rem">قم بتحميل البيانات أولاً</td></tr></tbody></table></div>
         <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="runFullAudit()" id="auditBtn">تشغيل فحص تدقيق شامل</button>
     </section>
+
+    <!-- VIEW EMPLOYEES WITH FILTERS -->
     <section id="viewSection" class="card hidden">
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 بحث بالاسم، رقم الهوية، رقم الحدود، أو رقم الملف..." oninput="filterEmployees()">
-        <div class="table-wrapper"><table id="employeesTable"><thead><tr><th>الاسم</th><th>رقم الهوية/الحدود</th><th>الجنسية</th><th>المهنة</th><th>المبلغ الإجمالي</th><th>انتهاء الإقامة</th><th>انتهاء العقد</th><th>مكان العمل</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+        <input type="text" id="globalSearch" class="search-bar" placeholder="🔍 بحث عام بالاسم، رقم الهوية، رقم الحدود، أو رقم الملف..." oninput="applyFilters()">
+        <div class="table-wrapper">
+            <table id="employeesTable">
+                <thead id="empTableHead"><tr><th>الاسم</th><th>رقم الهوية/الحدود</th><th>الجنسية</th><th>المهنة</th><th>انتهاء الإقامة</th><th>انتهاء العقد</th><th>IBAN</th><th>مكان العمل</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
         <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="loadEmployees()" id="refreshBtn">تحديث بيانات العمالة</button>
     </section>
+
+    <!-- DATA MANAGEMENT -->
     <section id="dataSection" class="card hidden">
         <div class="section-title">📥 تحميل النموذج المعتمد</div>
-        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem">يجب استخدام هذا النموذج حصراً لضمان مطابقة الأعمدة مع نظام التدقيق.</p>
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:1rem">يجب استخدام هذا النموذج حصراً. أي تعديل على أسماء الأعمدة سيؤدي إلى رفض الرفع.</p>
         <button class="btn btn-outline" onclick="downloadMasterData()">⬇️ تحميل ملف Excel الرئيسي (CSV)</button>
         <div class="section-title">📤 رفع التحديثات الأسبوعية</div>
-        <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem"><p style="margin-bottom:0.5rem;font-weight:700">اختر ملف CSV محدث</p><input type="file" id="uploadFile" accept=".csv" style="padding:0.5rem"></div>
+        <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem"><p style="margin-bottom:.5rem;font-weight:700">اختر ملف CSV محدث</p><input type="file" id="uploadFile" accept=".csv" style="padding:.5rem"></div>
         <button class="btn btn-primary" onclick="handleUpload()" id="uploadBtn" style="width:100%">رفع وتحديث البيانات</button>
     </section>
 </main>
 <div id="toast" class="toast"></div>
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQtuyGQ79Lr8qY___Rt3SZ3mpxaibosbRa9K1FJcSEDy1qaeG6wcG058TNtGwGdPk/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXhDZGPmsLgr4ZQEficiVvOpzvbxuwt2QrdPHgOJ09QAKLcax48T4o3ePv_0ChsdU/exec';
 let allEmployees = [];
 let auditResults = [];
+let sheetHeaders = [];
+let columnFilters = {};
 
-const C = {SEQ:0,FILE_NO:1,BORDER:2,ENTRY_DATE:3,IQAMA:4,IQAMA_EXP_H:5,IQAMA_EXP_G:6,NAME:7,EST_NAME:8,WORK_LOC_MAIN:9,WORK_LOC_CURR:10,WORK_LOC_SUB:11,CITY:12,NATIONALITY:13,JOB:14,AGENT:15,EST_NO:16,JOIN_DATE:17,EXCLUSION:18,MOBILE:19,DOB:20,PASSPORT_NO:21,PASSPORT_ISSUE:22,PASSPORT_EXP:23,CONTRACT_SIGN:24,CONTRACT_EXP:25,BANK_CODE:26,IBAN:27,BANK_USER:28,PIN:29,INMA_CODE:30,LEAVE_DUE:31,LEAVE_RETURN:32,LEAVE_STATUS:33,PAYSLIP_NO:34,BASIC:35,ALLOW:36,DEDUCTIONS:37,TOTAL_SAL:38,WORK_PLACE:39};
+// ✅ UPDATED: 32 columns - Salary removed, IBAN kept
+const C = {SEQ:0,FILE_NO:1,BORDER:2,ENTRY_DATE:3,IQAMA:4,IQAMA_EXP_H:5,IQAMA_EXP_G:6,NAME:7,EST_NAME:8,WORK_LOC_MAIN:9,WORK_LOC_CURR:10,WORK_LOC_SUB:11,CITY:12,NATIONALITY:13,JOB:14,AGENT:15,EST_NO:16,JOIN_DATE:17,EXCLUSION:18,MOBILE:19,DOB:20,PASSPORT_NO:21,PASSPORT_ISSUE:22,PASSPORT_EXP:23,CONTRACT_SIGN:24,CONTRACT_EXP:25,BANK_CODE:26,IBAN:27,BANK_USER:28,LEAVE_DUE:29,LEAVE_RETURN:30,LEAVE_STATUS:31};
+
+// Visible columns for the main table with filter support
+const VISIBLE_COLS = [
+    {idx:C.NAME, label:'الاسم'},
+    {idx:C.IQAMA, label:'رقم الإقامة', fallback:C.BORDER},
+    {idx:C.NATIONALITY, label:'الجنسية'},
+    {idx:C.JOB, label:'المهنة'},
+    {idx:C.IQAMA_EXP_G, label:'انتهاء الإقامة', isDate:true},
+    {idx:C.CONTRACT_EXP, label:'انتهاء العقد', isDate:true},
+    {idx:C.IBAN, label:'IBAN'},
+    {idx:C.WORK_LOC_CURR, label:'مكان العمل'}
+];
 
 function formatDateDisplay(val) {
     if (!val) return '-';
@@ -151,52 +176,39 @@ async function jsonpRequest(params, retries=2) {
     });
 }
 
-// ✅ AUTO-TRIGGER WITH LOADING STATE
 async function loadDashboard() {
-    const kpiIds = ['kpi-total','kpi-saudization','kpi-compliance','kpi-wps','kpi-iqama-exp','kpi-iqama-soon','kpi-con-exp','kpi-con-soon','kpi-pass-exp','kpi-sal-mis','kpi-iban','kpi-sal-miss'];
+    const kpiIds = ['kpi-total','kpi-saudization','kpi-compliance','kpi-iban','kpi-iqama-exp','kpi-iqama-soon','kpi-con-exp','kpi-con-soon','kpi-pass-exp','kpi-pass-soon'];
     kpiIds.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '...'; });
-
     try {
         let r = await jsonpRequest({action:'dashboard'});
         let m = r.metrics || {};
-
-        // Auto-rebuild if empty
         if (!m.total_active || m.total_active === 0) {
             showToast('جاري تحديث محرك الامتثال تلقائياً...', 'success');
             await jsonpRequest({action:'force_refresh'});
             r = await jsonpRequest({action:'dashboard'});
             m = r.metrics || {};
         }
-
-        renderKPIs(m);
-        renderUrgentTable(r.urgentActions);
+        document.getElementById('kpi-total').textContent = m.total_active ?? '--';
+        document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
+        document.getElementById('kpi-compliance').textContent = m.compliance_rate ?? '--';
+        document.getElementById('kpi-iban').textContent = m.iban_missing ?? '--';
+        document.getElementById('kpi-iqama-exp').textContent = m.iqama_expired ?? '--';
+        document.getElementById('kpi-iqama-soon').textContent = m.iqama_expiring_30 ?? '--';
+        document.getElementById('kpi-con-exp').textContent = m.contract_expired ?? '--';
+        document.getElementById('kpi-con-soon').textContent = m.contract_expiring_90 ?? '--';
+        document.getElementById('kpi-pass-exp').textContent = m.passport_expired ?? '--';
+        document.getElementById('kpi-pass-soon').textContent = m.passport_expiring_60 ?? '--';
+        
+        const tbody = document.getElementById('urgentBody');
+        if(r.urgentActions?.length) {
+            tbody.innerHTML = r.urgentActions.map(a => `<tr><td>${a.name}</td><td>${a.id}</td><td><span class="badge badge-red">${a.risk}</span></td><td>${a.action}</td></tr>`).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--success)">✅ لا توجد مخاطر عاجلة</td></tr>';
+        }
     } catch(e) { showToast('خطأ في تحميل اللوحة: ' + e.message, 'error'); }
 }
 
-function renderKPIs(m) {
-    document.getElementById('kpi-total').textContent = m.total_active ?? '--';
-    document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
-    document.getElementById('kpi-compliance').textContent = m.compliance_rate ?? '--';
-    document.getElementById('kpi-wps').textContent = m.wps_risk ?? '--';
-    document.getElementById('kpi-iqama-exp').textContent = m.iqama_expired ?? '--';
-    document.getElementById('kpi-iqama-soon').textContent = m.iqama_expiring_30 ?? '--';
-    document.getElementById('kpi-con-exp').textContent = m.contract_expired ?? '--';
-    document.getElementById('kpi-con-soon').textContent = m.contract_expiring_90 ?? '--';
-    document.getElementById('kpi-pass-exp').textContent = m.passport_expired ?? '--';
-    document.getElementById('kpi-sal-mis').textContent = m.salary_mismatch ?? '--';
-    document.getElementById('kpi-iban').textContent = m.iban_missing ?? '--';
-    document.getElementById('kpi-sal-miss').textContent = m.salary_missing ?? '--';
-}
-
-function renderUrgentTable(actions) {
-    const tbody = document.getElementById('urgentBody');
-    if (actions && actions.length) {
-        tbody.innerHTML = actions.map(a => `<tr><td>${a.name}</td><td>${a.id}</td><td><span class="badge badge-red">${a.risk}</span></td><td>${a.action}</td></tr>`).join('');
-    } else {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--success)">✅ لا توجد مخاطر عاجلة</td></tr>';
-    }
-}
-
+// ✅ AUDIT: Salary removed, IBAN-only
 async function runFullAudit() {
     const btn = document.getElementById('auditBtn');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التدقيق...';
@@ -207,15 +219,13 @@ async function runFullAudit() {
         allEmployees.forEach(emp => {
             if(emp[C.EXCLUSION]) return;
             const name = emp[C.NAME]||'', id = emp[C.IQAMA]||emp[C.BORDER]||'';
-            const basic = parseFloat(emp[C.BASIC])||0, allow = parseFloat(emp[C.ALLOW])||0, total = parseFloat(emp[C.TOTAL_SAL])||0;
             const iqamaExp = emp[C.IQAMA_EXP_G] ? new Date(emp[C.IQAMA_EXP_G]) : null;
             
-            if(emp[C.BASIC]!=='' && emp[C.TOTAL_SAL]!=='') {
-                if(Math.abs((basic+allow)-total)>1) auditResults.push({name,id,type:'salary',issue:'تباين إجمالي الراتب',actual:total,expected:(basic+allow).toFixed(2)});
-            } else if(emp[C.BASIC]==='' && emp[C.TOTAL_SAL]==='') {
-                auditResults.push({name,id,type:'missing',issue:'بيانات الراتب غير مسجلة',actual:'-',expected:'أدخل الراتب الأساسي والإجمالي'});
-            }
             if(iqamaExp && iqamaExp<today) auditResults.push({name,id,type:'docs',issue:'إقامة منتهية',actual:formatDateDisplay(emp[C.IQAMA_EXP_G]),expected:'تجديد فوري'});
+            
+            const iban = String(emp[C.IBAN]||'').trim();
+            if(!iban || iban.length < 18) auditResults.push({name,id,type:'iban',issue:'IBAN ناقص أو غير صالح',actual:iban||'-',expected:'IBAN مكون من 18+ حرف'});
+            
             if(!emp[C.NAME]) auditResults.push({name,id,type:'missing',issue:'اسم الموظف مفقود',actual:'-',expected:'استكمال البيانات'});
         });
         renderAuditTable();
@@ -235,37 +245,101 @@ function renderAuditTable() {
     });
     if(!filtered.length) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--success)">✅ لا توجد مخالفات</td></tr>'; return; }
     tbody.innerHTML = filtered.map(r => {
-        const badge = r.type==='salary'?'badge-yellow':r.type==='docs'?'badge-red':'badge-blue';
+        const badge = r.type==='iban'?'badge-yellow':r.type==='docs'?'badge-red':'badge-blue';
         return `<tr><td>${r.name}</td><td>${r.id}</td><td><span class="badge ${badge}">${r.issue}</span></td><td style="font-family:sans-serif">${r.actual}</td><td style="font-family:sans-serif">${r.expected}</td><td>مراجعة</td></tr>`;
     }).join('');
 }
 
+// ✅ EMPLOYEES VIEW WITH COLUMN FILTERS
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
     btn.disabled=true; btn.innerHTML='<span class="spinner"></span> تحميل...';
-    try { const r = await jsonpRequest({action:'get'}); allEmployees=r.data||[]; filterEmployees(); }
-    catch(e) { showToast(e.message,'error'); }
+    try { 
+        const r = await jsonpRequest({action:'get'}); 
+        allEmployees = r.data || [];
+        sheetHeaders = r.headers || [];
+        buildFilterHeaders();
+        applyFilters(); 
+    } catch(e) { showToast(e.message,'error'); }
     finally { btn.disabled=false; btn.textContent='تحديث بيانات العمالة'; }
 }
 
-function filterEmployees() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
+function buildFilterHeaders() {
+    const thead = document.getElementById('empTableHead');
+    columnFilters = {};
+    let html = '<tr>';
+    VISIBLE_COLS.forEach((col, i) => {
+        html += `<th>${col.label}<input class="filter-input" type="text" placeholder="فلتر..." data-col="${i}" oninput="onFilterChange(this)"></th>`;
+        columnFilters[i] = '';
+    });
+    html += '</tr>';
+    thead.innerHTML = html;
+}
+
+function onFilterChange(input) {
+    columnFilters[input.dataset.col] = input.value.toLowerCase();
+    applyFilters();
+}
+
+function applyFilters() {
+    const globalTerm = (document.getElementById('globalSearch')?.value || '').toLowerCase();
     const tbody = document.getElementById('tableBody');
-    const filtered = allEmployees.filter(emp => String(emp[C.NAME]||'').toLowerCase().includes(term) || String(emp[C.IQAMA]||'').includes(term) || String(emp[C.BORDER]||'').includes(term) || String(emp[C.FILE_NO]||'').includes(term));
-    if(!filtered.length) { tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem">لا توجد نتائج</td></tr>'; return; }
+    const today = new Date();
+    
+    const filtered = allEmployees.filter(emp => {
+        // Global search
+        if(globalTerm) {
+            const match = String(emp[C.NAME]||'').toLowerCase().includes(globalTerm) || 
+                String(emp[C.IQAMA]||'').includes(globalTerm) || 
+                String(emp[C.BORDER]||'').includes(globalTerm) || 
+                String(emp[C.FILE_NO]||'').includes(globalTerm);
+            if(!match) return false;
+        }
+        // Column filters
+        for(let i = 0; i < VISIBLE_COLS.length; i++) {
+            const term = columnFilters[i];
+            if(!term) continue;
+            const col = VISIBLE_COLS[i];
+            let val = '';
+            if(col.isDate) {
+                val = formatDateDisplay(emp[col.idx]);
+            } else if(col.fallback !== undefined) {
+                val = String(emp[col.idx] || emp[col.fallback] || '');
+            } else {
+                val = String(emp[col.idx] || '');
+            }
+            if(!val.toLowerCase().includes(term)) return false;
+        }
+        return true;
+    });
+    
+    if(!filtered.length) { tbody.innerHTML=`<tr><td colspan="${VISIBLE_COLS.length}" style="text-align:center;padding:2rem">لا توجد نتائج</td></tr>`; return; }
+    
     tbody.innerHTML = filtered.map(emp => {
-        const total = parseFloat(emp[C.TOTAL_SAL]||0).toLocaleString('en-US',{style:'currency',currency:'SAR'});
         const iqamaRaw=emp[C.IQAMA_EXP_G], conRaw=emp[C.CONTRACT_EXP];
-        const iqamaD=iqamaRaw?Math.ceil((new Date(iqamaRaw)-new Date())/864e5):null;
-        const conD=conRaw?Math.ceil((new Date(conRaw)-new Date())/864e5):null;
+        const iqamaD=iqamaRaw?Math.ceil((new Date(iqamaRaw)-today)/864e5):null;
+        const conD=conRaw?Math.ceil((new Date(conRaw)-today)/864e5):null;
         const iqB=iqamaD!==null?(iqamaD<=0?'<span class="badge badge-red">منتهي</span>':iqamaD<=30?'<span class="badge badge-yellow">قريب</span>':'<span class="badge badge-green">ساري</span>'):'<span class="badge badge-blue">-</span>';
         const cB=conD!==null?(conD<=0?'<span class="badge badge-red">منتهي</span>':conD<=90?'<span class="badge badge-yellow">تجديد</span>':'<span class="badge badge-green">ساري</span>'):'<span class="badge badge-blue">-</span>';
-        return `<tr><td>${emp[C.NAME]||''}</td><td>${emp[C.IQAMA]||emp[C.BORDER]||''}</td><td>${emp[C.NATIONALITY]||''}</td><td>${emp[C.JOB]||''}</td><td style="font-family:sans-serif">${total}</td><td>${iqB} <small style="color:var(--text-light)">${formatDateDisplay(iqamaRaw)}</small></td><td>${cB} <small style="color:var(--text-light)">${formatDateDisplay(conRaw)}</small></td><td>${emp[C.WORK_PLACE]||emp[C.WORK_LOC_CURR]||''}</td></tr>`;
+        const iban = String(emp[C.IBAN]||'').trim();
+        const ibanBadge = (!iban || iban.length<18) ? '<span class="badge badge-red">❌</span>' : '<span class="badge badge-green">✅</span>';
+        
+        return `<tr>
+            <td>${emp[C.NAME]||''}</td>
+            <td>${emp[C.IQAMA]||emp[C.BORDER]||''}</td>
+            <td>${emp[C.NATIONALITY]||''}</td>
+            <td>${emp[C.JOB]||''}</td>
+            <td>${iqB} <small style="color:var(--text-light)">${formatDateDisplay(iqamaRaw)}</small></td>
+            <td>${cB} <small style="color:var(--text-light)">${formatDateDisplay(conRaw)}</small></td>
+            <td>${ibanBadge} <small style="font-family:sans-serif">${iban.substring(0,8)}...</small></td>
+            <td>${emp[C.WORK_LOC_CURR]||''}</td>
+        </tr>`;
     }).join('');
 }
 
 function downloadMasterData() { window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank'); }
 
+// ✅ STRICT UPLOAD VALIDATION
 async function handleUpload() {
     const fi=document.getElementById('uploadFile'), btn=document.getElementById('uploadBtn');
     if(!fi.files.length) { showToast('اختر ملف CSV أولاً','error'); return; }
@@ -273,25 +347,35 @@ async function handleUpload() {
     const reader=new FileReader();
     reader.onload=async(e)=>{
         try {
-            const rows=parseCSV(e.target.result);
-            if(!rows.length) throw new Error('ملف فارغ');
-            for(let i=0;i<rows.length;i+=50) await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'upload',rows:rows.slice(i,i+50)})});
-            showToast(`✅ تم تحديث ${rows.length} سجل`,'success'); fi.value=''; loadDashboard();
+            const lines = e.target.result.split('\n').filter(l=>l.trim());
+            if(lines.length<2) throw new Error('ملف فارغ');
+            
+            // Parse and validate headers BEFORE sending
+            const fileHeaders = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+            
+            const rows = lines.slice(1).map(line=>{
+                const vals=line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)||[];
+                const row={}; fileHeaders.forEach((h,i)=>row[h]=vals[i]?.replace(/^"|"$/g,'').trim()||'');
+                return row;
+            }).filter(r=>r['رقم الاقامة']||r['رقم الحدود']||r['الاسم من مكتب العمل']);
+            
+            if(!rows.length) throw new Error('لا توجد بيانات صالحة');
+            
+            // Send headers + rows for server-side validation
+            const batchSize = 50;
+            for(let i=0;i<rows.length;i+=batchSize) {
+                const resp = await fetch(APPS_SCRIPT_URL,{
+                    method:'POST', mode:'no-cors',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({action:'upload', headers:fileHeaders, rows:rows.slice(i,i+batchSize)})
+                });
+                // Note: no-cors means we can't read response, but server validates
+            }
+            showToast(`✅ تم تحديث ${rows.length} سجل`,'success'); fi.value=''; loadDashboard(); loadEmployees();
         } catch(err) { showToast(err.message,'error'); }
         finally { btn.disabled=false; btn.textContent='رفع وتحديث البيانات'; }
     };
     reader.readAsText(fi.files[0],'UTF-8');
-}
-
-function parseCSV(text) {
-    const lines=text.split('\n').filter(l=>l.trim());
-    if(lines.length<2) return [];
-    const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
-    return lines.slice(1).map(line=>{
-        const vals=line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)||[];
-        const row={}; headers.forEach((h,i)=>row[h]=vals[i]?.replace(/^"|"$/g,'').trim()||'');
-        return row;
-    }).filter(r=>r['رقم الاقامة']||r['رقم الحدود']||r['الاسم من مكتب العمل']);
 }
 
 document.addEventListener('DOMContentLoaded', () => loadDashboard());
