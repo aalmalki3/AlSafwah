@@ -9,7 +9,6 @@
         :root { --primary:#0f766e; --primary-hover:#0d9488; --bg:#f1f5f9; --card:#fff; --border:#cbd5e1; --text:#0f172a; --text-light:#64748b; --success:#16a34a; --warning:#ca8a04; --error:#dc2626; --radius:10px; }
         *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
         
-        /* Header & Nav */
         .header{background:var(--card);border-bottom:1px solid var(--border);padding:0.75rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
         .header h1{font-size:1.25rem;color:var(--primary);display:flex;align-items:center;gap:0.5rem}
         .nav-tabs{display:flex;gap:0.25rem;flex-wrap:wrap}
@@ -17,22 +16,19 @@
         .tab-btn:hover{background:#f8fafc;color:var(--text)}
         .tab-btn.active{background:var(--primary);color:#fff}
 
-        /* Layout */
         .container{max-width:1400px;margin:1.5rem auto;padding:0 1.5rem}
         .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:1.5rem;border:1px solid var(--border)}
         
-        /* KPI Grid */
         .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
         .kpi-card{padding:1.25rem;border-radius:var(--radius);border:1px solid;display:flex;flex-direction:column;justify-content:center}
         .kpi-label{font-size:0.8rem;font-weight:600;margin-bottom:0.25rem;opacity:0.9}
-        .kpi-value{font-size:1.75rem;font-weight:700;line-height:1.2;font-family:'Segoe UI', sans-serif} /* English font for numbers */
+        .kpi-value{font-size:1.75rem;font-weight:700;line-height:1.2;font-family:'Segoe UI', sans-serif}
         
         .kpi-green{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
         .kpi-red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
         .kpi-yellow{background:#fffbeb;border-color:#fde68a;color:#a16207}
         .kpi-blue{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
 
-        /* Forms */
         .section-title{font-size:1rem;font-weight:700;margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--bg);color:var(--primary)}
         .section-title:first-child{margin-top:0}
         .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
@@ -42,21 +38,18 @@
         input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,0.1);outline:none}
         input[readonly]{background:#f8fafc;color:var(--text-light);cursor:not-allowed}
 
-        /* Tables */
         .table-wrapper{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
         table{width:100%;border-collapse:collapse;font-size:0.85rem;white-space:nowrap}
         th,td{padding:0.75rem 1rem;text-align:right;border-bottom:1px solid var(--border)}
         th{background:#f8fafc;font-weight:700;color:var(--text-light);position:sticky;top:0;z-index:10}
         tr:hover{background:#f8fafc}
         
-        /* Badges */
         .badge{display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.6rem;border-radius:99px;font-size:0.75rem;font-weight:700}
         .badge-red{background:#fef2f2;color:var(--error);border:1px solid #fecaca}
         .badge-yellow{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}
         .badge-green{background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0}
         .badge-blue{background:#eff6ff;color:var(--primary);border:1px solid #bfdbfe}
 
-        /* Buttons & Utils */
         .btn{padding:0.6rem 1.5rem;border:none;border-radius:6px;font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem}
         .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
         .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}.btn-outline:hover{background:var(--primary);color:#fff}
@@ -87,21 +80,40 @@
 </header>
 
 <main class="container">
-    <!-- DASHBOARD -->
+    <!-- ENHANCED MULTI-LEVEL DASHBOARD -->
     <section id="dashboardSection" class="card">
+        <!-- Level 1: Executive KPIs -->
+        <div class="section-title">📊 المؤشرات التنفيذية</div>
         <div class="kpi-grid">
             <div class="kpi-card kpi-blue"><div class="kpi-label">إجمالي العمالة النشطة</div><div class="kpi-value" id="kpi-total">--</div></div>
-            <div class="kpi-card kpi-red"><div class="kpi-label">وثائق منتهية / قريبة (30 يوم)</div><div class="kpi-value" id="kpi-expiring">--</div></div>
-            <div class="kpi-card kpi-yellow"><div class="kpi-label">تباين الرواتب (GOSI vs عقد)</div><div class="kpi-value" id="kpi-salary-mismatch">--</div></div>
+            <div class="kpi-card kpi-green"><div class="kpi-label">نسبة التوطين (نطاقات)</div><div class="kpi-value" id="kpi-saudization">--</div></div>
             <div class="kpi-card kpi-green"><div class="kpi-label">نسبة الامتثال العام</div><div class="kpi-value" id="kpi-compliance">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">مخاطر WPS / الرواتب</div><div class="kpi-value" id="kpi-wps">--</div></div>
         </div>
+
+        <!-- Level 2: Operational Compliance Breakdown -->
+        <div class="section-title">🔍 تفاصيل الامتثال التشغيلي</div>
+        <div class="kpi-grid">
+            <div class="kpi-card kpi-red"><div class="kpi-label">إقامات منتهية</div><div class="kpi-value" id="kpi-iqama-exp">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">إقامات قريبة (30 يوم)</div><div class="kpi-value" id="kpi-iqama-soon">--</div></div>
+            <div class="kpi-card kpi-red"><div class="kpi-label">عقود منتهية</div><div class="kpi-value" id="kpi-con-exp">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">عقود قريبة (90 يوم)</div><div class="kpi-value" id="kpi-con-soon">--</div></div>
+            <div class="kpi-card kpi-red"><div class="kpi-label">جوازات منتهية</div><div class="kpi-value" id="kpi-pass-exp">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">رواتب غير متطابقة</div><div class="kpi-value" id="kpi-sal-mis">--</div></div>
+            <div class="kpi-card kpi-blue"><div class="kpi-label">IBAN ناقص / غير صالح</div><div class="kpi-value" id="kpi-iban">--</div></div>
+            <div class="kpi-card kpi-blue"><div class="kpi-label">بيانات رواتب مفقودة</div><div class="kpi-value" id="kpi-sal-miss">--</div></div>
+        </div>
+
+        <!-- Level 3: Urgent Actions Table -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h3 style="font-size:1rem;color:var(--text)">⚠️ التنبيهات العاجلة</h3>
-            <button class="btn btn-outline" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="loadDashboard()">تحديث</button>
+            <div class="section-title" style="margin:0">🚨 إجراءات عاجلة مطلوبة</div>
+            <button class="btn btn-outline" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="loadDashboard()">⟳ تحديث اللوحة</button>
         </div>
         <div class="table-wrapper">
-            <table id="urgentTable"><thead><tr><th>الموظف</th><th>رقم الهوية/الحدود</th><th>نوع الخطر</th><th>الإجراء المطلوب</th></tr></thead>
-            <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light)">اضغط تحديث للتحميل</td></tr></tbody></table>
+            <table id="urgentTable">
+                <thead><tr><th>الموظف</th><th>رقم الهوية/الحدود</th><th>مستوى الخطر</th><th>الإجراء المطلوب</th></tr></thead>
+                <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light)">اضغط تحديث للتحميل</td></tr></tbody>
+            </table>
         </div>
     </section>
 
@@ -168,7 +180,8 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNT8OL891Oe4lXckhjpO6XcFmifnXPXOapFAanN06UuequBUAj_c5o4plfouO2jio/exec';
+// ✅ UPDATED API URL
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzP68jR0DgExwueuigz3xwqn1PS5V6SBjLB-FaUUMSrzOStQRVIWd52E8XGQhgQp-w/exec';
 let allEmployees = [];
 let auditResults = [];
 
@@ -230,15 +243,29 @@ async function jsonpRequest(params, retries=2) {
     });
 }
 
+// ✅ ENHANCED: Multi-level dashboard loader
 async function loadDashboard() {
     try {
         const r = await jsonpRequest({action:'dashboard'});
         const m = r.metrics || {};
-        document.getElementById('kpi-total').textContent = m.total_active ?? '--';
-        document.getElementById('kpi-expiring').textContent = m.expiring_docs ?? '--';
-        document.getElementById('kpi-salary-mismatch').textContent = m.salary_mismatches ?? '--';
-        document.getElementById('kpi-compliance').textContent = m.compliance_rate ?? '--';
         
+        // Level 1: Executive
+        document.getElementById('kpi-total').textContent = m.total_active ?? '--';
+        document.getElementById('kpi-saudization').textContent = m.saudization_pct ?? '--';
+        document.getElementById('kpi-compliance').textContent = m.compliance_rate ?? '--';
+        document.getElementById('kpi-wps').textContent = m.wps_risk ?? '--';
+        
+        // Level 2: Operational
+        document.getElementById('kpi-iqama-exp').textContent = m.iqama_expired ?? '--';
+        document.getElementById('kpi-iqama-soon').textContent = m.iqama_expiring_30 ?? '--';
+        document.getElementById('kpi-con-exp').textContent = m.contract_expired ?? '--';
+        document.getElementById('kpi-con-soon').textContent = m.contract_expiring_90 ?? '--';
+        document.getElementById('kpi-pass-exp').textContent = m.passport_expired ?? '--';
+        document.getElementById('kpi-sal-mis').textContent = m.salary_mismatch ?? '--';
+        document.getElementById('kpi-iban').textContent = m.iban_missing ?? '--';
+        document.getElementById('kpi-sal-miss').textContent = m.salary_missing ?? '--';
+        
+        // Level 3: Urgent Actions
         const tbody = document.getElementById('urgentBody');
         if(r.urgentActions?.length) {
             tbody.innerHTML = r.urgentActions.map(a => `<tr>
@@ -247,7 +274,7 @@ async function loadDashboard() {
                 <td>${a.action}</td>
             </tr>`).join('');
         } else {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--success)">✅ لا توجد مخاطر عاجلة</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--success)">✅ لا توجد مخاطر عاجلة - جميع العمالة متوافقة</td></tr>';
         }
     } catch(e) { showToast(e.message, 'error'); }
 }
