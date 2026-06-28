@@ -3,385 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام شركة الصفوة | HRIS</title>
+    <title>نظام الصفوة للرقابة والتدقيق | AlSafwah Audit</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary:#1a56db;--primary-hover:#1e40af;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#1e293b;--text-light:#64748b;--success:#16a34a;--warning:#d97706;--error:#dc2626;--radius:12px; }
+        :root { --primary:#0f766e; --primary-hover:#0d9488; --bg:#f1f5f9; --card:#fff; --border:#cbd5e1; --text:#0f172a; --text-light:#64748b; --success:#16a34a; --warning:#ca8a04; --error:#dc2626; --radius:10px; }
         *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-        .header{background:var(--card);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}.header h1{font-size:1.5rem;color:var(--primary)}
-        .nav-tabs{display:flex;gap:.5rem;flex-wrap:wrap}.tab-btn{padding:.5rem 1.25rem;border:1px solid var(--border);background:transparent;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.9rem;transition:all .2s}.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-        .container{max-width:1200px;margin:2rem auto;padding:0 1.5rem}.card{background:var(--card);border-radius:var(--radius);padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:1.5rem}
-        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}.kpi-card{padding:1.5rem;border-radius:var(--radius);border:1px solid}.kpi-label{font-size:.8rem;font-weight:500;margin-bottom:.25rem}.kpi-value{font-size:2rem;font-weight:700;line-height:1.2}
-        .kpi-green{background:#f0fdf4;border-color:#bbf7d0}.kpi-green .kpi-label{color:var(--success)}.kpi-green .kpi-value{color:#15803d}
-        .kpi-red{background:#fef2f2;border-color:#fecaca}.kpi-red .kpi-label{color:var(--error)}.kpi-red .kpi-value{color:#b91c1c}
-        .kpi-yellow{background:#fffbeb;border-color:#fde68a}.kpi-yellow .kpi-label{color:var(--warning)}.kpi-yellow .kpi-value{color:#b45309}
-        .kpi-blue{background:#eff6ff;border-color:#bfdbfe}.kpi-blue .kpi-label{color:var(--primary)}.kpi-blue .kpi-value{color:var(--primary-hover)}
-        .badge{display:inline-block;padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:700}.badge-red{background:#fef2f2;color:var(--error);border:1px solid #fecaca}.badge-yellow{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}.badge-green{background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0}
-        .section-title{font-size:1.1rem;font-weight:700;margin-bottom:1rem;margin-top:1.5rem;color:var(--text)}.section-title:first-child{margin-top:0}
-        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem}.form-group{display:flex;flex-direction:column;gap:.4rem}label{font-size:.85rem;font-weight:500;color:var(--text-light)}
-        input,select{padding:.75rem 1rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem;transition:border-color .2s;outline:none}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1)}input[readonly]{background:#f1f5f9;color:var(--text-light)}
-        .btn-submit{margin-top:1.5rem;padding:.85rem 2rem;background:var(--primary);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;width:100%}.btn-submit:hover{background:var(--primary-hover)}.btn-submit:disabled{opacity:.6;cursor:not-allowed}
-        .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:.5rem}.btn-outline:hover{background:var(--primary);color:#fff}
-        .table-wrapper{overflow-x:auto;border-radius:var(--radius)}table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{padding:.75rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}th{background:#f8fafc;font-weight:700;color:var(--text-light);position:sticky;top:0}tr:hover{background:#f8fafc}
-        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);padding:.75rem 1.5rem;border-radius:8px;color:#fff;font-weight:500;opacity:0;transition:all .3s ease;z-index:1000}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}.toast.success{background:var(--success)}.toast.error{background:var(--error)}
-        .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-left:.5rem;vertical-align:middle}@keyframes spin{to{transform:rotate(360deg)}}
+        
+        /* Header & Nav */
+        .header{background:var(--card);border-bottom:1px solid var(--border);padding:0.75rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+        .header h1{font-size:1.25rem;color:var(--primary);display:flex;align-items:center;gap:0.5rem}
+        .nav-tabs{display:flex;gap:0.25rem;flex-wrap:wrap}
+        .tab-btn{padding:0.5rem 1rem;border:none;background:transparent;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:500;color:var(--text-light);transition:all 0.2s}
+        .tab-btn:hover{background:#f8fafc;color:var(--text)}
+        .tab-btn.active{background:var(--primary);color:#fff}
+
+        /* Layout */
+        .container{max-width:1400px;margin:1.5rem auto;padding:0 1.5rem}
+        .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:1.5rem;border:1px solid var(--border)}
+        
+        /* KPI Grid */
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
+        .kpi-card{padding:1.25rem;border-radius:var(--radius);border:1px solid;display:flex;flex-direction:column;justify-content:center}
+        .kpi-label{font-size:0.8rem;font-weight:600;margin-bottom:0.25rem;opacity:0.9}
+        .kpi-value{font-size:1.75rem;font-weight:700;line-height:1.2;font-family:'Segoe UI', sans-serif} /* English font for numbers */
+        
+        .kpi-green{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+        .kpi-red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+        .kpi-yellow{background:#fffbeb;border-color:#fde68a;color:#a16207}
+        .kpi-blue{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+
+        /* Forms */
+        .section-title{font-size:1rem;font-weight:700;margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--bg);color:var(--primary)}
+        .section-title:first-child{margin-top:0}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+        .form-group{display:flex;flex-direction:column;gap:0.3rem}
+        label{font-size:0.8rem;font-weight:600;color:var(--text-light)}
+        input,select{padding:0.6rem 0.8rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:0.9rem;transition:all 0.2s;background:#fff}
+        input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,0.1);outline:none}
+        input[readonly]{background:#f8fafc;color:var(--text-light);cursor:not-allowed}
+
+        /* Tables */
+        .table-wrapper{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+        table{width:100%;border-collapse:collapse;font-size:0.85rem;white-space:nowrap}
+        th,td{padding:0.75rem 1rem;text-align:right;border-bottom:1px solid var(--border)}
+        th{background:#f8fafc;font-weight:700;color:var(--text-light);position:sticky;top:0;z-index:10}
+        tr:hover{background:#f8fafc}
+        
+        /* Badges */
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.6rem;border-radius:99px;font-size:0.75rem;font-weight:700}
+        .badge-red{background:#fef2f2;color:var(--error);border:1px solid #fecaca}
+        .badge-yellow{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}
+        .badge-green{background:#f0fdf4;color:var(--success);border:1px solid #bbf7d0}
+        .badge-blue{background:#eff6ff;color:var(--primary);border:1px solid #bfdbfe}
+
+        /* Buttons & Utils */
+        .btn{padding:0.6rem 1.5rem;border:none;border-radius:6px;font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem}
+        .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
+        .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}.btn-outline:hover{background:var(--primary);color:#fff}
+        .btn:disabled{opacity:0.6;cursor:not-allowed}
+        
+        .search-bar{width:100%;padding:0.75rem 1rem;margin-bottom:1rem;border:1px solid var(--border);border-radius:6px;font-size:0.95rem}
         .hidden{display:none!important}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}.modal{background:var(--card);border-radius:var(--radius);padding:2rem;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}.modal h2{margin-bottom:1rem;color:var(--primary)}.modal table{margin-bottom:1rem}.modal-close{margin-top:1rem;padding:.6rem 1.5rem;background:var(--text-light);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit}
-        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem;transition:border-color .2s}.upload-zone:hover{border-color:var(--primary)}
-        .search-bar{width:100%;padding:1rem;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:8px;font-size:1rem;outline:none;}
-        .search-bar:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1);}
-        @media(max-width:768px){.header{flex-direction:column;gap:1rem}.form-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.container{padding:0 1rem;margin:1rem auto}}@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
+        .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        
+        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);padding:0.75rem 1.5rem;border-radius:8px;color:#fff;font-weight:600;opacity:0;transition:all 0.3s;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        .toast.success{background:var(--success)}.toast.error{background:var(--error)}
+
+        @media(max-width:768px){.header{flex-direction:column;gap:0.75rem;padding:1rem}.form-grid{grid-template-columns:1fr}.container{padding:0 1rem;margin:1rem auto}}
     </style>
 </head>
 <body>
+
 <header class="header">
-    <h1>🏢 نظام موارد الصفوة</h1>
+    <h1>🛡️ نظام الصفوة للرقابة والتدقيق</h1>
     <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('dashboard',this)">لوحة الامتثال</button>
-        <button class="tab-btn" onclick="switchTab('add',this)">إضافة موظف</button>
-        <button class="tab-btn" onclick="switchTab('view',this)">سجل الموظفين</button>
-        <button class="tab-btn" onclick="switchTab('data',this)">إدارة البيانات</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard',this)">لوحة الرقابة</button>
+        <button class="tab-btn" onclick="switchTab('audit',this)">التدقيق والمطابقة</button>
+        <button class="tab-btn" onclick="switchTab('view',this)">بيانات العمالة</button>
+        <button class="tab-btn" onclick="switchTab('data',this)">تحديث البيانات</button>
     </nav>
 </header>
+
 <main class="container">
-
+    <!-- DASHBOARD -->
     <section id="dashboardSection" class="card">
-        <div class="section-title">📊 مؤشرات الموارد البشرية والتوطين</div>
         <div class="kpi-grid">
-            <div class="kpi-card kpi-green"><div class="kpi-label">نسبة التوطين (Nitaqat)</div><div class="kpi-value" id="kpi-saudization">--</div></div>
-            <div class="kpi-card kpi-blue"><div class="kpi-label">الموظفين النشطين</div><div class="kpi-value" id="kpi-total">--</div></div>
-            <div class="kpi-card kpi-red"><div class="kpi-label">وثائق تنتهي خلال 30 يوم</div><div class="kpi-value" id="kpi-iqama">--</div></div>
-            <div class="kpi-card kpi-yellow"><div class="kpi-label">عقود قريبة الانتهاء (90 يوم)</div><div class="kpi-value" id="kpi-contracts">--</div></div>
+            <div class="kpi-card kpi-blue"><div class="kpi-label">إجمالي العمالة النشطة</div><div class="kpi-value" id="kpi-total">--</div></div>
+            <div class="kpi-card kpi-red"><div class="kpi-label">وثائق منتهية / قريبة (30 يوم)</div><div class="kpi-value" id="kpi-expiring">--</div></div>
+            <div class="kpi-card kpi-yellow"><div class="kpi-label">تباين الرواتب (GOSI vs عقد)</div><div class="kpi-value" id="kpi-salary-mismatch">--</div></div>
+            <div class="kpi-card kpi-green"><div class="kpi-label">نسبة الامتثال العام</div><div class="kpi-value" id="kpi-compliance">--</div></div>
         </div>
-        <div class="section-title">الامتثال التنظيمي</div>
-        <div class="kpi-grid">
-            <div class="kpi-card kpi-red"><div class="kpi-label">غير مسجلين في GOSI</div><div class="kpi-value" id="kpi-gosi">--</div></div>
-            <div class="kpi-card kpi-yellow"><div class="kpi-label">غير موثقين في Qiwa</div><div class="kpi-value" id="kpi-qiwa">--</div></div>
-            <div class="kpi-card kpi-red"><div class="kpi-label">مشاكل WPS / Mudad</div><div class="kpi-value" id="kpi-wps">--</div></div>
-            <div class="kpi-card kpi-blue"><div class="kpi-label">سعودي / غير سعودي</div><div class="kpi-value" id="kpi-ratio">--</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h3 style="font-size:1rem;color:var(--text)">⚠️ التنبيهات العاجلة</h3>
+            <button class="btn btn-outline" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="loadDashboard()">تحديث</button>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;">
-            <div class="section-title" style="margin:0;">🚨 إجراءات مطلوبة</div>
-            <button class="btn-submit btn-outline" style="width:auto;margin:0;padding:.5rem 1rem;font-size:.85rem;" onclick="showGuide()">دليل تفعيل الامتثال</button>
-        </div>
-        <div class="table-wrapper" style="margin-top:1rem;">
-            <table id="urgentTable"><thead><tr><th>الموظف</th><th>رقم الهوية</th><th>مستوى الخطورة</th><th>الإجراء المطلوب</th></tr></thead>
-            <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light);">اضغط على "تحديث اللوحة" للتحميل</td></tr></tbody></table>
-        </div>
-        <button class="btn-submit" style="margin-top:1rem;" onclick="loadDashboard()" id="dashRefreshBtn">تحديث اللوحة</button>
-    </section>
-
-    <section id="addSection" class="card hidden">
-        <form id="hrisForm" onsubmit="handleAddEmployee(event)">
-            <div class="section-title">👤 البيانات الشخصية والوظيفية</div>
-            <div class="form-grid">
-                <div class="form-group"><label>اسم المشترك *</label><input type="text" name="name" required></div>
-                <div class="form-group"><label>رقم الهوية *</label><input type="text" name="nationalId" required pattern="\d{10}" title="أدخل 10 أرقام"></div>
-                <div class="form-group"><label>الجنسية *</label><select name="nationality" required><option value="">اختر</option><option value="سعودي">سعودي</option><option value="غير سعودي">غير سعودي</option></select></div>
-                <div class="form-group"><label>حالة الموظف *</label><select name="status" required><option value="على رأس العمل">على رأس العمل</option><option value="إجازة">إجازة</option><option value="منقطع">منقطع</option><option value="خروج نهائي">خروج نهائي</option><option value="نقل كفالة">نقل كفالة</option></select></div>
-                <div class="form-group"><label>الجنس *</label><select name="gender" required><option value="">اختر</option><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
-                <div class="form-group"><label>تاريخ الميلاد *</label><input type="date" name="dob" required></div>
-                <div class="form-group"><label>المهنة *</label><input type="text" name="jobTitle" required></div>
-                <div class="form-group"><label>تاريخ الإلتحاق *</label><input type="date" name="joinDate" required></div>
-            </div>
-            
-            <div class="section-title">💰 بيانات الرواتب (حماية الأجور)</div>
-            <div class="form-grid">
-                <div class="form-group"><label>الأجر الأساسي *</label><input type="number" name="basic" id="basicSal" step="0.01" min="0" value="0" required oninput="calcTotal()"></div>
-                <div class="form-group"><label>بدل السكن *</label><input type="number" name="housing" id="housingSal" step="0.01" min="0" value="0" required oninput="calcTotal()"></div>
-                <div class="form-group"><label>العمولات</label><input type="number" name="commissions" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
-                <div class="form-group"><label>البدلات الأخرى</label><input type="number" name="other" step="0.01" min="0" value="0" oninput="calcTotal()"></div>
-                <div class="form-group"><label>إجمالي الأجر</label><input type="text" id="totalSalaryDisplay" readonly value="0.00"></div>
-                <div class="form-group"><label>الأجر الخاضع لاشتراك التأمينات *</label><input type="number" name="gosiSalary" id="gosiSal" step="0.01" min="0" required oninput="validateGosi()">
-                <small id="gosiWarning" style="color:var(--error);font-size:0.75rem;display:none;">يجب أن يساوي (الأساسي + السكن) لتجنب رفض منصة مدد</small></div>
-                <div class="form-group"><label>الاهلية للتأمينات 1445هـ</label><select name="gosiEligible"><option value="نعم">نعم</option><option value="لا">لا</option></select></div>
-            </div>
-
-            <div class="section-title">🏛️ الامتثال والوثائق</div>
-            <div class="form-grid">
-                <div class="form-group"><label>رقم الإقامة / الجواز</label><input type="text" name="docNumber"></div>
-                <div class="form-group"><label>تاريخ انتهاء الوثيقة</label><input type="date" name="docExpiry"></div>
-                <div class="form-group"><label>نوع العقد</label><select name="contractType"><option value="">اختر</option><option value="عقد عمل محدد المدة">عقد عمل محدد المدة</option><option value="عقد عمل غير محدد المدة">عقد عمل غير محدد المدة</option><option value="عقد تدريب">عقد تدريب</option><option value="عقد موسمي">عقد موسمي</option></select></div>
-                <div class="form-group"><label>تاريخ انتهاء العقد</label><input type="date" name="contractExpiry"></div>
-                <div class="form-group"><label>مسجل في GOSI</label><select name="gosiRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
-                <div class="form-group"><label>مسجل في Qiwa</label><select name="qiwaRegistered"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
-            </div>
-
-            <button type="submit" class="btn-submit" id="submitBtn">حفظ بيانات الموظف</button>
-        </form>
-    </section>
-
-    <section id="viewSection" class="card hidden">
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 بحث برقم الهوية أو الاسم..." oninput="filterEmployees()">
         <div class="table-wrapper">
-            <table id="employeesTable"><thead><tr><th>اسم المشترك</th><th>رقم الهوية</th><th>الجنسية</th><th>المهنة</th><th>إجمالي الأجر</th><th>حالة الوثيقة</th><th>حالة العقد</th><th>GOSI</th><th>Qiwa</th></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="9" style="text-align:center;padding:2rem;">اضغط على "تحديث البيانات" للتحميل</td></tr></tbody></table>
+            <table id="urgentTable"><thead><tr><th>الموظف</th><th>رقم الهوية/الحدود</th><th>نوع الخطر</th><th>الإجراء المطلوب</th></tr></thead>
+            <tbody id="urgentBody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-light)">اضغط تحديث للتحميل</td></tr></tbody></table>
         </div>
-        <button class="btn-submit" style="margin-top:1rem;" onclick="loadEmployees()" id="refreshBtn">تحديث البيانات</button>
     </section>
 
-    <section id="dataSection" class="card hidden">
-        <div class="section-title">📥 تحميل نموذج التحديث</div>
-        <p style="margin-bottom:1rem;color:var(--text-light);">قم بتحميل الملف الحالي، حدّث أعمدة الامتثال (Qiwa, GOSI, Mudad, Ajeer, Muqeem) في Excel، ثم أعد رفعه.</p>
-        <button class="btn-submit btn-outline" onclick="downloadMasterData()" style="width:auto;">⬇️ تحميل ملف البيانات الرئيسي (CSV)</button>
-
-        <div class="section-title">📤 رفع التحديثات (المنصات الحكومية / Excel)</div>
-        <div class="upload-zone" id="dropZone">
-            <p style="margin-bottom:.5rem;font-weight:700;">اختر ملف CSV</p>
-            <input type="file" id="uploadFile" accept=".csv" style="padding:.5rem;">
+    <!-- AUDIT & CONTROL -->
+    <section id="auditSection" class="card hidden">
+        <div class="section-title">🔍 محرك التدقيق والمطابقة</div>
+        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem">يقوم النظام بمطابقة بيانات Excel مع قواعد الامتثال تلقائياً. يتم فحص: تطابق الرواتب، صلاحية الوثائق، وتكامل البيانات.</p>
+        
+        <div class="form-grid" style="margin-bottom:1.5rem">
+            <div class="form-group">
+                <label>فلتر التدقيق</label>
+                <select id="auditFilter" onchange="renderAuditTable()">
+                    <option value="all">جميع المخالفات</option>
+                    <option value="salary">تباين الرواتب فقط</option>
+                    <option value="docs">وثائق منتهية/ناقصة</option>
+                    <option value="missing">بيانات ناقصة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>بحث في النتائج</label>
+                <input type="text" id="auditSearch" placeholder="ابحث بالاسم أو الرقم..." oninput="renderAuditTable()">
+            </div>
         </div>
-        <button class="btn-submit" onclick="handleUpload()" id="uploadBtn" style="width:auto;">رفع وتحديث البيانات</button>
+
+        <div class="table-wrapper">
+            <table id="auditTable">
+                <thead><tr><th>الموظف</th><th>رقم الهوية</th><th>المخالفة المرصودة</th><th>القيمة في النظام</th><th>القيمة المتوقعة/الصحيحة</th><th>الحالة</th></tr></thead>
+                <tbody id="auditBody"><tr><td colspan="6" style="text-align:center;padding:2rem">قم بتحميل البيانات أولاً</td></tr></tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="runFullAudit()" id="auditBtn">تشغيل فحص تدقيق شامل</button>
+    </section>
+
+    <!-- VIEW EMPLOYEES -->
+    <section id="viewSection" class="card hidden">
+        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 بحث بالاسم، رقم الهوية، رقم الحدود، أو رقم الملف..." oninput="filterEmployees()">
+        <div class="table-wrapper">
+            <table id="employeesTable">
+                <thead><tr>
+                    <th>الاسم</th><th>رقم الهوية/الحدود</th><th>الجنسية</th><th>المهنة</th>
+                    <th>المبلغ الإجمالي</th><th>انتهاء الإقامة</th><th>انتهاء العقد</th><th>مكان العمل</th>
+                </tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="loadEmployees()" id="refreshBtn">تحديث بيانات العمالة</button>
+    </section>
+
+    <!-- DATA MANAGEMENT -->
+    <section id="dataSection" class="card hidden">
+        <div class="section-title">📥 تحميل النموذج المعتمد</div>
+        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem">يجب استخدام هذا النموذج حصراً لضمان مطابقة الأعمدة مع نظام التدقيق.</p>
+        <button class="btn btn-outline" onclick="downloadMasterData()">⬇️ تحميل ملف Excel الرئيسي (CSV)</button>
+
+        <div class="section-title">📤 رفع التحديثات الأسبوعية</div>
+        <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1rem">
+            <p style="margin-bottom:0.5rem;font-weight:700">اختر ملف CSV محدث</p>
+            <input type="file" id="uploadFile" accept=".csv" style="padding:0.5rem">
+        </div>
+        <button class="btn btn-primary" onclick="handleUpload()" id="uploadBtn" style="width:100%">رفع وتحديث البيانات</button>
     </section>
 </main>
 
 <div id="toast" class="toast"></div>
 
 <script>
-// ضع رابط تطبيقك هنا
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytx-LVmEitfDmYO_q6FicwGf289Z2n8ehgqPIbKaju89EJujG7Uwom66Nv19ZpwY4/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwS-cGSP-eX-IyrU0DsO-yz-sY3DZhJCbCLLrgVbht4TixIeOTZHRh9QC_ON5PP518/exec';
+let allEmployees = [];
+let auditResults = [];
 
-function switchTab(tab, btnElement) {
+function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if (btnElement) btnElement.classList.add('active');
-    ['dashboardSection','addSection','viewSection','dataSection'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('hidden', id.replace('Section','') !== tab);
+    if(btn) btn.classList.add('active');
+    ['dashboard','audit','view','data'].forEach(t => {
+        document.getElementById(t+'Section').classList.toggle('hidden', t !== tab);
     });
-    if (tab === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
-    if (tab === 'view' && typeof loadEmployees === 'function') loadEmployees();
-}
-
-function calcTotal() {
-    const b = parseFloat(document.getElementById('basicSal').value) || 0;
-    const h = parseFloat(document.getElementById('housingSal').value) || 0;
-    const c = parseFloat(document.getElementsByName('commissions')[0].value) || 0;
-    const o = parseFloat(document.getElementsByName('other')[0].value) || 0;
-    document.getElementById('totalSalaryDisplay').value = (b + h + c + o).toFixed(2);
-    validateGosi();
-}
-
-function validateGosi() {
-    const b = parseFloat(document.getElementById('basicSal').value) || 0;
-    const h = parseFloat(document.getElementById('housingSal').value) || 0;
-    const gosiVal = parseFloat(document.getElementById('gosiSal').value) || 0;
-    const warning = document.getElementById('gosiWarning');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    // التحقق التقاطعي المالي (أساسي + سكن يجب أن يساوي أجر التأمينات)
-    if (Math.abs(gosiVal - (b + h)) > 0.01 && gosiVal > 0) {
-        warning.style.display = 'block';
-        submitBtn.disabled = true;
-    } else {
-        warning.style.display = 'none';
-        submitBtn.disabled = false;
-    }
+    if(tab === 'dashboard') loadDashboard();
+    if(tab === 'view') loadEmployees();
 }
 
 function showToast(msg, type='success') {
-    const t = document.getElementById('toast'); if (!t) return;
+    const t = document.getElementById('toast');
     t.textContent = msg; t.className = `toast ${type} show`;
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-// دالة اتصال مع إعادة محاولة تلقائية
-function jsonpRequest(params, retries = 2, timeoutMs = 20000) {
+async function jsonpRequest(params, retries=2) {
     return new Promise((resolve, reject) => {
-        const attempt = (n) => {
-            const cb = '_hris_cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
-            let resolved = false, scriptEl = null;
-            
-            const cleanup = () => {
-                resolved = true;
-                delete window[cb];
-                if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-            };
-
-            window[cb] = (resp) => {
-                cleanup();
-                if(resp.error) reject(new Error(resp.error));
-                else resolve(resp);
-            };
-
-            const timer = setTimeout(() => {
-                if (resolved) return;
-                cleanup();
-                if (n > 0) { console.log(`إعادة المحاولة... متبقي ${n}`); attempt(n - 1); }
-                else reject(new Error('انتهت مهلة الاتصال بالخادم.'));
-            }, timeoutMs);
-
-            try {
-                const qs = new URLSearchParams({callback: cb, ...params}).toString();
-                scriptEl = document.createElement('script'); scriptEl.src = `${APPS_SCRIPT_URL}?${qs}`;
-                scriptEl.onerror = () => {
-                    if (resolved) return;
-                    cleanup();
-                    clearTimeout(timer);
-                    if (n > 0) attempt(n - 1); else reject(new Error('فشل الاتصال بالشبكة.'));
-                };
-                document.head.appendChild(scriptEl);
-            } catch(e) { reject(new Error('خطأ في إعداد الطلب.')); }
-        };
-        attempt(retries);
+        const cb = '_cb_' + Date.now();
+        window[cb] = (resp) => { delete window[cb]; resp.error ? reject(new Error(resp.error)) : resolve(resp); };
+        const qs = new URLSearchParams({callback: cb, ...params}).toString();
+        const s = document.createElement('script');
+        s.src = `${APPS_SCRIPT_URL}?${qs}`;
+        s.onerror = () => retries > 0 ? jsonpRequest(params, retries-1).then(resolve).catch(reject) : reject(new Error('فشل الاتصال'));
+        document.head.appendChild(s);
     });
 }
 
-function downloadMasterData() {
-    showToast('جاري تحضير الملف...', 'success');
-    window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank');
-}
-
-async function handleUpload() {
-    const fileInput = document.getElementById('uploadFile');
-    const btn = document.getElementById('uploadBtn');
-    if (!fileInput.files.length) { showToast('يرجى اختيار ملف CSV أولاً', 'error'); return; }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
-
-    reader.onload = async (e) => {
-        try {
-            const text = e.target.result;
-            const rows = parseCSV(text);
-            if (!rows.length) throw new Error('الملف فارغ أو غير صالح');
-
-            const batchSize = 50; // تقسيم الملف لمعالجة قيد الـ 15 ثانية
-            let totalUpdated = 0;
-
-            for (let i = 0; i < rows.length; i += batchSize) {
-                const batch = rows.slice(i, i + batchSize);
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'upload', rows: batch })
-                });
-                totalUpdated += batch.length;
-            }
-            showToast(`✅ تم رفع وتحديث ${totalUpdated} سجل بنجاح`, 'success');
-            fileInput.value = '';
-            setTimeout(() => loadDashboard(), 2000);
-        } catch (err) {
-            showToast('❌ فشل رفع الملف: ' + err.message, 'error');
-        } finally {
-            btn.disabled = false; btn.textContent = 'رفع وتحديث البيانات';
-        }
-    };
-    reader.readAsText(file, 'UTF-8');
-}
-
-function parseCSV(text) {
-    const lines = text.split('\n').filter(l => l.trim());
-    if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
-    const result = [];
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-        const row = {};
-        headers.forEach((h, idx) => { row[h] = values[idx] ? values[idx].replace(/^"|"$/g, '').trim() : ''; });
-        row.nationalId = row['رقم الهوية'] || row['nationalId'] || '';
-        if (row.nationalId) result.push(row);
-    }
-    return result;
-}
-
+// --- DASHBOARD ---
 async function loadDashboard() {
-    const btn = document.getElementById('dashRefreshBtn');
-    const ub = document.getElementById('urgentBody');
-    if (!btn || !ub) return;
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    
     try {
-        const r = await jsonpRequest({ action: 'dashboard' });
-        const metrics = r.metrics;
-        if (metrics) {
-            const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ?? '--'; };
-            setVal('kpi-saudization', metrics.saudization_pct);
-            setVal('kpi-total', metrics.total_active ?? '0');
-            setVal('kpi-iqama', metrics.iqama_expiring_30d ?? '0');
-            setVal('kpi-contracts', metrics.contracts_expiring_90d ?? '0');
-            setVal('kpi-gosi', metrics.gosi_unregistered ?? '0');
-            setVal('kpi-qiwa', metrics.qiwa_unregistered ?? '0');
-            setVal('kpi-wps', metrics.wps_rejections ?? '0');
-            setVal('kpi-ratio', `${metrics.saudi_count ?? 0} / ${metrics.non_saudi_count ?? 0}`);
-        }
-
-        const actions = r.urgentActions || [];
-        if (actions.length > 0) {
-            ub.innerHTML = actions.map(i => {
-                const bc = i.riskLevel.includes('عاجل') ? 'badge-red' : 'badge-yellow';
-                return `<tr><td>${i.name}</td><td>${i.nationalId}</td><td><span class="badge ${bc}">${i.riskLevel}</span></td><td>${i.actionRequired}</td></tr>`;
-            }).join('');
+        const r = await jsonpRequest({action:'dashboard'});
+        const m = r.metrics || {};
+        document.getElementById('kpi-total').textContent = m.total_active ?? '--';
+        document.getElementById('kpi-expiring').textContent = m.expiring_docs ?? '--';
+        document.getElementById('kpi-salary-mismatch').textContent = m.salary_mismatches ?? '--';
+        document.getElementById('kpi-compliance').textContent = m.compliance_rate ?? '--';
+        
+        const tbody = document.getElementById('urgentBody');
+        if(r.urgentActions?.length) {
+            tbody.innerHTML = r.urgentActions.map(a => `<tr>
+                <td>${a.name}</td><td>${a.id}</td>
+                <td><span class="badge badge-red">${a.risk}</span></td>
+                <td>${a.action}</td>
+            </tr>`).join('');
         } else {
-            ub.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--success);">✅ لا توجد إجراءات مطلوبة حالياً</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--success)">✅ لا توجد مخاطر عاجلة</td></tr>';
         }
-    } catch (err) {
-        showToast('فشل تحميل اللوحة', 'error');
-    } finally { btn.disabled = false; btn.textContent = 'تحديث اللوحة'; }
+    } catch(e) { showToast(e.message, 'error'); }
 }
 
-async function handleAddEmployee(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn'); 
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
-    const fd = Object.fromEntries(new FormData(e.target));
-    fd.totalSalary = document.getElementById('totalSalaryDisplay').value;
-    fd.action = 'add';
+// --- AUDIT ENGINE ---
+async function runFullAudit() {
+    const btn = document.getElementById('auditBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التدقيق...';
     try {
-        await jsonpRequest({data: JSON.stringify(fd)});
-        showToast('✅ تم إضافة الموظف بنجاح');
-        e.target.reset(); document.getElementById('totalSalaryDisplay').value = '0.00';
-    } catch(err) {
-        if(err.message.includes('موجود مسبقاً')) showToast('❌ ' + err.message, 'error');
-        else showToast('❌ فشل الحفظ: ' + err.message, 'error');
-    } finally { btn.disabled=false; btn.textContent='حفظ بيانات الموظف'; }
+        // Fetch fresh data if not loaded
+        if(!allEmployees.length) {
+            const r = await jsonpRequest({action:'get'});
+            allEmployees = r.data || [];
+        }
+        
+        // Client-side audit for instant feedback (Server also validates on upload)
+        auditResults = [];
+        const today = new Date();
+        
+        allEmployees.forEach(emp => {
+            // Map indices based on provided headers
+            // 0:تسلسل, 6:رقم الاقامة, 8:تاريخ انتهاء الإقامة( ميلادى), 9:الاسم, 16:المهنة
+            // 25:تاريخ انتهاء العقد, 36:الراتب الاساسى, 37:بدلات أخرى, 39:المبلغ الاجمالى
+            
+            const name = emp[9] || '';
+            const id = emp[6] || emp[4] || ''; // Iqama or Border Number
+            const basic = parseFloat(emp[36]) || 0;
+            const allowances = parseFloat(emp[37]) || 0;
+            const total = parseFloat(emp[39]) || 0;
+            const iqamaExp = emp[8] ? new Date(emp[8]) : null;
+            const contractExp = emp[25] ? new Date(emp[25]) : null;
+            
+            // Rule 1: Salary Mismatch
+            const calcTotal = basic + allowances;
+            if(Math.abs(calcTotal - total) > 1) {
+                auditResults.push({name, id, type:'salary', issue:'تباين إجمالي الراتب', actual:total, expected:calcTotal.toFixed(2)});
+            }
+            
+            // Rule 2: Expired Documents
+            if(iqamaExp && iqamaExp < today) {
+                auditResults.push({name, id, type:'docs', issue:'إقامة منتهية', actual:iqamaExp.toLocaleDateString('ar-SA'), expected:'تجديد فوري'});
+            }
+            
+            // Rule 3: Missing Critical Data
+            if(!emp[36] || !emp[9]) {
+                auditResults.push({name, id, type:'missing', issue:'بيانات راتب أو اسم ناقصة', actual:'-', expected:'استكمال البيانات'});
+            }
+        });
+        
+        renderAuditTable();
+        showToast(`تم تدقيق ${allEmployees.length} سجل بنجاح`, 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'تشغيل فحص تدقيق شامل'; }
 }
 
-let currentEmployees = [];
+function renderAuditTable() {
+    const filter = document.getElementById('auditFilter').value;
+    const search = document.getElementById('auditSearch').value.toLowerCase();
+    const tbody = document.getElementById('auditBody');
+    
+    let filtered = auditResults.filter(r => {
+        if(filter !== 'all' && r.type !== filter) return false;
+        if(search && !r.name.toLowerCase().includes(search) && !r.id.includes(search)) return false;
+        return true;
+    });
+    
+    if(!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--success)">✅ لا توجد مخالفات مطابقة لهذا الفلتر</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(r => {
+        const badge = r.type === 'salary' ? 'badge-yellow' : r.type === 'docs' ? 'badge-red' : 'badge-blue';
+        return `<tr>
+            <td>${r.name}</td><td>${r.id}</td>
+            <td><span class="badge ${badge}">${r.issue}</span></td>
+            <td style="font-family:sans-serif">${r.actual}</td>
+            <td style="font-family:sans-serif">${r.expected}</td>
+            <td>مراجعة</td>
+        </tr>`;
+    }).join('');
+}
 
+// --- EMPLOYEES VIEW ---
 async function loadEmployees() {
     const btn = document.getElementById('refreshBtn');
-    const tb = document.getElementById('tableBody');
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جاري التحميل...';
-    tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;">جاري التحميل...</td></tr>';
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> تحميل...';
     try {
         const r = await jsonpRequest({action:'get'});
-        currentEmployees = r?.data || [];
-        renderEmployeeTable(currentEmployees);
-    } catch(err) { tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--error);">❌ فشل التحميل</td></tr>`; }
-    finally { btn.disabled=false; btn.textContent='تحديث البيانات'; }
+        allEmployees = r.data || [];
+        filterEmployees();
+    } catch(e) { showToast(e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'تحديث بيانات العمالة'; }
 }
 
 function filterEmployees() {
     const term = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = currentEmployees.filter(emp => 
-        String(emp[0]||'').toLowerCase().includes(term) || String(emp[1]||'').includes(term)
-    );
-    renderEmployeeTable(filtered);
-}
-
-function renderEmployeeTable(emps) {
-    const tb = document.getElementById('tableBody');
-    if (!emps.length) { tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">لا توجد بيانات متطابقة</td></tr>'; return; }
+    const tbody = document.getElementById('tableBody');
     
-    tb.innerHTML = emps.map(emp => {
-        const nat = String(emp[2]||'');
-        const gR = String(emp[22]||'').includes('نعم'); // Index 22 is GOSI Reg
-        const qR = String(emp[23]||'').includes('نعم'); // Index 23 is Qiwa Reg
-        const gB = gR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-red">❌</span>';
-        const qB = qR?'<span class="badge badge-green">✅</span>':'<span class="badge badge-yellow">❌</span>';
+    const filtered = allEmployees.filter(emp => 
+        String(emp[9]||'').toLowerCase().includes(term) || 
+        String(emp[6]||'').includes(term) || 
+        String(emp[4]||'').includes(term) ||
+        String(emp[3]||'').includes(term)
+    );
+    
+    if(!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem">لا توجد نتائج</td></tr>'; return; }
+    
+    tbody.innerHTML = filtered.map(emp => {
+        const total = parseFloat(emp[39]||0).toLocaleString('en-US',{style:'currency',currency:'SAR'});
+        const iqamaExp = emp[8] ? new Date(emp[8]) : null;
+        const conExp = emp[25] ? new Date(emp[25]) : null;
+        const today = new Date();
         
-        let dB='<span class="badge badge-green">✅</span>', cB='<span class="badge badge-green">✅</span>';
-        const dE = emp[18]; // Doc expiry
-        if(dE){const d=Math.ceil((new Date(dE)-new Date())/86400000);if(d<=0)dB='<span class="badge badge-red">منتهي</span>';else if(d<=30)dB='<span class="badge badge-red">قريب</span>';}
-        const cE = emp[20]; // Contract expiry
-        if(cE){const d=Math.ceil((new Date(cE)-new Date())/86400000);if(d<=0)cB='<span class="badge badge-red">⛔ منتهي</span>';else if(d<=90)cB='<span class="badge badge-yellow">تجديد</span>';}
-        
-        const sal = parseFloat(emp[10]||0).toLocaleString('en-US',{style:'currency',currency:'SAR',minimumFractionDigits:2});
-        return `<tr><td>${emp[0]||''}</td><td>${emp[1]||''}</td><td>${nat}</td><td>${emp[12]||''}</td><td>${sal}</td><td>${dB}</td><td>${cB}</td><td>${gB}</td><td>${qB}</td></tr>`;
+        const iqamaBadge = iqamaExp ? (iqamaExp < today ? '<span class="badge badge-red">منتهي</span>' : 
+            (iqamaExp - today)/(1000*60*60*24) <= 30 ? '<span class="badge badge-yellow">قريب</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">غير محدد</span>';
+            
+        const conBadge = conExp ? (conExp < today ? '<span class="badge badge-red">منتهي</span>' : 
+            (conExp - today)/(1000*60*60*24) <= 90 ? '<span class="badge badge-yellow">تجديد</span>' : '<span class="badge badge-green">ساري</span>') : '<span class="badge badge-blue">-</span>';
+
+        return `<tr>
+            <td>${emp[9]||''}</td>
+            <td>${emp[6]||emp[4]||''}</td>
+            <td>${emp[15]||''}</td>
+            <td>${emp[16]||''}</td>
+            <td style="font-family:sans-serif">${total}</td>
+            <td>${iqamaBadge}</td>
+            <td>${conBadge}</td>
+            <td>${emp[40]||emp[13]||''}</td>
+        </tr>`;
     }).join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => { if(typeof loadDashboard==='function') loadDashboard(); });
+// --- DATA UPLOAD ---
+function downloadMasterData() { window.open(`${APPS_SCRIPT_URL}?action=download`, '_blank'); }
+
+async function handleUpload() {
+    const fileInput = document.getElementById('uploadFile');
+    const btn = document.getElementById('uploadBtn');
+    if(!fileInput.files.length) { showToast('اختر ملف CSV أولاً', 'error'); return; }
+    
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> معالجة...';
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const rows = parseCSV(e.target.result);
+            if(!rows.length) throw new Error('ملف فارغ');
+            
+            // Batch upload to avoid timeout
+            const batchSize = 50;
+            for(let i=0; i<rows.length; i+=batchSize) {
+                await fetch(APPS_SCRIPT_URL, {
+                    method:'POST', mode:'no-cors',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({action:'upload', rows: rows.slice(i, i+batchSize)})
+                });
+            }
+            showToast(`✅ تم تحديث ${rows.length} سجل`, 'success');
+            fileInput.value = '';
+            loadDashboard();
+        } catch(err) { showToast(err.message, 'error'); }
+        finally { btn.disabled = false; btn.textContent = 'رفع وتحديث البيانات'; }
+    };
+    reader.readAsText(fileInput.files[0], 'UTF-8');
+}
+
+function parseCSV(text) {
+    const lines = text.split('\n').filter(l=>l.trim());
+    if(lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+    return lines.slice(1).map(line => {
+        const vals = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+        const row = {};
+        headers.forEach((h,i) => row[h] = vals[i]?.replace(/^"|"$/g,'').trim() || '');
+        return row;
+    }).filter(r => r['رقم الاقامة'] || r['رقم الحدود'] || r['الاسم من مكتب العمل']);
+}
+
+document.addEventListener('DOMContentLoaded', () => loadDashboard());
 </script>
 </body>
 </html>
